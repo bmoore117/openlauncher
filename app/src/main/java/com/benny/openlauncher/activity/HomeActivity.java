@@ -193,11 +193,9 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         setContentView(getLayoutInflater().inflate(R.layout.activity_home, null));
 
         // transparent status and navigation
-        if (VERSION.SDK_INT >= 21) {
-            Window window = getWindow();
-            View decorView = window.getDecorView();
-            decorView.setSystemUiVisibility(1536);
-        }
+        Window window = getWindow();
+        View decorView = window.getDecorView();
+        decorView.setSystemUiVisibility(1536);
 
         init();
     }
@@ -227,21 +225,15 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             appDrawerBtnItem._x = 2;
             _db.saveItem(appDrawerBtnItem, 0, ItemPosition.Dock);
         }
-        Setup.appLoader().addUpdateListener(new AppUpdateListener() {
-            @Override
-            public boolean onAppUpdated(List<App> it) {
-                getDesktop().initDesktop();
-                getDock().initDock();
-                return false;
-            }
+        Setup.appLoader().addUpdateListener(it -> {
+            getDesktop().initDesktop();
+            getDock().initDock();
+            return false;
         });
-        Setup.appLoader().addDeleteListener(new AppDeleteListener() {
-            @Override
-            public boolean onAppDeleted(List<App> apps) {
-                getDesktop().initDesktop();
-                getDock().initDock();
-                return false;
-            }
+        Setup.appLoader().addDeleteListener(apps -> {
+            getDesktop().initDesktop();
+            getDock().initDock();
+            return false;
         });
         AppManager.getInstance(this).init();
     }
@@ -260,12 +252,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         _desktopOption = new HpDesktopOption(this);
 
         getDesktopOptionView().setDesktopOptionViewListener(_desktopOption);
-        getDesktopOptionView().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getDesktopOptionView().updateLockIcon(appSettings.getDesktopLock());
-            }
-        }, 100);
+        getDesktopOptionView().postDelayed(() -> getDesktopOptionView().updateLockIcon(appSettings.getDesktopLock()), 100);
 
         getDesktop().addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -287,12 +274,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         final ArrayList<LauncherAction.ActionDisplayItem> items = AppSettings.get().getMinibarArrangement();
         MinibarView minibar = findViewById(R.id.minibar);
         minibar.setAdapter(new MinibarAdapter(this, items));
-        minibar.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
-                LauncherAction.RunAction(items.get(i), HomeActivity.this);
-            }
-        });
+        minibar.setOnItemClickListener((parent, view, i, id) -> LauncherAction.RunAction(items.get(i), HomeActivity.this));
     }
 
     public final void initSettings() {

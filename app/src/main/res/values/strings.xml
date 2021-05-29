@@ -254,4 +254,27 @@
     <string name="toast_icon_pack_error">Please read access for external storage.</string>
     <string name="toast_remove_from_group_first">Remove item from group first.</string>
     <string name="toast_update_group_due_to_missing_items">Uninstalled or hidden apps were removed from this group.</string>
+    <string name="skywall">SkyWall</string>
+    <string name="app_whitelisting">App Whitelisting</string>
+    <string name="choose_a_delay">Choose a delay:</string>
+    <string name="apply">Apply</string>
+    <string name="search">search</string>
+    <string name="whitelist">Whitelist</string>
+    <string name="cancel">Cancel</string>
+    <string name="pending_changes">Here you can view pending changes and cancel them as desired</string>
+    <string name="whitelist_explanation">Here you can set a delay for whitelisting, as well as queue apps to be whitelisted. When the delay is 0, all apps will be allowed, regardless of whether they have been whitelisted or not</string>
+
+    <string-array name="delay_values">
+        <item>0</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>4 hours</item>
+        <item>5 hours</item>
+        <item>10 hours</item>
+    </string-array>
 </resources>

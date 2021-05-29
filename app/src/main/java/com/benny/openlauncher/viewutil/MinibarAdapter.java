@@ -15,8 +15,8 @@ import java.util.List;
 
 public class MinibarAdapter extends BaseAdapter {
 
-    private Context context;
-    private List<LauncherAction.ActionDisplayItem> items;
+    private final Context context;
+    private final List<LauncherAction.ActionDisplayItem> items;
 
     public MinibarAdapter(Context context, List<LauncherAction.ActionDisplayItem> items) {
         this.context = context;
@@ -37,7 +37,12 @@ public class MinibarAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.item_minibar, parent, false);
+        View view;
+        if (convertView == null) {
+            view = inflater.inflate(R.layout.item_minibar, parent, false);
+        } else {
+            view = convertView;
+        }
 
         ImageView icon = view.findViewById(R.id.iv);
         TextView label = view.findViewById(R.id.tv);

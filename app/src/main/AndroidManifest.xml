@@ -28,6 +28,11 @@
             android:name="android.max_aspect"
             android:value="2.1" />
 
+        <activity android:name="com.hyperion.skywall.activity.SkyWallActivity"
+            android:label="@string/skywall"
+            android:parentActivityName="com.benny.openlauncher.activity.HomeActivity"
+            android:theme="@style/NormalActivity.Light" />
+
         <activity
             android:name="com.benny.openlauncher.activity.OnBoardActivity"
             android:clearTaskOnLaunch="true"
