@@ -12,6 +12,7 @@ import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.benny.openlauncher.BuildConfig;
 import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
@@ -40,7 +41,8 @@ public class WhitelistFragment extends Fragment {
         List<App> apps = Setup.appLoader().getAllApps(getContext(), false);
         Set<String> whiteListedApps = whitelistService.getCurrentWhitelistedApps();
         nonWhitelistedApps = apps.stream()
-                .filter(app -> !whiteListedApps.contains(app.getClassName()))
+                .filter(app -> !whiteListedApps.contains(app.getClassName())
+                        && !BuildConfig.APPLICATION_ID.equals(app.getPackageName()))
                 .map(app -> new DisplayApp(app.getLabel(), app.getClassName(), app.getIcon(), null))
                 .collect(Collectors.toList());
     }
@@ -61,10 +63,10 @@ public class WhitelistFragment extends Fragment {
             long millisValue = WhitelistService.valueInMilliSeconds(spinnerValue);
             if (millisValue >= whitelistService.getCurrentDelayMillis()) {
                 whitelistService.increaseDelay(millisValue);
-                Toast.makeText(getContext(), "Delay set", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.delay_set, Toast.LENGTH_SHORT).show();
             } else {
                 whitelistService.queueDelayReduction(millisValue);
-                Toast.makeText(getContext(), "Change queued", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.change_queued, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -73,11 +75,9 @@ public class WhitelistFragment extends Fragment {
 
         Button whitelist = view.findViewById(R.id.fragment_whitelist_button);
         whitelist.setOnClickListener(button -> {
-            for (int i = 0; i < gridView.getChildCount(); i++) {
-                View child = gridView.getChildAt(i);
-                CheckBox checkBox = child.findViewById(R.id.item_whitelist_checkbox);
-                if (checkBox.isChecked()) {
-                    whitelistService.queueApp(nonWhitelistedApps.get(i).getActivityName());
+            for (DisplayApp displayApp : nonWhitelistedApps) {
+                if (displayApp.isSelected()) {
+                    whitelistService.queueApp(displayApp.getActivityName());
                 }
             }
         });

@@ -21,9 +21,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -34,8 +34,6 @@ import com.benny.openlauncher.activity.homeparts.HpDesktopOption;
 import com.benny.openlauncher.activity.homeparts.HpDragOption;
 import com.benny.openlauncher.activity.homeparts.HpInitSetup;
 import com.benny.openlauncher.activity.homeparts.HpSearchBar;
-import com.benny.openlauncher.interfaces.AppDeleteListener;
-import com.benny.openlauncher.interfaces.AppUpdateListener;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 import com.benny.openlauncher.model.Item;
@@ -63,6 +61,7 @@ import com.benny.openlauncher.widget.ItemOptionView;
 import com.benny.openlauncher.widget.MinibarView;
 import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
+import com.hyperion.skywall.service.WhitelistService;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import net.gsantner.opoc.util.ContextUtils;
@@ -97,6 +96,9 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     private int cx;
     private int cy;
+
+    // SkyWall variables
+    private WhitelistService whitelistService;
 
     public static final class Companion {
         private Companion() {
@@ -198,6 +200,8 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         decorView.setSystemUiVisibility(1536);
 
         init();
+
+        whitelistService = WhitelistService.getInstance(this);
     }
 
     private void init() {
@@ -321,6 +325,11 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     public final void onStartApp(@NonNull Context context, @NonNull App app, @Nullable View view) {
         if (BuildConfig.APPLICATION_ID.equals(app._packageName)) {
             LauncherAction.RunAction(Action.LauncherSettings, context);
+            return;
+        }
+
+        if (!whitelistService.refreshAndCheckWhitelistedExternal(app._className)) {
+            Toast.makeText(this, R.string.ignoring_app, Toast.LENGTH_SHORT).show();
             return;
         }
 

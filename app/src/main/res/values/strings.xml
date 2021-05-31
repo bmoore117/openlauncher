@@ -270,6 +270,9 @@
     <string name="remove_apps">Remove any apps you no longer wish to allow</string>
     <string name="no_pending_apps">No pending apps</string>
     <string name="no_whitelisted_apps">No whitelisted apps</string>
+    <string name="ignoring_app">Ignoring non-whitelisted app</string>
+    <string name="delay_set">Delay set</string>
+    <string name="change_queued">Change queued</string>
 
     <string-array name="delay_values">
         <item>0</item>

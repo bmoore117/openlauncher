@@ -51,7 +51,7 @@ public class RemoveFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_remove, container, false);
 
         GridView gridView = view.findViewById(R.id.fragment_remove_grid);
-        gridView.setAdapter(new PendingFragmentAdapter(getContext(), whitelistedApps, whitelistService));
+        gridView.setAdapter(new RemoveFragmentAdapter(getContext(), whitelistedApps, whitelistService));
 
         return view;
     }

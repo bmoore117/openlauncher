@@ -6,12 +6,9 @@ import android.support.v4.util.Pair;
 
 import com.benny.openlauncher.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -69,11 +66,15 @@ public class WhitelistService {
         isInit = true;
     }
 
-    public boolean refreshAndCheckWhitelisted(String appName) {
-        if (currentDelayMillis == 0) {
+    public boolean refreshAndCheckWhitelistedExternal(String appName) {
+        if (getCurrentDelayMillis() == 0) {
             return true;
         }
 
+        return refreshAndCheckWhitelistedInternal(appName);
+    }
+
+    public boolean refreshAndCheckWhitelistedInternal(String appName) {
         if (currentActiveApps.contains(appName)) {
             return true;
         }
@@ -146,13 +147,14 @@ public class WhitelistService {
     }
 
     public Set<String> getCurrentWhitelistedApps() {
+        getPendingApps();
         return new HashSet<>(currentActiveApps);
     }
 
     public Map<String, Long> getPendingApps() {
         Map<String, ?> pending = pendingChanges.getAll();
         for (String key : pending.keySet()) {
-            refreshAndCheckWhitelisted(key);
+            refreshAndCheckWhitelistedInternal(key);
         }
 
         pending = pendingChanges.getAll();
