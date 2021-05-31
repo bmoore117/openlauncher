@@ -2,7 +2,7 @@ package com.hyperion.skywall.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 
 import com.benny.openlauncher.R;
 
