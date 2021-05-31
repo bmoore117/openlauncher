@@ -14,13 +14,13 @@ import com.hyperion.skywall.service.WhitelistService;
 
 import java.util.List;
 
-public class PendingFragmentAdapter extends BaseAdapter {
+public class RemoveFragmentAdapter extends BaseAdapter {
 
     private final Context context;
     private final List<DisplayApp> appList;
     private final WhitelistService whitelistService;
 
-    public PendingFragmentAdapter(Context context, List<DisplayApp> appList, WhitelistService whitelistService) {
+    public RemoveFragmentAdapter(Context context, List<DisplayApp> appList, WhitelistService whitelistService) {
         this.context = context;
         this.appList = appList;
         this.whitelistService = whitelistService;
@@ -46,21 +46,19 @@ public class PendingFragmentAdapter extends BaseAdapter {
         View v;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.item_pending, parent, false);
+            v = inflater.inflate(R.layout.item_remove, parent, false);
         } else {
             v = convertView;
         }
 
-        ImageView imageView = v.findViewById(R.id.item_pending_imageview);
-        TextView label = v.findViewById(R.id.item_pending_name);
-        TextView date = v.findViewById(R.id.item_pending_date);
-        Button cancel = v.findViewById(R.id.item_pending_button);
+        ImageView imageView = v.findViewById(R.id.item_remove_imageview);
+        TextView label = v.findViewById(R.id.item_remove_name);
+        Button cancel = v.findViewById(R.id.item_remove_button);
 
         DisplayApp displayApp = appList.get(position);
 
         if (displayApp.getIcon() != null) {
             imageView.setImageDrawable(displayApp.getIcon());
-            date.setText(PendingFragment.simpleDateFormat.format(appList.get(position).getWhitelistTime()));
             cancel.setOnClickListener(view -> {
                 whitelistService.removeWhitelistedApp(displayApp.getActivityName());
                 appList.remove(position);
@@ -69,9 +67,8 @@ public class PendingFragmentAdapter extends BaseAdapter {
         } else {
             imageView.setVisibility(View.INVISIBLE);
             cancel.setVisibility(View.INVISIBLE);
-            date.setVisibility(View.INVISIBLE);
         }
-        label.setText(appList.get(position).getName());
+        label.setText(displayApp.getName());
 
         return v;
     }

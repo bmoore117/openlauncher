@@ -265,6 +265,11 @@
     <string name="whitelist_explanation">Here you can set a delay for whitelisting, as well as queue apps to be whitelisted. When the delay is 0, all apps will be allowed, regardless of whether they have been whitelisted or not</string>
     <string name="pending_delay">New delay of</string>
     <string name="no_pending_delay">No pending delay</string>
+    <string name="add">Add</string>
+    <string name="pending">Pending</string>
+    <string name="remove_apps">Remove any apps you no longer wish to allow</string>
+    <string name="no_pending_apps">No pending apps</string>
+    <string name="no_whitelisted_apps">No whitelisted apps</string>
 
     <string-array name="delay_values">
         <item>0</item>

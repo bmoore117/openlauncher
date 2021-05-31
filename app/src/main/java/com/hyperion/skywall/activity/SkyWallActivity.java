@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 
 import com.benny.openlauncher.R;
 import com.hyperion.skywall.fragment.PendingFragment;
+import com.hyperion.skywall.fragment.RemoveFragment;
 import com.hyperion.skywall.fragment.WhitelistFragment;
 import com.hyperion.skywall.service.WhitelistService;
 
@@ -33,15 +34,19 @@ public class SkyWallActivity extends AppCompatActivity {
         TabLayout tabLayout = findViewById(R.id.activity_skywall_tablayout);
 
         TabLayout.Tab firstTab = tabLayout.newTab();
-        firstTab.setText("Whitelist");
+        firstTab.setText(R.string.add);
         tabLayout.addTab(firstTab);
         TabLayout.Tab secondTab = tabLayout.newTab();
-        secondTab.setText("Pending Changes");
+        secondTab.setText(R.string.remove);
         tabLayout.addTab(secondTab);
+        TabLayout.Tab thirdTab = tabLayout.newTab();
+        thirdTab.setText(R.string.pending);
+        tabLayout.addTab(thirdTab);
 
         WhitelistService.getInstance(this);
         WhitelistFragment whitelistFragment = new WhitelistFragment();
         PendingFragment pendingFragment = new PendingFragment();
+        RemoveFragment removeFragment = new RemoveFragment();
         fragmentManager = getSupportFragmentManager();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -54,8 +59,10 @@ public class SkyWallActivity extends AppCompatActivity {
                         fragment = whitelistFragment;
                         break;
                     case 1:
-                        fragment = pendingFragment;
+                        fragment = removeFragment;
                         break;
+                    case 2:
+                        fragment = pendingFragment;
                 }
                 doTransition(fragment);
             }

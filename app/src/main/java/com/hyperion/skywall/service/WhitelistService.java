@@ -188,6 +188,11 @@ public class WhitelistService {
         return displayValueToIndex.get(getDisplayValue(getCurrentDelayMillis()));
     }
 
+    public void removeWhitelistedApp(String appName) {
+        currentActiveApps.remove(appName);
+        activePrefs.edit().remove(appName).apply();
+    }
+
     public static long valueInMilliSeconds(String delay) {
         String[] parts = delay.split(" ");
         if ("0".equals(parts[0])) {

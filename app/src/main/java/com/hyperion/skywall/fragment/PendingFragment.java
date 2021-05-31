@@ -49,6 +49,9 @@ public class PendingFragment extends Fragment {
             App app = apps.get(appActivityName);
             pendingApps.add(new DisplayApp(app.getLabel(), appActivityName, app.getIcon(), new Date(pendingChanges.get(appActivityName))));
         }
+        if (pendingApps.isEmpty()) {
+            pendingApps.add(new DisplayApp(getString(R.string.no_pending_apps), null, null, null));
+        }
     }
 
     @Override
