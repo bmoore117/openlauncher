@@ -2,9 +2,18 @@ package com.hyperion.skywall.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v4.util.Pair;
 
+import com.benny.openlauncher.R;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class WhitelistService {
@@ -13,7 +22,7 @@ public class WhitelistService {
     private static final String PENDING_PREFS_VALUES = "pendingPrefsValues";
     private static final String ACTIVE_PREFS = "activePrefs";
 
-    private static final String DELAY_KEY = "skywall.delay";
+    public static final String DELAY_KEY = "skywall.delay";
     private static final String APPS_KEY = "skywall.apps";
 
     private static long currentDelayMillis;
@@ -22,6 +31,9 @@ public class WhitelistService {
     private SharedPreferences pendingChanges;
     private SharedPreferences pendingValues;
     private SharedPreferences activePrefs;
+
+    private Map<Long, String> delayValuesToDisplayValues;
+    private Map<String, Integer> displayValueToIndex;
 
     private boolean isInit;
 
@@ -43,6 +55,17 @@ public class WhitelistService {
 
         currentActiveApps = activePrefs.getStringSet(APPS_KEY, new HashSet<>());
         currentDelayMillis = activePrefs.getLong(DELAY_KEY, 0);
+
+        String[] delayValues = context.getResources().getStringArray(R.array.delay_values);
+        delayValuesToDisplayValues = new HashMap<>();
+        for (String delayValue : delayValues) {
+            delayValuesToDisplayValues.put(valueInMilliSeconds(delayValue), delayValue);
+        }
+        displayValueToIndex = new HashMap<>();
+        for (int i = 0; i < delayValues.length; i++) {
+            displayValueToIndex.put(delayValues[i], i);
+        }
+
         isInit = true;
     }
 
@@ -80,12 +103,17 @@ public class WhitelistService {
     }
 
     private void updateFiles(String appName) {
-        pendingValues.edit().remove(appName).apply();
-        pendingChanges.edit().remove(appName).apply();
-        if (!DELAY_KEY.equals(appName)) {
+        if (DELAY_KEY.equals(appName)) {
+            long delayValue = pendingValues.getLong(DELAY_KEY, currentDelayMillis);
+            activePrefs.edit().putLong(DELAY_KEY, delayValue).apply();
+            currentDelayMillis = delayValue;
+        } else {
             currentActiveApps.add(appName);
             activePrefs.edit().putStringSet(APPS_KEY, currentActiveApps).apply();
         }
+
+        pendingValues.edit().remove(appName).apply();
+        pendingChanges.edit().remove(appName).apply();
     }
 
     public void increaseDelay(long newDelayMillis) {
@@ -106,11 +134,68 @@ public class WhitelistService {
     }
 
     public long getCurrentDelayMillis() {
-        // TODO make this update delay as well, need to as we need to check what the new delay is if the user only ever queues delay changes and does nothing else
+        long delayTimeChange = pendingChanges.getLong(DELAY_KEY, Long.MAX_VALUE);
+        long now = new Date().getTime();
+        if (delayTimeChange == Long.MAX_VALUE) {
+            return currentDelayMillis;
+        } else if (delayTimeChange <= now) {
+            updateFiles(DELAY_KEY);
+        }
+
         return currentDelayMillis;
     }
 
-    public Set<String> getCurrentActiveApps() {
+    public Set<String> getCurrentWhitelistedApps() {
         return new HashSet<>(currentActiveApps);
+    }
+
+    public Map<String, Long> getPendingApps() {
+        Map<String, ?> pending = pendingChanges.getAll();
+        for (String key : pending.keySet()) {
+            refreshAndCheckWhitelisted(key);
+        }
+
+        pending = pendingChanges.getAll();
+        Map<String, Long> pendingApps = new HashMap<>();
+        for (String key : pending.keySet()) {
+            if (!DELAY_KEY.equals(key)) {
+                pendingApps.put(key, (Long) pending.get(key));
+            }
+        }
+
+        return pendingApps;
+    }
+
+    public void cancelPendingChange(String appName) {
+        pendingValues.edit().remove(appName).apply();
+        pendingChanges.edit().remove(appName).apply();
+    }
+
+    public Optional<Pair<Long, Long>> getPendingDelay() {
+        long delayTimeChange = pendingChanges.getLong(DELAY_KEY, Long.MAX_VALUE);
+        if (delayTimeChange == Long.MAX_VALUE) {
+            return Optional.empty();
+        } else {
+            return Optional.of(Pair.create(delayTimeChange, pendingValues.getLong(DELAY_KEY, Long.MAX_VALUE)));
+        }
+    }
+
+    public String getDisplayValue(long milliseconds) {
+        return delayValuesToDisplayValues.get(milliseconds);
+    }
+
+    public int getDelayDisplayValuePosition() {
+        return displayValueToIndex.get(getDisplayValue(getCurrentDelayMillis()));
+    }
+
+    public static long valueInMilliSeconds(String delay) {
+        String[] parts = delay.split(" ");
+        if ("0".equals(parts[0])) {
+            return 0;
+        } else if (parts[1].contains("minute")) {
+            return Integer.parseInt(parts[0])*60*1000;
+        } else {
+            return Integer.parseInt(parts[0])*60*60*1000;
+        }
     }
 }

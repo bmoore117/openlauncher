@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,9 +18,9 @@ import java.util.List;
 public class WhitelistFragmentAdapter extends BaseAdapter {
 
     private final Context context;
-    private final List<App> appList;
+    private final List<DisplayApp> appList;
 
-    public WhitelistFragmentAdapter(Context context, List<App> appList) {
+    public WhitelistFragmentAdapter(Context context, List<DisplayApp> appList) {
         this.context = context;
         this.appList = appList;
     }
@@ -50,9 +52,14 @@ public class WhitelistFragmentAdapter extends BaseAdapter {
 
         ImageView imageView = v.findViewById(R.id.item_whitelist_imageview);
         TextView label = v.findViewById(R.id.item_whitelist_textview);
+        CheckBox checkBox = v.findViewById(R.id.item_whitelist_checkbox);
 
-        imageView.setImageDrawable(appList.get(position).getIcon());
-        label.setText(appList.get(position).getLabel());
+        DisplayApp app = appList.get(position);
+        imageView.setImageDrawable(app.getIcon());
+        label.setText(app.getName());
+        // note, the listener has to come first before the setting of checked, otherwise it unsets :/
+        checkBox.setOnCheckedChangeListener((cb, checked) -> app.setSelected(checked));
+        checkBox.setChecked(app.isSelected());
 
         return v;
     }

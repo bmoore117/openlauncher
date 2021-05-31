@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
@@ -26,7 +27,7 @@ public class WhitelistFragment extends Fragment {
     private static final String TAG = WhitelistFragment.class.getSimpleName();
 
     private final WhitelistService whitelistService;
-    private List<App> nonWhitelistedApps;
+    private List<DisplayApp> nonWhitelistedApps;
 
     public WhitelistFragment() {
         whitelistService = WhitelistService.getInstance(getContext());
@@ -37,8 +38,11 @@ public class WhitelistFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         List<App> apps = Setup.appLoader().getAllApps(getContext(), false);
-        Set<String> whiteListedApps = whitelistService.getCurrentActiveApps();
-        nonWhitelistedApps = apps.stream().filter(app -> !whiteListedApps.contains(app.getPackageName())).collect(Collectors.toList());
+        Set<String> whiteListedApps = whitelistService.getCurrentWhitelistedApps();
+        nonWhitelistedApps = apps.stream()
+                .filter(app -> !whiteListedApps.contains(app.getClassName()))
+                .map(app -> new DisplayApp(app.getLabel(), app.getClassName(), app.getIcon(), null))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -49,15 +53,18 @@ public class WhitelistFragment extends Fragment {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.delay_values, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         delayList.setAdapter(adapter);
+        delayList.setSelection(whitelistService.getDelayDisplayValuePosition());
 
         Button apply = view.findViewById(R.id.fragment_whitelist_apply_button);
         apply.setOnClickListener(button -> {
             String spinnerValue = delayList.getSelectedItem().toString();
-            long millisValue = valueInMilliSeconds(spinnerValue);
+            long millisValue = WhitelistService.valueInMilliSeconds(spinnerValue);
             if (millisValue >= whitelistService.getCurrentDelayMillis()) {
                 whitelistService.increaseDelay(millisValue);
+                Toast.makeText(getContext(), "Delay set", Toast.LENGTH_SHORT).show();
             } else {
                 whitelistService.queueDelayReduction(millisValue);
+                Toast.makeText(getContext(), "Change queued", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -70,23 +77,12 @@ public class WhitelistFragment extends Fragment {
                 View child = gridView.getChildAt(i);
                 CheckBox checkBox = child.findViewById(R.id.item_whitelist_checkbox);
                 if (checkBox.isChecked()) {
-                    whitelistService.queueApp(((App) adapter.getItem(i)).getPackageName());
+                    whitelistService.queueApp(nonWhitelistedApps.get(i).getActivityName());
                 }
             }
         });
 
         return view;
-    }
-
-    public static long valueInMilliSeconds(String delay) {
-        String[] parts = delay.split(" ");
-        if ("0".equals(parts[0])) {
-            return 0;
-        } else if (parts[1].contains("minute")) {
-            return Integer.parseInt(parts[0])*60*1000;
-        } else {
-            return Integer.parseInt(parts[0])*60*60*1000;
-        }
     }
 
 }
