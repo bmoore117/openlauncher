@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.benny.openlauncher.R;
+import com.hyperion.skywall.fragment.view.DisplayApp;
 import com.hyperion.skywall.service.WhitelistService;
 
 import java.util.List;

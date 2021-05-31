@@ -66,7 +66,7 @@ public class WhitelistService {
         isInit = true;
     }
 
-    public boolean refreshAndCheckWhitelistedExternal(String appName) {
+    public boolean refreshAndCheckWhitelisted(String appName) {
         if (getCurrentDelayMillis() == 0) {
             return true;
         }
@@ -74,7 +74,7 @@ public class WhitelistService {
         return refreshAndCheckWhitelistedInternal(appName);
     }
 
-    public boolean refreshAndCheckWhitelistedInternal(String appName) {
+    private boolean refreshAndCheckWhitelistedInternal(String appName) {
         if (currentActiveApps.contains(appName)) {
             return true;
         }

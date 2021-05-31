@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
+import com.hyperion.skywall.fragment.view.DisplayApp;
 import com.hyperion.skywall.service.WhitelistService;
 
 import java.text.DateFormat;

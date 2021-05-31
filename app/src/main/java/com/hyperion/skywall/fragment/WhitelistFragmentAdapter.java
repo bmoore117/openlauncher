@@ -6,12 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.benny.openlauncher.R;
-import com.benny.openlauncher.model.App;
+import com.hyperion.skywall.fragment.view.DisplayApp;
 
 import java.util.List;
 

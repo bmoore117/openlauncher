@@ -1,4 +1,4 @@
-package com.hyperion.skywall.fragment;
+package com.hyperion.skywall.fragment.view;
 
 import android.graphics.drawable.Drawable;
 

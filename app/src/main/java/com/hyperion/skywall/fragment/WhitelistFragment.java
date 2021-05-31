@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -16,6 +15,7 @@ import com.benny.openlauncher.BuildConfig;
 import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
+import com.hyperion.skywall.fragment.view.DisplayApp;
 import com.hyperion.skywall.service.WhitelistService;
 
 import java.util.ArrayList;
