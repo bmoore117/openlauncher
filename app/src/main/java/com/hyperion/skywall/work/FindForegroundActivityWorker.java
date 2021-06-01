@@ -28,7 +28,6 @@ public class FindForegroundActivityWorker extends Worker {
     private static final String TAG = FindForegroundActivityWorker.class.getSimpleName();
     private final WhitelistService whitelistService;
     public static final AtomicBoolean isStarted = new AtomicBoolean(false);
-    private static final AtomicBoolean isQueued = new AtomicBoolean(false);
 
     public FindForegroundActivityWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
