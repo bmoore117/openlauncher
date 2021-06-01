@@ -34,6 +34,11 @@
             android:parentActivityName="com.benny.openlauncher.activity.HomeActivity"
             android:theme="@style/NormalActivity.Light" />
 
+        <activity android:name="com.hyperion.skywall.activity.BlockedActivity"
+            android:label="@string/blocked_activity"
+            android:parentActivityName="com.benny.openlauncher.activity.HomeActivity"
+            android:theme="@style/NormalActivity.Light" />
+
         <activity
             android:name="com.benny.openlauncher.activity.OnBoardActivity"
             android:clearTaskOnLaunch="true"

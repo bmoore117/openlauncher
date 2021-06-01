@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion version_compileSdk
-    buildToolsVersion version_buildTools
 
     defaultConfig {
         minSdkVersion version_minSdk
@@ -63,18 +62,6 @@ android {
         }
     }
 
-    configurations.all {
-        resolutionStrategy {
-            eachDependency { details ->
-                if (details.requested.group == 'com.android.support') {
-                    if (details.requested.name != 'multidex' && details.requested.name != 'multidex-instrumentation') {
-                        details.useVersion "${version_library_appcompat}"
-                    }
-                }
-            }
-        }
-    }
-
     packagingOptions {
         exclude 'META-INF/LICENSE-LGPL-2.1.txt'
         exclude 'META-INF/LICENSE-LGPL-3.txt'
@@ -111,6 +98,8 @@ dependencies {
     implementation 'in.championswimmer:SimpleFingerGestures_Android_Library:1.1'
     implementation 'com.nononsenseapps:filepicker:4.2.1'
     implementation 'org.slf4j:slf4j-android:1.7.21'
+
+    implementation "androidx.work:work-runtime:2.5.0"
 
     implementation ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
         transitive = true

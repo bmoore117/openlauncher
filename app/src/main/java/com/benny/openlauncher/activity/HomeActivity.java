@@ -2,6 +2,7 @@ package com.benny.openlauncher.activity;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.AppOpsManager;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Bundle;
@@ -18,6 +20,11 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -62,6 +69,7 @@ import com.benny.openlauncher.widget.MinibarView;
 import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
 import com.hyperion.skywall.service.WhitelistService;
+import com.hyperion.skywall.work.FindForegroundActivityWorker;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import net.gsantner.opoc.util.ContextUtils;
@@ -200,8 +208,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         decorView.setSystemUiVisibility(1536);
 
         init();
-
-        whitelistService = WhitelistService.getInstance(this);
     }
 
     private void init() {
@@ -219,6 +225,8 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         initAppManager();
         initSettings();
         initViews();
+
+        whitelistService = WhitelistService.getInstance(this);
     }
 
     protected void initAppManager() {
@@ -551,6 +559,27 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         handleLauncherResume();
+
+        // check for usage stats permissions
+        AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+        int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), this.getPackageName());
+        boolean granted;
+        if (mode == AppOpsManager.MODE_DEFAULT) {
+            granted = (checkCallingOrSelfPermission(android.Manifest.permission.PACKAGE_USAGE_STATS) == PackageManager.PERMISSION_GRANTED);
+        } else {
+            granted = (mode == AppOpsManager.MODE_ALLOWED);
+        }
+
+        // if no usage stats permissions throw up screen to get it, otherwise start worker if not queued yet
+        if (!granted) {
+            startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+        } else {
+            if (!FindForegroundActivityWorker.isStarted.get()) {
+                Log.i(HomeActivity.class.getSimpleName(), "Queueing work");
+                WorkManager workManager = WorkManager.getInstance(this);
+                workManager.enqueue(new OneTimeWorkRequest.Builder(FindForegroundActivityWorker.class).build());
+            }
+        }
     }
 
     @Override

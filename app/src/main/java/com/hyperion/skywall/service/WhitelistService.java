@@ -6,6 +6,7 @@ import androidx.core.util.Pair;
 
 import com.benny.openlauncher.R;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +22,8 @@ public class WhitelistService {
 
     public static final String DELAY_KEY = "skywall.delay";
     private static final String APPS_KEY = "skywall.apps";
+
+    private static final String[] ALLOWED_PACKAGES = new String[] {"com.benny.openlauncher", "com.hyperion.skywall", "com.android.internal.app.ResolverActivity"};
 
     private static long currentDelayMillis;
     private static Set<String> currentActiveApps;
@@ -77,6 +80,12 @@ public class WhitelistService {
     private boolean refreshAndCheckWhitelistedInternal(String appName) {
         if (currentActiveApps.contains(appName)) {
             return true;
+        }
+
+        for (String val : ALLOWED_PACKAGES) {
+            if (appName.startsWith(val)) {
+                return true;
+            }
         }
 
         long now = new Date().getTime();
