@@ -107,6 +107,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     // SkyWall variables
     private WhitelistService whitelistService;
+    private WorkManager workManager;
 
     public static final class Companion {
         private Companion() {
@@ -206,6 +207,8 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         Window window = getWindow();
         View decorView = window.getDecorView();
         decorView.setSystemUiVisibility(1536);
+
+        workManager = WorkManager.getInstance(this);
 
         init();
     }
@@ -342,7 +345,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
 
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && app._userHandle != null) {
+            if (app._userHandle != null) {
                 LauncherApps launcherApps = (LauncherApps) context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
                 List<LauncherActivityInfo> activities = launcherApps.getActivityList(app.getPackageName(), app._userHandle);
                 for (int intent = 0; intent < activities.size(); intent++) {
@@ -369,21 +372,17 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             return null;
         }
 
-        ActivityOptions options = null;
-        if (VERSION.SDK_INT >= 23) {
-            int left = 0;
-            int top = 0;
-            int width = view.getMeasuredWidth();
-            int height = view.getMeasuredHeight();
-            if (view instanceof AppItemView) {
-                width = (int) ((AppItemView) view).getIconSize();
-                left = (int) ((AppItemView) view).getDrawIconLeft();
-                top = (int) ((AppItemView) view).getDrawIconTop();
-            }
-            options = ActivityOptions.makeClipRevealAnimation(view, left, top, width, height);
-        } else if (VERSION.SDK_INT < 21) {
-            options = ActivityOptions.makeScaleUpAnimation(view, 0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        ActivityOptions options;
+        int left = 0;
+        int top = 0;
+        int width = view.getMeasuredWidth();
+        int height = view.getMeasuredHeight();
+        if (view instanceof AppItemView) {
+            width = (int) ((AppItemView) view).getIconSize();
+            left = (int) ((AppItemView) view).getDrawIconLeft();
+            top = (int) ((AppItemView) view).getDrawIconTop();
         }
+        options = ActivityOptions.makeClipRevealAnimation(view, left, top, width, height);
 
         if (options != null) {
             bundle = options.toBundle();
@@ -576,7 +575,8 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         } else {
             if (!FindForegroundActivityWorker.isStarted.get()) {
                 Log.i(HomeActivity.class.getSimpleName(), "Queueing work");
-                WorkManager workManager = WorkManager.getInstance(this);
+                FindForegroundActivityWorker.shouldRequeue.set(true);
+                workManager.cancelAllWork();
                 workManager.enqueue(new OneTimeWorkRequest.Builder(FindForegroundActivityWorker.class).build());
             }
         }
@@ -590,6 +590,11 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         unregisterReceiver(_appUpdateReceiver);
         unregisterReceiver(_shortcutReceiver);
         unregisterReceiver(_timeChangedReceiver);
+
+        FindForegroundActivityWorker.isStarted.set(false);
+        FindForegroundActivityWorker.shouldRequeue.set(false);
+        workManager.cancelAllWork();
+
         super.onDestroy();
     }
 

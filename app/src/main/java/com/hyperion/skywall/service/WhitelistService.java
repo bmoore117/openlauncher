@@ -119,7 +119,8 @@ public class WhitelistService {
             currentDelayMillis = delayValue;
         } else {
             currentActiveApps.add(appName);
-            activePrefs.edit().putStringSet(APPS_KEY, currentActiveApps).apply();
+            Set<String> newSet = new HashSet<>(currentActiveApps);
+            activePrefs.edit().putStringSet(APPS_KEY, newSet).apply();
         }
 
         pendingValues.edit().remove(appName).apply();

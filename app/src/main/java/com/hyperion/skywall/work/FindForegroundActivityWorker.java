@@ -28,6 +28,7 @@ public class FindForegroundActivityWorker extends Worker {
     private static final String TAG = FindForegroundActivityWorker.class.getSimpleName();
     private final WhitelistService whitelistService;
     public static final AtomicBoolean isStarted = new AtomicBoolean(false);
+    public static final AtomicBoolean shouldRequeue = new AtomicBoolean(true);
 
     public FindForegroundActivityWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -56,9 +57,12 @@ public class FindForegroundActivityWorker extends Worker {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException ignored) {}
-        WorkManager workManager = WorkManager.getInstance(context);
-        workManager.cancelAllWork();
-        workManager.enqueue(new OneTimeWorkRequest.Builder(FindForegroundActivityWorker.class).build());
+
+        if (shouldRequeue.get()) {
+            WorkManager workManager = WorkManager.getInstance(context);
+            workManager.cancelAllWork();
+            workManager.enqueue(new OneTimeWorkRequest.Builder(FindForegroundActivityWorker.class).build());
+        }
 
         return Result.success();
     }
