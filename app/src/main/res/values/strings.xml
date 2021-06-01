@@ -273,6 +273,7 @@
     <string name="ignoring_app">Ignoring non-whitelisted app</string>
     <string name="delay_set">Delay set</string>
     <string name="change_queued">Change queued</string>
+    <string name="changes_queued">Change(s) queued</string>
     <string name="aborting_launch">Aborting launch of non-whitelisted app</string>
     <string name="blocked_activity">Blocked Activity</string>
 

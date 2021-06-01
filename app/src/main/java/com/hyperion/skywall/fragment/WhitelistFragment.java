@@ -75,10 +75,15 @@ public class WhitelistFragment extends Fragment {
 
         Button whitelist = view.findViewById(R.id.fragment_whitelist_button);
         whitelist.setOnClickListener(button -> {
+            boolean queued = false;
             for (DisplayApp displayApp : nonWhitelistedApps) {
                 if (displayApp.isSelected()) {
                     whitelistService.queueApp(displayApp.getActivityName());
+                    queued = true;
                 }
+            }
+            if (queued) {
+                Toast.makeText(getContext(), R.string.changes_queued, Toast.LENGTH_SHORT).show();
             }
         });
 
