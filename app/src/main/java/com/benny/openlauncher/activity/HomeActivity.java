@@ -91,7 +91,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     // static launcher variables
     public static HomeActivity _launcher;
-    public static DatabaseHelper _db;
+    public DatabaseHelper _db;
     public static HpDesktopOption _desktopOption;
 
     // receiver variables
