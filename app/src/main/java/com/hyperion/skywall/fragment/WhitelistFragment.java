@@ -2,11 +2,15 @@ package com.hyperion.skywall.fragment;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -71,7 +75,22 @@ public class WhitelistFragment extends Fragment {
         });
 
         GridView gridView = view.findViewById(R.id.fragment_whitelist_grid);
-        gridView.setAdapter(new WhitelistFragmentAdapter(getContext(), nonWhitelistedApps));
+        WhitelistFragmentAdapter fragmentAdapter = new WhitelistFragmentAdapter(getContext(), nonWhitelistedApps);
+        gridView.setAdapter(fragmentAdapter);
+
+        EditText search = view.findViewById(R.id.fragment_whitelist_search);
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                fragmentAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         Button whitelist = view.findViewById(R.id.fragment_whitelist_button);
         whitelist.setOnClickListener(button -> {

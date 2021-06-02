@@ -6,32 +6,40 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.benny.openlauncher.R;
 import com.hyperion.skywall.fragment.view.DisplayApp;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class WhitelistFragmentAdapter extends BaseAdapter {
+public class WhitelistFragmentAdapter extends BaseAdapter implements Filterable {
 
     private final Context context;
-    private final List<DisplayApp> appList;
+    private final List<DisplayApp> filterableAppList;
+    private final List<DisplayApp> originalAppList;
+    private final WhitelistFilter filter;
 
     public WhitelistFragmentAdapter(Context context, List<DisplayApp> appList) {
         this.context = context;
-        this.appList = appList;
+        this.filterableAppList = appList;
+        this.originalAppList = new ArrayList<>(appList);
+        filter = new WhitelistFilter();
     }
 
     @Override
     public int getCount() {
-        return appList.size();
+        return filterableAppList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return appList.get(position);
+        return filterableAppList.get(position);
     }
 
     @Override
@@ -53,7 +61,7 @@ public class WhitelistFragmentAdapter extends BaseAdapter {
         TextView label = v.findViewById(R.id.item_whitelist_textview);
         CheckBox checkBox = v.findViewById(R.id.item_whitelist_checkbox);
 
-        DisplayApp app = appList.get(position);
+        DisplayApp app = filterableAppList.get(position);
         imageView.setImageDrawable(app.getIcon());
         label.setText(app.getName());
         // note, the listener has to come first before the setting of checked, otherwise it unsets :/
@@ -61,5 +69,34 @@ public class WhitelistFragmentAdapter extends BaseAdapter {
         checkBox.setChecked(app.isSelected());
 
         return v;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    private class WhitelistFilter extends Filter {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            String input = charSequence.toString().toLowerCase();
+            List<DisplayApp> filteredList;
+            if (input.isEmpty()) {
+                filteredList = originalAppList;
+            } else {
+                filteredList = originalAppList.stream().filter(app -> app.getName().toLowerCase().contains(input)).collect(Collectors.toList());
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            filterableAppList.clear();
+            filterableAppList.addAll((List<DisplayApp>) filterResults.values);
+            notifyDataSetChanged();
+        }
     }
 }
