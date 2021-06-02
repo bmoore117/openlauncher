@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FindForegroundActivityWorker extends Worker {
@@ -54,14 +55,10 @@ public class FindForegroundActivityWorker extends Worker {
             }
         });
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException ignored) {}
-
         if (shouldRequeue.get()) {
             WorkManager workManager = WorkManager.getInstance(context);
-            workManager.cancelAllWork();
-            workManager.enqueue(new OneTimeWorkRequest.Builder(FindForegroundActivityWorker.class).build());
+            workManager.enqueue(new OneTimeWorkRequest.Builder(FindForegroundActivityWorker.class)
+                    .setInitialDelay(3, TimeUnit.SECONDS).build());
         }
 
         return Result.success();

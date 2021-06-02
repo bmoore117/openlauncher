@@ -91,7 +91,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     // static launcher variables
     public static HomeActivity _launcher;
-    public DatabaseHelper _db;
+    public static DatabaseHelper _db;
     public static HpDesktopOption _desktopOption;
 
     // receiver variables
@@ -333,6 +333,16 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         registerReceiver(_timeChangedReceiver, _timeChangedIntentFilter);
     }
 
+    private boolean isUsageStatsGranted() {
+        AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+        int mode = appOps.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), this.getPackageName());
+        if (mode == AppOpsManager.MODE_DEFAULT) {
+            return (checkCallingOrSelfPermission(android.Manifest.permission.PACKAGE_USAGE_STATS) == PackageManager.PERMISSION_GRANTED);
+        } else {
+            return (mode == AppOpsManager.MODE_ALLOWED);
+        }
+    }
+
     public final void onStartApp(@NonNull Context context, @NonNull App app, @Nullable View view) {
         if (BuildConfig.APPLICATION_ID.equals(app._packageName)) {
             LauncherAction.RunAction(Action.LauncherSettings, context);
@@ -559,26 +569,15 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
         handleLauncherResume();
 
-        // check for usage stats permissions
-        AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
-        int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), this.getPackageName());
-        boolean granted;
-        if (mode == AppOpsManager.MODE_DEFAULT) {
-            granted = (checkCallingOrSelfPermission(android.Manifest.permission.PACKAGE_USAGE_STATS) == PackageManager.PERMISSION_GRANTED);
-        } else {
-            granted = (mode == AppOpsManager.MODE_ALLOWED);
-        }
-
         // if no usage stats permissions throw up screen to get it, otherwise start worker if not queued yet
-        if (!granted) {
+        if (!isUsageStatsGranted()) {
             startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
         } else {
             if (!FindForegroundActivityWorker.isStarted.get()) {
                 Log.i(HomeActivity.class.getSimpleName(), "Queueing work");
                 FindForegroundActivityWorker.shouldRequeue.set(true);
-                workManager.cancelAllWork();
                 workManager.enqueue(new OneTimeWorkRequest.Builder(FindForegroundActivityWorker.class).build());
-            }
+           }
         }
     }
 
