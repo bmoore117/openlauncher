@@ -84,8 +84,8 @@ public class FindForegroundActivityWorker extends Worker {
 
         if (mostRecent.isPresent()) {
             UsageEvents.Event eventObj = mostRecent.get();
-            if (!TextUtils.isEmpty(eventObj.getClassName())) {
-                return Optional.of(eventObj.getClassName());
+            if (!TextUtils.isEmpty(eventObj.getPackageName())) {
+                return Optional.of(eventObj.getPackageName());
             } else {
                 return Optional.empty();
             }

@@ -36,11 +36,11 @@ public class RemoveFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Set<String> currentWhitelistedApps = whitelistService.getCurrentWhitelistedApps();
-        Map<String, App> apps = Setup.appLoader().getAllApps(getContext(), false).stream().collect(Collectors.toMap(App::getClassName, Function.identity()));
+        Map<String, App> apps = Setup.appLoader().getAllApps(getContext(), false).stream().collect(Collectors.toMap(App::getPackageName, Function.identity()));
         whitelistedApps.clear();
-        for (String appActivityName : currentWhitelistedApps) {
-            App app = apps.get(appActivityName);
-            whitelistedApps.add(new DisplayApp(app.getLabel(), appActivityName, app.getIcon(), null));
+        for (String appPackageName : currentWhitelistedApps) {
+            App app = apps.get(appPackageName);
+            whitelistedApps.add(new DisplayApp(app.getLabel(), appPackageName, app.getIcon(), null));
         }
         if (whitelistedApps.isEmpty()) {
             whitelistedApps.add(new DisplayApp(getString(R.string.no_whitelisted_apps), null, null, null));

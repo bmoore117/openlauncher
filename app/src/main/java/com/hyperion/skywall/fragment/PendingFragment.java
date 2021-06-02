@@ -44,11 +44,11 @@ public class PendingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Map<String, Long> pendingChanges = whitelistService.getPendingApps();
-        Map<String, App> apps = Setup.appLoader().getAllApps(getContext(), false).stream().collect(Collectors.toMap(App::getClassName, Function.identity()));
+        Map<String, App> apps = Setup.appLoader().getAllApps(getContext(), false).stream().collect(Collectors.toMap(App::getPackageName, Function.identity()));
         pendingApps.clear();
-        for (String appActivityName : pendingChanges.keySet()) {
-            App app = apps.get(appActivityName);
-            pendingApps.add(new DisplayApp(app.getLabel(), appActivityName, app.getIcon(), new Date(pendingChanges.get(appActivityName))));
+        for (String appPackageName : pendingChanges.keySet()) {
+            App app = apps.get(appPackageName);
+            pendingApps.add(new DisplayApp(app.getLabel(), appPackageName, app.getIcon(), new Date(pendingChanges.get(appPackageName))));
         }
         if (pendingApps.isEmpty()) {
             pendingApps.add(new DisplayApp(getString(R.string.no_pending_apps), null, null, null));
