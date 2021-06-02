@@ -93,6 +93,7 @@ public class WhitelistFragmentAdapter extends BaseAdapter implements Filterable 
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             filterableAppList.clear();
             filterableAppList.addAll((List<DisplayApp>) filterResults.values);
