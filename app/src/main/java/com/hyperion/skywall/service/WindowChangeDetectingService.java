@@ -26,7 +26,9 @@ public class WindowChangeDetectingService extends AccessibilityService {
     private static final Set<String> allowedAndroidActivities = new HashSet<>(
             Arrays.asList("com.android.internal.app.ResolverActivity",
                     "com.android.settings.Settings$WifiSettings2Activity",
-                    "com.android.settings.Settings$ConnectedDeviceDashboardActivity"));
+                    "com.android.settings.Settings$ConnectedDeviceDashboardActivity",
+                    "com.android.quickstep.RecentsActivity",
+                    "com.android.settings.password.ConfirmDeviceCredentialActivity"));
 
     @Override
     protected void onServiceConnected() {
