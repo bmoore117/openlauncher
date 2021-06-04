@@ -276,6 +276,8 @@
     <string name="changes_queued">Change(s) queued</string>
     <string name="aborting_launch">Aborting launch of non-whitelisted app</string>
     <string name="blocked_activity">Blocked Activity</string>
+    <string name="accessibility_service_description">SkyWall needs your approval to run as an Accessibility Service to be able to monitor the screen contents to block apps.</string>
+    <string name="accessibility_service_name">WindowChangeDetectingService</string>
 
     <string-array name="delay_values">
         <item>0</item>

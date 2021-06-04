@@ -20,6 +20,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +45,14 @@ public class PendingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Map<String, Long> pendingChanges = whitelistService.getPendingApps();
-        Map<String, App> apps = Setup.appLoader().getAllApps(getContext(), false).stream().collect(Collectors.toMap(App::getPackageName, Function.identity()));
+
+        // cannot simply stream to map because of stupid google quicksearchbox, listing itself twice
+        Map<String, App> apps = new HashMap<>();
+        List<App> appList = Setup.appLoader().getAllApps(getContext(), false);
+        for (App app : appList) {
+            apps.put(app.getPackageName(), app);
+        }
+
         pendingApps.clear();
         for (String appPackageName : pendingChanges.keySet()) {
             App app = apps.get(appPackageName);

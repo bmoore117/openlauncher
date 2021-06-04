@@ -14,6 +14,7 @@ import com.hyperion.skywall.fragment.view.DisplayApp;
 import com.hyperion.skywall.service.WhitelistService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +37,14 @@ public class RemoveFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Set<String> currentWhitelistedApps = whitelistService.getCurrentWhitelistedApps();
-        Map<String, App> apps = Setup.appLoader().getAllApps(getContext(), false).stream().collect(Collectors.toMap(App::getPackageName, Function.identity()));
+
+        // cannot simply stream to map because of stupid google quicksearchbox, listing itself twice
+        Map<String, App> apps = new HashMap<>();
+        List<App> appList = Setup.appLoader().getAllApps(getContext(), false);
+        for (App app : appList) {
+            apps.put(app.getPackageName(), app);
+        }
+
         whitelistedApps.clear();
         for (String appPackageName : currentWhitelistedApps) {
             App app = apps.get(appPackageName);

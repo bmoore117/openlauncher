@@ -12,19 +12,15 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
-import android.os.Build;
-import android.os.Build.VERSION;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -69,7 +65,6 @@ import com.benny.openlauncher.widget.MinibarView;
 import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
 import com.hyperion.skywall.service.WhitelistService;
-import com.hyperion.skywall.work.FindForegroundActivityWorker;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import net.gsantner.opoc.util.ContextUtils;
@@ -571,13 +566,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
         // if no usage stats permissions throw up screen to get it, otherwise start worker if not queued yet
         if (!isUsageStatsGranted()) {
-            startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
-        } else {
-            if (!FindForegroundActivityWorker.isStarted.get()) {
-                Log.i(HomeActivity.class.getSimpleName(), "Queueing work");
-                FindForegroundActivityWorker.shouldRequeue.set(true);
-                workManager.enqueue(new OneTimeWorkRequest.Builder(FindForegroundActivityWorker.class).build());
-           }
+            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
         }
     }
 
@@ -589,10 +578,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         unregisterReceiver(_appUpdateReceiver);
         unregisterReceiver(_shortcutReceiver);
         unregisterReceiver(_timeChangedReceiver);
-
-        FindForegroundActivityWorker.isStarted.set(false);
-        FindForegroundActivityWorker.shouldRequeue.set(false);
-        workManager.cancelAllWork();
 
         super.onDestroy();
     }
