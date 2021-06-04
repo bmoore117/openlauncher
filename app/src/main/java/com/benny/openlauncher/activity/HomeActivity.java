@@ -1,5 +1,7 @@
 package com.benny.openlauncher.activity;
 
+import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AppOpsManager;
@@ -12,18 +14,19 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.work.WorkManager;
 
 import android.provider.Settings;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +68,7 @@ import com.benny.openlauncher.widget.MinibarView;
 import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
 import com.hyperion.skywall.service.WhitelistService;
+import com.hyperion.skywall.service.WindowChangeDetectingService;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import net.gsantner.opoc.util.ContextUtils;
@@ -102,7 +106,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     // SkyWall variables
     private WhitelistService whitelistService;
-    private WorkManager workManager;
 
     public static final class Companion {
         private Companion() {
@@ -202,8 +205,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         Window window = getWindow();
         View decorView = window.getDecorView();
         decorView.setSystemUiVisibility(1536);
-
-        workManager = WorkManager.getInstance(this);
 
         init();
     }
@@ -328,14 +329,18 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         registerReceiver(_timeChangedReceiver, _timeChangedIntentFilter);
     }
 
-    private boolean isUsageStatsGranted() {
-        AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
-        int mode = appOps.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), this.getPackageName());
-        if (mode == AppOpsManager.MODE_DEFAULT) {
-            return (checkCallingOrSelfPermission(android.Manifest.permission.PACKAGE_USAGE_STATS) == PackageManager.PERMISSION_GRANTED);
-        } else {
-            return (mode == AppOpsManager.MODE_ALLOWED);
+    public boolean isAccessibilityServiceEnabled() {
+        AccessibilityManager am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
+        List<AccessibilityServiceInfo> enabledServices = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK);
+
+        for (AccessibilityServiceInfo enabledService : enabledServices) {
+            ServiceInfo enabledServiceInfo = enabledService.getResolveInfo().serviceInfo;
+            if (enabledServiceInfo.packageName.equals(getPackageName()) && enabledServiceInfo.name.equals(WindowChangeDetectingService.class.getName())) {
+                return true;
+            }
         }
+
+        return false;
     }
 
     public final void onStartApp(@NonNull Context context, @NonNull App app, @Nullable View view) {
@@ -565,7 +570,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         handleLauncherResume();
 
         // if no usage stats permissions throw up screen to get it, otherwise start worker if not queued yet
-        if (!isUsageStatsGranted()) {
+        if (!isAccessibilityServiceEnabled()) {
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
         }
     }

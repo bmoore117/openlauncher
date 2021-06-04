@@ -18,7 +18,7 @@ android {
         buildConfigField "String", "GITHASH", "\"${getGitHash()}\""
         resValue "string", "manifest_package_id", "com.benny.openlauncher"
 
-        resValue 'string', 'app_name', "OpenLauncher"
+        resValue 'string', 'app_name', "SkyWall"
 
         applicationId "com.benny.openlauncher"
         versionCode 42
@@ -38,7 +38,7 @@ android {
           versionCode = Integer.parseInt(new Date().format('yyMMdd'))
           versionName = new Date().format('yyMMdd')
           applicationId "com.benny.openlauncher.nightly"
-          resValue 'string', 'app_name', "OL Nightly"
+          resValue 'string', 'app_name', "SkyWall"
         }
 
         flavorGsantner {
@@ -98,8 +98,6 @@ dependencies {
     implementation 'in.championswimmer:SimpleFingerGestures_Android_Library:1.1'
     implementation 'com.nononsenseapps:filepicker:4.2.1'
     implementation 'org.slf4j:slf4j-android:1.7.21'
-
-    implementation "androidx.work:work-runtime:2.5.0"
 
     implementation ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
         transitive = true
