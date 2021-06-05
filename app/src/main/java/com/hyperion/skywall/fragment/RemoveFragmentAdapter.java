@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,28 +15,34 @@ import com.benny.openlauncher.R;
 import com.hyperion.skywall.fragment.view.DisplayApp;
 import com.hyperion.skywall.service.WhitelistService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class RemoveFragmentAdapter extends BaseAdapter {
+public class RemoveFragmentAdapter extends BaseAdapter implements Filterable {
 
     private final Context context;
-    private final List<DisplayApp> appList;
+    private final List<DisplayApp> filterableAppList;
+    private final List<DisplayApp> originalAppList;
+    private final RemoveFilter filter;
     private final WhitelistService whitelistService;
 
     public RemoveFragmentAdapter(Context context, List<DisplayApp> appList, WhitelistService whitelistService) {
         this.context = context;
-        this.appList = appList;
+        this.filterableAppList = appList;
+        this.originalAppList = new ArrayList<>(appList);
+        filter = new RemoveFilter();
         this.whitelistService = whitelistService;
     }
 
     @Override
     public int getCount() {
-        return appList.size();
+        return filterableAppList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return appList.get(position);
+        return filterableAppList.get(position);
     }
 
     @Override
@@ -56,13 +64,13 @@ public class RemoveFragmentAdapter extends BaseAdapter {
         TextView label = v.findViewById(R.id.item_remove_name);
         Button cancel = v.findViewById(R.id.item_remove_button);
 
-        DisplayApp displayApp = appList.get(position);
+        DisplayApp displayApp = filterableAppList.get(position);
 
         if (displayApp.getIcon() != null) {
             imageView.setImageDrawable(displayApp.getIcon());
             cancel.setOnClickListener(view -> {
                 whitelistService.removeWhitelistedApp(displayApp.getActivityName());
-                appList.remove(position);
+                filterableAppList.remove(position);
                 notifyDataSetChanged();
             });
         } else {
@@ -72,5 +80,35 @@ public class RemoveFragmentAdapter extends BaseAdapter {
         label.setText(displayApp.getName());
 
         return v;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    private class RemoveFilter extends Filter {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            String input = charSequence.toString().toLowerCase();
+            List<DisplayApp> filteredList;
+            if (input.isEmpty()) {
+                filteredList = originalAppList;
+            } else {
+                filteredList = originalAppList.stream().filter(app -> app.getName().toLowerCase().contains(input)).collect(Collectors.toList());
+            }
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            return filterResults;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            filterableAppList.clear();
+            filterableAppList.addAll((List<DisplayApp>) filterResults.values);
+            notifyDataSetChanged();
+        }
     }
 }

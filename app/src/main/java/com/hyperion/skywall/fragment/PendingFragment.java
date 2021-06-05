@@ -1,14 +1,15 @@
 package com.hyperion.skywall.fragment;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.core.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
+
+import androidx.core.util.Pair;
+import androidx.fragment.app.Fragment;
 
 import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
@@ -19,13 +20,12 @@ import com.hyperion.skywall.service.WhitelistService;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class PendingFragment extends Fragment {
 
@@ -61,6 +61,7 @@ public class PendingFragment extends Fragment {
         if (pendingApps.isEmpty()) {
             pendingApps.add(new DisplayApp(getString(R.string.no_pending_apps), null, null, null));
         }
+        pendingApps.sort(Comparator.comparing(DisplayApp::getName));
     }
 
     @Override

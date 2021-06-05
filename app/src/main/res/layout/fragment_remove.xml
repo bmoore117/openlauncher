@@ -15,6 +15,14 @@
         android:layout_height="1dp"
         android:background="?android:attr/listDivider" />
 
+    <EditText
+        android:id="@+id/fragment_remove_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/search"
+        android:padding="8dp"
+        android:importantForAutofill="no" />
+
     <GridView
         android:id="@+id/fragment_remove_grid"
         android:layout_width="match_parent"
