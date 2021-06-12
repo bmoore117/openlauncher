@@ -28,7 +28,7 @@ public class RemoveFragment extends Fragment {
 
     private static final String TAG = RemoveFragment.class.getSimpleName();
 
-    private final WhitelistService whitelistService;
+    private WhitelistService whitelistService;
     private final List<DisplayApp> whitelistedApps;
 
     public RemoveFragment() {
@@ -39,6 +39,7 @@ public class RemoveFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        whitelistService = WhitelistService.getInstance(getContext());
         Set<String> currentWhitelistedApps = whitelistService.getCurrentWhitelistedApps();
 
         // cannot simply stream to map because of stupid google quicksearchbox, listing itself twice

@@ -42,7 +42,7 @@ public class WhitelistService {
     private WhitelistService() {}
 
     public static WhitelistService getInstance(Context context) {
-        if (!instance.isInit) {
+        if (context != null) {
             instance.init(context.getApplicationContext());
         }
         return instance;
@@ -56,17 +56,19 @@ public class WhitelistService {
         currentActiveApps = activePrefs.getStringSet(APPS_KEY, new HashSet<>());
         currentDelayMillis = activePrefs.getLong(DELAY_KEY, 0);
 
-        String[] delayValues = context.getResources().getStringArray(R.array.delay_values);
-        delayValuesToDisplayValues = new HashMap<>();
-        for (String delayValue : delayValues) {
-            delayValuesToDisplayValues.put(valueInMilliSeconds(delayValue), delayValue);
-        }
-        displayValueToIndex = new HashMap<>();
-        for (int i = 0; i < delayValues.length; i++) {
-            displayValueToIndex.put(delayValues[i], i);
-        }
+        if (!instance.isInit) {
+            String[] delayValues = context.getResources().getStringArray(R.array.delay_values);
+            delayValuesToDisplayValues = new HashMap<>();
+            for (String delayValue : delayValues) {
+                delayValuesToDisplayValues.put(valueInMilliSeconds(delayValue), delayValue);
+            }
+            displayValueToIndex = new HashMap<>();
+            for (int i = 0; i < delayValues.length; i++) {
+                displayValueToIndex.put(delayValues[i], i);
+            }
 
-        isInit = true;
+            isInit = true;
+        }
     }
 
     public boolean refreshAndCheckWhitelisted(String appName) {

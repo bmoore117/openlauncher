@@ -8,6 +8,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.Toast;
 
 import com.benny.openlauncher.BuildConfig;
 import com.hyperion.skywall.activity.BlockedActivity;
@@ -31,18 +32,21 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.android.settings.Settings$WifiSettings2Activity",
                     "com.android.settings.Settings$ConnectedDeviceDashboardActivity",
                     "com.android.settings.Settings$ManageExternalStorageActivity",
-                    "com.android.settings.SubSettings"));
+                    "com.android.settings.SubSettings",
+                    "com.google.android.gms.wallet.activity.GenericDelegatorInternalActivity"));
 
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
 
+        String not = getApplicationContext() == null ? "" : " not";
+        Log.i(TAG, "Application context is" + not + " null");
         whitelistService = WhitelistService.getInstance(getApplicationContext());
 
         //Configure these here for compatibility with API 13 and below.
         AccessibilityServiceInfo config = new AccessibilityServiceInfo();
         config.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
-        config.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
+        config.feedbackType = AccessibilityServiceInfo.FEEDBACK_ALL_MASK;
         config.flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
 
         setServiceInfo(config);
