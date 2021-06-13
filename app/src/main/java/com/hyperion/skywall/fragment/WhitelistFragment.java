@@ -31,17 +31,17 @@ public class WhitelistFragment extends Fragment {
 
     private static final String TAG = WhitelistFragment.class.getSimpleName();
 
-    private WhitelistService whitelistService;
+    private final WhitelistService whitelistService;
     private List<DisplayApp> nonWhitelistedApps;
 
     public WhitelistFragment() {
+        whitelistService = WhitelistService.getInstance(getContext());
         nonWhitelistedApps = new ArrayList<>();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        whitelistService = WhitelistService.getInstance(getContext());
         List<App> apps = Setup.appLoader().getAllApps(getContext(), false);
         Set<String> whiteListedApps = whitelistService.getCurrentWhitelistedApps();
         nonWhitelistedApps = apps.stream()

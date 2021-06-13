@@ -31,19 +31,19 @@ public class PendingFragment extends Fragment {
 
     private static final String TAG = PendingFragment.class.getSimpleName();
 
-    private WhitelistService whitelistService;
+    private final WhitelistService whitelistService;
     private final List<DisplayApp> pendingApps;
 
     public static final DateFormat simpleDateFormat = SimpleDateFormat.getTimeInstance();
 
     public PendingFragment() {
+        whitelistService = WhitelistService.getInstance(getContext());
         pendingApps = new ArrayList<>();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        whitelistService = WhitelistService.getInstance(getContext());
         Map<String, Long> pendingChanges = whitelistService.getPendingApps();
 
         // cannot simply stream to map because of stupid google quicksearchbox, listing itself twice
