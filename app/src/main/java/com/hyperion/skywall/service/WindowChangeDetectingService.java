@@ -24,7 +24,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
     private WhitelistService whitelistService;
     public static final String ACTIVITY_NAME = "activityName";
 
-    private static final Set<String> allowedAndroidActivities = new HashSet<>(
+    private static final Set<String> allowedAndroidSystemActivities = new HashSet<>(
             Arrays.asList("com.android.internal.app.ResolverActivity",
                     "com.android.internal.app.ChooserActivity",
                     "com.android.permissioncontroller.permission.ui.GrantPermissionsActivity",
@@ -66,7 +66,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
         try {
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
                 if (event.getPackageName() != null && event.getClassName() != null) {
-
                     String packageName = event.getPackageName().toString();
                     String className = event.getClassName().toString();
                     ComponentName componentName = new ComponentName(packageName, className);
@@ -75,16 +74,17 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     boolean isActivity = activityInfo != null;
                     if (isActivity) {
                         Log.i(TAG, "CurrentActivity: " + componentName.flattenToShortString());
+                        if (allowedAndroidSystemActivities.contains(className)) {
+                            return;
+                        }
 
                         if (blockedActivities.contains(className)) {
                             blockActivity(className);
                         }
 
-                        if (!allowedAndroidActivities.contains(className)) {
-                            if (!whitelistService.refreshAndCheckWhitelisted(packageName)) {
-                                Log.i(TAG, "Found non-whitelisted foreground activity: " + className);
-                                blockActivity(className);
-                            }
+                        if (!whitelistService.refreshAndCheckWhitelisted(packageName)) {
+                            Log.i(TAG, "Found non-whitelisted foreground activity: " + className);
+                            blockActivity(className);
                         }
                     }
                 }
