@@ -38,46 +38,56 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
     @Override
     protected void onServiceConnected() {
-        super.onServiceConnected();
+        try  {
+            super.onServiceConnected();
 
-        whitelistService = WhitelistService.getInstance(getApplicationContext());
+            whitelistService = WhitelistService.getInstance(getApplicationContext());
 
-        //Configure these here for compatibility with API 13 and below.
-        AccessibilityServiceInfo config = new AccessibilityServiceInfo();
-        config.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
-        config.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
-        config.flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
+            //Configure these here for compatibility with API 13 and below.
+            AccessibilityServiceInfo config = new AccessibilityServiceInfo();
+            config.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+            config.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
+            config.flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
 
-        setServiceInfo(config);
+            setServiceInfo(config);
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Error starting " + TAG, e);
+            throw e;
+        }
     }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            if (event.getPackageName() != null && event.getClassName() != null) {
+        try {
+            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+                if (event.getPackageName() != null && event.getClassName() != null) {
 
-                String packageName = event.getPackageName().toString();
-                String className = event.getClassName().toString();
-                ComponentName componentName = new ComponentName(packageName, className);
-                ActivityInfo activityInfo = tryGetActivity(componentName);
+                    String packageName = event.getPackageName().toString();
+                    String className = event.getClassName().toString();
+                    ComponentName componentName = new ComponentName(packageName, className);
+                    ActivityInfo activityInfo = tryGetActivity(componentName);
 
-                boolean isActivity = activityInfo != null;
-                if (isActivity) {
-                    Log.i("CurrentActivity", componentName.flattenToShortString());
-                    if (!allowedAndroidActivities.contains(className)) {
-                        if (!whitelistService.refreshAndCheckWhitelisted(packageName)) {
-                            Log.i(TAG, "Found non-whitelisted foreground activity: " + className);
+                    boolean isActivity = activityInfo != null;
+                    if (isActivity) {
+                        Log.i(TAG, "CurrentActivity: " + componentName.flattenToShortString());
+                        if (!allowedAndroidActivities.contains(className)) {
+                            if (!whitelistService.refreshAndCheckWhitelisted(packageName)) {
+                                Log.i(TAG, "Found non-whitelisted foreground activity: " + className);
 
-                            Intent intent = new Intent(Intent.ACTION_MAIN);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            String canonicalName = BlockedActivity.class.getCanonicalName();
-                            intent.setClassName(BuildConfig.APPLICATION_ID, canonicalName);
-                            intent.putExtra(ACTIVITY_NAME, className);
-                            getApplicationContext().startActivity(intent);
+                                Intent intent = new Intent(Intent.ACTION_MAIN);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                String canonicalName = BlockedActivity.class.getCanonicalName();
+                                intent.setClassName(BuildConfig.APPLICATION_ID, canonicalName);
+                                intent.putExtra(ACTIVITY_NAME, className);
+                                getApplicationContext().startActivity(intent);
+                            }
                         }
                     }
                 }
             }
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Error while checking screen contents", e);
+            throw e;
         }
     }
 
@@ -91,4 +101,19 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
     @Override
     public void onInterrupt() {}
+
+    @Override
+    public void onLowMemory() {
+        Log.w(TAG, "Bumped for low memory");
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        Log.w(TAG, "Bumped to trim memory, level: " + level);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.w(TAG, "Service destroyed");
+    }
 }
