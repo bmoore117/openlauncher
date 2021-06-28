@@ -13,6 +13,7 @@ import com.benny.openlauncher.BuildConfig;
 import com.hyperion.skywall.activity.BlockedActivity;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,8 +34,12 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.android.settings.Settings$ConnectedDeviceDashboardActivity",
                     "com.android.settings.Settings$ManageExternalStorageActivity",
                     "com.android.settings.SubSettings",
+                    "com.android.systemui.pip.phone.PipMenuActivity",
                     "com.google.android.gms.auth.api.credentials.ui.CredentialPickerActivity",
                     "com.google.android.gms.wallet.activity.GenericDelegatorInternalActivity"));
+
+    private static final Set<String> blockedActivities = new HashSet<>(
+            Collections.singletonList("com.facebook.browser.lite.BrowserLiteActivity"));
 
     @Override
     protected void onServiceConnected() {
@@ -70,16 +75,15 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     boolean isActivity = activityInfo != null;
                     if (isActivity) {
                         Log.i(TAG, "CurrentActivity: " + componentName.flattenToShortString());
+
+                        if (blockedActivities.contains(className)) {
+                            blockActivity(className);
+                        }
+
                         if (!allowedAndroidActivities.contains(className)) {
                             if (!whitelistService.refreshAndCheckWhitelisted(packageName)) {
                                 Log.i(TAG, "Found non-whitelisted foreground activity: " + className);
-
-                                Intent intent = new Intent(Intent.ACTION_MAIN);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                String canonicalName = BlockedActivity.class.getCanonicalName();
-                                intent.setClassName(BuildConfig.APPLICATION_ID, canonicalName);
-                                intent.putExtra(ACTIVITY_NAME, className);
-                                getApplicationContext().startActivity(intent);
+                                blockActivity(className);
                             }
                         }
                     }
@@ -89,6 +93,15 @@ public class WindowChangeDetectingService extends AccessibilityService {
             Log.e(TAG, "Error while checking screen contents", e);
             throw e;
         }
+    }
+
+    private void blockActivity(String className) {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        String canonicalName = BlockedActivity.class.getCanonicalName();
+        intent.setClassName(BuildConfig.APPLICATION_ID, canonicalName);
+        intent.putExtra(ACTIVITY_NAME, className);
+        getApplicationContext().startActivity(intent);
     }
 
     private ActivityInfo tryGetActivity(ComponentName componentName) {
