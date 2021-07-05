@@ -24,7 +24,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
     private WhitelistService whitelistService;
     public static final String ACTIVITY_NAME = "activityName";
 
-    private static final Set<String> allowedAndroidSystemActivities = new HashSet<>(
+    private static final Set<String> allowedActivities = new HashSet<>(
             Arrays.asList("com.android.internal.app.ResolverActivity",
                     "com.android.internal.app.ChooserActivity",
                     "com.android.permissioncontroller.permission.ui.GrantPermissionsActivity",
@@ -35,7 +35,13 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.android.settings.Settings$ManageExternalStorageActivity",
                     "com.android.settings.SubSettings",
                     "com.android.systemui.pip.phone.PipMenuActivity",
+                    "com.facebook.katana.gdp.WebViewProxyAuth",
+                    "com.google.android.gms.common.account.AccountPickerActivity",
+                    "com.google.android.gms.common.api.GoogleApiActivity",
+                    "com.google.android.gms.signin.activity.SignInActivity",
+                    "com.google.android.gms.appinvite.AppInviteAcceptInvitationActivity",
                     "com.google.android.gms.auth.api.credentials.ui.CredentialPickerActivity",
+                    "com.google.android.gms.auth.api.signin.ui.SignInActivity",
                     "com.google.android.gms.wallet.activity.GenericDelegatorInternalActivity"));
 
     private static final Set<String> blockedActivities = new HashSet<>(
@@ -74,7 +80,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     boolean isActivity = activityInfo != null;
                     if (isActivity) {
                         Log.i(TAG, "CurrentActivity: " + componentName.flattenToShortString());
-                        if (allowedAndroidSystemActivities.contains(className)) {
+                        if (allowedActivities.contains(className)) {
                             return;
                         }
 
