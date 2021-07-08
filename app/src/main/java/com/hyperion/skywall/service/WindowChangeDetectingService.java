@@ -36,6 +36,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.android.settings.SubSettings",
                     "com.android.systemui.pip.phone.PipMenuActivity",
                     "com.facebook.katana.gdp.WebViewProxyAuth",
+                    "com.google.android.apps.inputmethod.latin.preference.SettingsActivity",
                     "com.google.android.gms.common.account.AccountPickerActivity",
                     "com.google.android.gms.common.api.GoogleApiActivity",
                     "com.google.android.gms.signin.activity.SignInActivity",
