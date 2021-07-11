@@ -5,8 +5,10 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AppOpsManager;
+import android.app.admin.DevicePolicyManager;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,6 +16,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -570,9 +573,30 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         handleLauncherResume();
 
         // if no usage stats permissions throw up screen to get it, otherwise start worker if not queued yet
-        if (!isAccessibilityServiceEnabled()) {
+        if (!isDeviceAdmin()) {
+            startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
+        } else if (!isHomeApp()) {
+            startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));
+        } else if (!isAccessibilityServiceEnabled()) {
             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
         }
+    }
+
+    private boolean isDeviceAdmin() {
+        DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        List<ComponentName> activeAdmins = dpm.getActiveAdmins();
+        if (activeAdmins != null) {
+            return activeAdmins.stream().anyMatch(componentName -> componentName.getPackageName().equals(BuildConfig.APPLICATION_ID));
+        }
+        return false;
+    }
+
+    private boolean isHomeApp() {
+        final Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        final ResolveInfo res = getPackageManager().resolveActivity(intent, 0);
+        return res != null && res.activityInfo != null && getPackageName()
+                .equals(res.activityInfo.packageName);
     }
 
     @Override

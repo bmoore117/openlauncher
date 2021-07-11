@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
@@ -70,6 +71,13 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+        // if delay is non-zero, the accessibility service is active, and we're not the default
+        // launcher app, we can get trapped in a loop here where everything is blocked. So only
+        // block things if we're the default home app
+        if (!isHomeApp()) {
+            return;
+        }
+
         try {
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
                 if (event.getPackageName() != null && event.getClassName() != null) {
@@ -100,6 +108,14 @@ public class WindowChangeDetectingService extends AccessibilityService {
             Log.e(TAG, "Error while checking screen contents", e);
             throw e;
         }
+    }
+
+    private boolean isHomeApp() {
+        final Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        final ResolveInfo res = getPackageManager().resolveActivity(intent, 0);
+        return res != null && res.activityInfo != null && getPackageName()
+                .equals(res.activityInfo.packageName);
     }
 
     private void blockActivity(String className) {

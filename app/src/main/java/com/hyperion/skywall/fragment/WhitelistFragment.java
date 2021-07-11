@@ -23,6 +23,8 @@ import com.hyperion.skywall.fragment.view.DisplayApp;
 import com.hyperion.skywall.service.WhitelistService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +35,10 @@ public class WhitelistFragment extends Fragment {
 
     private final WhitelistService whitelistService;
     private List<DisplayApp> nonWhitelistedApps;
+
+    // these are apps that either don't need to be whitelisted, such as the Skywall app itself, or
+    // should never be allowed to be whitelisted, such as settings, as it defeats the whole point
+    private static final Set<String> excludedApps = new HashSet<>(Arrays.asList(BuildConfig.APPLICATION_ID, "com.android.settings"));
 
     public WhitelistFragment() {
         whitelistService = WhitelistService.getInstance(getContext());
@@ -46,7 +52,7 @@ public class WhitelistFragment extends Fragment {
         Set<String> whiteListedApps = whitelistService.getCurrentWhitelistedApps();
         nonWhitelistedApps = apps.stream()
                 .filter(app -> !whiteListedApps.contains(app.getPackageName())
-                        && !BuildConfig.APPLICATION_ID.equals(app.getPackageName()))
+                        && !excludedApps.contains(app.getPackageName()))
                 .map(app -> new DisplayApp(app.getLabel(), app.getPackageName(), app.getIcon(), null))
                 .collect(Collectors.toList());
     }
