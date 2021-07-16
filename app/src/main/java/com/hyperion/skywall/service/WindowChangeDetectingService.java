@@ -44,6 +44,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.google.android.gms.appinvite.AppInviteAcceptInvitationActivity",
                     "com.google.android.gms.auth.api.credentials.ui.CredentialPickerActivity",
                     "com.google.android.gms.auth.api.signin.ui.SignInActivity",
+                    "com.google.android.gms.update.SystemUpdateActivity",
                     "com.google.android.gms.wallet.activity.GenericDelegatorInternalActivity"));
 
     private static final Set<String> blockedActivities = new HashSet<>(
