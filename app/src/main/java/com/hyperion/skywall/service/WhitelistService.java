@@ -26,7 +26,6 @@ public class WhitelistService {
     private static final String[] ALLOWED_PACKAGES = new String[] {"com.benny.openlauncher", "com.hyperion.skywall", "com.android.internal.app.ResolverActivity"};
 
     private static long currentDelayMillis;
-    private static Set<String> currentActiveApps;
 
     private SharedPreferences pendingChanges;
     private SharedPreferences pendingValues;
@@ -52,8 +51,6 @@ public class WhitelistService {
         pendingChanges = context.getSharedPreferences(PENDING_PREFS, Context.MODE_PRIVATE);
         activePrefs = context.getSharedPreferences(ACTIVE_PREFS, Context.MODE_PRIVATE);
         pendingValues = context.getSharedPreferences(PENDING_PREFS_VALUES, Context.MODE_PRIVATE);
-
-        currentActiveApps = activePrefs.getStringSet(APPS_KEY, new HashSet<>());
         currentDelayMillis = activePrefs.getLong(DELAY_KEY, 0);
 
         String[] delayValues = context.getResources().getStringArray(R.array.delay_values);
@@ -69,6 +66,10 @@ public class WhitelistService {
         isInit = true;
     }
 
+    private Set<String> currentActiveApps() {
+        return activePrefs.getStringSet(APPS_KEY, new HashSet<>());
+    }
+
     public boolean refreshAndCheckWhitelisted(String appName) {
         if (getCurrentDelayMillis() == 0) {
             return true;
@@ -78,7 +79,7 @@ public class WhitelistService {
     }
 
     private boolean refreshAndCheckWhitelistedInternal(String appName) {
-        if (currentActiveApps.contains(appName)) {
+        if (currentActiveApps().contains(appName)) {
             return true;
         }
 
@@ -118,8 +119,8 @@ public class WhitelistService {
             activePrefs.edit().putLong(DELAY_KEY, delayValue).apply();
             currentDelayMillis = delayValue;
         } else {
-            currentActiveApps.add(appName);
-            Set<String> newSet = new HashSet<>(currentActiveApps);
+            currentActiveApps().add(appName);
+            Set<String> newSet = new HashSet<>(currentActiveApps());
             activePrefs.edit().putStringSet(APPS_KEY, newSet).apply();
         }
 
@@ -158,7 +159,7 @@ public class WhitelistService {
 
     public Set<String> getCurrentWhitelistedApps() {
         getPendingApps();
-        return new HashSet<>(currentActiveApps);
+        return new HashSet<>(currentActiveApps());
     }
 
     public Map<String, Long> getPendingApps() {
@@ -201,7 +202,6 @@ public class WhitelistService {
     }
 
     public void removeWhitelistedApp(String appName) {
-        currentActiveApps.remove(appName);
         activePrefs.edit().remove(appName).apply();
     }
 

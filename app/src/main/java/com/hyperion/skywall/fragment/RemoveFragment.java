@@ -51,6 +51,11 @@ public class RemoveFragment extends Fragment {
         whitelistedApps.clear();
         for (String appPackageName : currentWhitelistedApps) {
             App app = apps.get(appPackageName);
+            if (app == null) {
+                // here the user has uninstalled an app, but it hasn't been removed from the list yet
+                whitelistService.removeWhitelistedApp(appPackageName);
+                continue;
+            }
             whitelistedApps.add(new DisplayApp(app.getLabel(), appPackageName, app.getIcon(), null));
         }
         if (whitelistedApps.isEmpty()) {
@@ -81,8 +86,6 @@ public class RemoveFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {}
         });
-
-
 
         return view;
     }

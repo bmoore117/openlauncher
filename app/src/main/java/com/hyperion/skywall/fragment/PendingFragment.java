@@ -56,6 +56,11 @@ public class PendingFragment extends Fragment {
         pendingApps.clear();
         for (String appPackageName : pendingChanges.keySet()) {
             App app = apps.get(appPackageName);
+            if (app == null) {
+                // here the user has uninstalled an app, but it hasn't been removed from the list yet
+                whitelistService.cancelPendingChange(appPackageName);
+                continue;
+            }
             pendingApps.add(new DisplayApp(app.getLabel(), appPackageName, app.getIcon(), new Date(pendingChanges.get(appPackageName))));
         }
         if (pendingApps.isEmpty()) {
