@@ -52,6 +52,12 @@ public class WindowChangeDetectingService extends AccessibilityService {
     private static final Set<String> blockedActivities = new HashSet<>(
             Collections.singletonList("com.facebook.browser.lite.BrowserLiteActivity"));
 
+    private static final Set<String> WEWORK_LOGIN_ACTIVITIES = new HashSet<>(
+            Arrays.asList("com.wework.ondemand/com.auth0.android.provider.AuthenticationActivity",
+                    "com.wework.ondemand/.splash.welcome.WelcomeActivity"));
+
+    private String lastActivity;
+
     @Override
     protected void onServiceConnected() {
         try  {
@@ -93,17 +99,26 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     if (isActivity) {
                         Log.i(TAG, "CurrentActivity: " + componentName.flattenToShortString());
                         if (allowedActivities.contains(className)) {
+                            lastActivity = componentName.flattenToShortString();
                             return;
                         }
 
                         if (blockedActivities.contains(className)) {
+                            lastActivity = componentName.flattenToShortString();
                             blockActivity(className);
+                            return;
+                        }
+
+                        if (lastActivity != null && WEWORK_LOGIN_ACTIVITIES.contains(lastActivity)) {
+                            lastActivity = componentName.flattenToShortString();
+                            return;
                         }
 
                         if (!whitelistService.refreshAndCheckWhitelisted(packageName)) {
                             Log.i(TAG, "Found non-whitelisted foreground activity: " + className);
                             blockActivity(className);
                         }
+                        lastActivity = componentName.flattenToShortString();
                     }
                 }
             }
@@ -123,7 +138,8 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
     private void blockActivity(String className) {
         Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         String canonicalName = BlockedActivity.class.getCanonicalName();
         intent.setClassName(BuildConfig.APPLICATION_ID, canonicalName);
         intent.putExtra(ACTIVITY_NAME, className);
