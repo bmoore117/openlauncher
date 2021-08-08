@@ -25,6 +25,8 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
 import android.view.Window;
@@ -79,6 +81,7 @@ import net.gsantner.opoc.util.ContextUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class HomeActivity extends Activity implements OnDesktopEditListener {
     public static final Companion Companion = new Companion();
@@ -109,6 +112,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     // SkyWall variables
     private WhitelistService whitelistService;
+    private static final AtomicBoolean startupChecksRun = new AtomicBoolean(false);
 
     public static final class Companion {
         private Companion() {
@@ -572,13 +576,20 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
         handleLauncherResume();
 
-        // if no usage stats permissions throw up screen to get it, otherwise start worker if not queued yet
-        if (!isDeviceAdmin()) {
-            startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
-        } else if (!isHomeApp()) {
-            startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));
-        } else if (!isAccessibilityServiceEnabled()) {
-            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+        if (startupChecksRun.compareAndSet(false, true)) {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(() -> {
+                // here we check for the proper permissions and throw up screens
+                // this is all run on a delay as the OS does not seem to start accessibility services
+                // until a second or two after boot
+                if (!isDeviceAdmin()) {
+                    startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
+                } else if (!isHomeApp()) {
+                    startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));
+                } else if (!isAccessibilityServiceEnabled()) {
+                    startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                }
+            }, 5000);
         }
     }
 
