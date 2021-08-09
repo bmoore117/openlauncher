@@ -1,10 +1,8 @@
 package com.benny.openlauncher.activity;
 
-import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.AppOpsManager;
 import android.app.admin.DevicePolicyManager;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -15,7 +13,6 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
-import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
@@ -112,7 +109,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     // SkyWall variables
     private WhitelistService whitelistService;
-    private static final AtomicBoolean startupChecksRun = new AtomicBoolean(false);
+    private static final AtomicBoolean startupChecksPassed = new AtomicBoolean(false);
 
     public static final class Companion {
         private Companion() {
@@ -576,7 +573,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
         handleLauncherResume();
 
-        if (startupChecksRun.compareAndSet(false, true)) {
+        if (startupChecksPassed.compareAndSet(false, true)) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(() -> {
                 // here we check for the proper permissions and throw up screens
@@ -584,10 +581,13 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                 // until a second or two after boot
                 if (!isDeviceAdmin()) {
                     startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
+                    startupChecksPassed.set(false);
                 } else if (!isHomeApp()) {
                     startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));
+                    startupChecksPassed.set(false);
                 } else if (!isAccessibilityServiceEnabled()) {
                     startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                    startupChecksPassed.set(false);
                 }
             }, 5000);
         }
