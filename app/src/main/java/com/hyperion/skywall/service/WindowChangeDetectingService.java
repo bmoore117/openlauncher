@@ -1,7 +1,6 @@
 package com.hyperion.skywall.service;
 
 import android.accessibilityservice.AccessibilityService;
-import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -65,16 +64,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
     protected void onServiceConnected() {
         try  {
             super.onServiceConnected();
-
             whitelistService = WhitelistService.getInstance(getApplicationContext());
-
-            //Configure these here for compatibility with API 13 and below.
-            AccessibilityServiceInfo config = new AccessibilityServiceInfo();
-            config.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
-            config.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
-            config.flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
-
-            setServiceInfo(config);
         } catch (RuntimeException e) {
             Log.e(TAG, "Error starting " + TAG, e);
             throw e;
@@ -122,6 +112,16 @@ public class WindowChangeDetectingService extends AccessibilityService {
                             blockActivity(className);
                         }
                         lastActivity = componentName.flattenToShortString();
+                    }
+                }
+            } else if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) {
+                if (whitelistService.getCurrentDelayMillis() > 0) {
+                    if ("com.android.systemui".equals(event.getPackageName().toString())
+                            && event.getText().stream().anyMatch(seq -> "power off"
+                                .equals(seq.toString().toLowerCase()))) {
+                        for (int i = 0; i < 1000; i++) {
+                            performGlobalAction(GLOBAL_ACTION_BACK);
+                        }
                     }
                 }
             }
