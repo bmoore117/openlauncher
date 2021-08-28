@@ -42,12 +42,13 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.facebook.katana.gdp.ProxyAuthDialog",
                     "com.facebook.katana.gdp.WebViewProxyAuth",
                     "com.google.android.apps.inputmethod.latin.preference.SettingsActivity",
-                    "com.google.android.gms.common.account.AccountPickerActivity",
-                    "com.google.android.gms.common.api.GoogleApiActivity",
-                    "com.google.android.gms.signin.activity.SignInActivity",
                     "com.google.android.gms.appinvite.AppInviteAcceptInvitationActivity",
                     "com.google.android.gms.auth.api.credentials.ui.CredentialPickerActivity",
                     "com.google.android.gms.auth.api.signin.ui.SignInActivity",
+                    "com.google.android.gms.common.account.AccountPickerActivity",
+                    "com.google.android.gms.common.api.GoogleApiActivity",
+                    "com.google.android.gms.octarine.ui.OctarineWebviewActivity",
+                    "com.google.android.gms.signin.activity.SignInActivity",
                     "com.google.android.gms.update.SystemUpdateActivity",
                     "com.google.android.gms.wallet.activity.GenericDelegatorInternalActivity"));
 
