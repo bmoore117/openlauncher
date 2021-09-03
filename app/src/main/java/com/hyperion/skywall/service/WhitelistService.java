@@ -184,6 +184,10 @@ public class WhitelistService {
         pendingChanges.edit().remove(appName).apply();
     }
 
+    public boolean isAppPending(String appName) {
+        return pendingChanges.contains(appName);
+    }
+
     public Optional<Pair<Long, Long>> getPendingDelay() {
         long delayTimeChange = pendingChanges.getLong(DELAY_KEY, Long.MAX_VALUE);
         if (delayTimeChange == Long.MAX_VALUE) {

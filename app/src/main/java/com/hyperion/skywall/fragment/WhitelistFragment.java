@@ -25,6 +25,7 @@ import com.hyperion.skywall.service.WhitelistService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,7 +53,8 @@ public class WhitelistFragment extends Fragment {
         Set<String> whiteListedApps = whitelistService.getCurrentWhitelistedApps();
         nonWhitelistedApps = apps.stream()
                 .filter(app -> !whiteListedApps.contains(app.getPackageName())
-                        && !excludedApps.contains(app.getPackageName()))
+                        && !excludedApps.contains(app.getPackageName())
+                        && !whitelistService.isAppPending(app.getPackageName()))
                 .map(app -> new DisplayApp(app.getLabel(), app.getPackageName(), app.getIcon(), null))
                 .collect(Collectors.toList());
     }
@@ -101,13 +103,17 @@ public class WhitelistFragment extends Fragment {
         Button whitelist = view.findViewById(R.id.fragment_whitelist_button);
         whitelist.setOnClickListener(button -> {
             boolean queued = false;
-            for (DisplayApp displayApp : nonWhitelistedApps) {
+            Iterator<DisplayApp> it = nonWhitelistedApps.iterator();
+            while (it.hasNext()) {
+                DisplayApp displayApp = it.next();
                 if (displayApp.isSelected()) {
                     whitelistService.queueApp(displayApp.getActivityName());
                     queued = true;
+                    it.remove();
                 }
             }
             if (queued) {
+                fragmentAdapter.notifyDataSetChanged();
                 Toast.makeText(getContext(), R.string.changes_queued, Toast.LENGTH_SHORT).show();
             }
         });
