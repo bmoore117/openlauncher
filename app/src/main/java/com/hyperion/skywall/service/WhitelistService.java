@@ -202,7 +202,9 @@ public class WhitelistService {
     }
 
     public void removeWhitelistedApp(String appName) {
-        activePrefs.edit().remove(appName).apply();
+        Set<String> activeApps = currentActiveApps();
+        activeApps.remove(appName);
+        activePrefs.edit().putStringSet(APPS_KEY, activeApps).apply();
     }
 
     public static long valueInMilliSeconds(String delay) {
