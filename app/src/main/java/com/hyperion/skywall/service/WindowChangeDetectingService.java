@@ -50,7 +50,8 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.google.android.gms.octarine.ui.OctarineWebviewActivity",
                     "com.google.android.gms.signin.activity.SignInActivity",
                     "com.google.android.gms.update.SystemUpdateActivity",
-                    "com.google.android.gms.wallet.activity.GenericDelegatorInternalActivity"));
+                    "com.google.android.gms.wallet.activity.GenericDelegatorInternalActivity",
+                    "com.google.android.location.settings.LocationSettingsCheckerActivity"));
 
     private static final Set<String> blockedActivities = new HashSet<>(
             Collections.singletonList("com.facebook.browser.lite.BrowserLiteActivity"));
