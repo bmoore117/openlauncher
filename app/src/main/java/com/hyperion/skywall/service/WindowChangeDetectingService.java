@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class WindowChangeDetectingService extends AccessibilityService {
 
@@ -121,7 +122,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                 if (whitelistService.getCurrentDelayMillis() > 0) {
                     if ("com.android.systemui".equals(event.getPackageName().toString())
                             && event.getText().stream().anyMatch(seq -> "power off"
-                                .equals(seq.toString().toLowerCase()))) {
+                                .equalsIgnoreCase(seq.toString()))) {
                         for (int i = 0; i < 1000; i++) {
                             performGlobalAction(GLOBAL_ACTION_BACK);
                         }
