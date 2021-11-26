@@ -32,6 +32,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.android.permissioncontroller.permission.ui.GrantPermissionsActivity",
                     "com.android.permissioncontroller.role.ui.RequestRoleActivity",
                     "com.android.quickstep.RecentsActivity",
+                    "com.android.settings.bluetooth.BluetoothPairingDialog",
                     "com.android.settings.password.ConfirmDeviceCredentialActivity",
                     "com.android.settings.Settings$ConnectedDeviceDashboardActivity",
                     "com.android.settings.Settings$ManageExternalStorageActivity",
