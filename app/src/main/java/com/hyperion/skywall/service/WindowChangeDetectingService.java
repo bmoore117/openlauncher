@@ -122,8 +122,9 @@ public class WindowChangeDetectingService extends AccessibilityService {
             } else if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) {
                 if (whitelistService.getCurrentDelayMillis() > 0) {
                     if ("com.android.systemui".equals(event.getPackageName().toString())
-                            && event.getText().stream().anyMatch(seq -> "power off"
-                                .equalsIgnoreCase(seq.toString()))) {
+                            && event.getText().stream().anyMatch(seq ->
+                            "power off".equalsIgnoreCase(seq.toString())
+                                    || "restart".equalsIgnoreCase(seq.toString()))) {
                         for (int i = 0; i < 1000; i++) {
                             performGlobalAction(GLOBAL_ACTION_BACK);
                         }
