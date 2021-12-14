@@ -26,7 +26,8 @@ public class WindowChangeDetectingService extends AccessibilityService {
     public static final String ACTIVITY_NAME = "activityName";
 
     private static final Set<String> allowedActivities = new HashSet<>(
-            Arrays.asList("com.android.internal.app.ResolverActivity",
+            Arrays.asList("com.android.documentsui.picker.PickActivity",
+                    "com.android.internal.app.ResolverActivity",
                     "com.android.internal.app.ChooserActivity",
                     "com.android.packageinstaller.UninstallerActivity",
                     "com.android.permissioncontroller.permission.ui.GrantPermissionsActivity",
