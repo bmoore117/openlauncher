@@ -1,0 +1,10 @@
+To disable safe mode completely, you must set the app as device owner.
+This can be done through ADB, as long as there are no other accounts on the device, e.g. the app
+is the first account.
+
+To delete all accounts, go into settings and delete everything present, then use the following
+command to find the remaining apps with accounts, and uninstall each:
+    .\adb.exe shell dumpsys account
+
+Then do:
+    .\adb.exe shell dpm set-device-owner com.benny.openlauncher/com.benny.openlauncher.receivers.DeviceAdminReceiver
