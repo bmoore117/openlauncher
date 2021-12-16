@@ -58,7 +58,8 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.google.android.location.settings.LocationSettingsCheckerActivity"));
 
     private static final Set<String> blockedActivities = new HashSet<>(
-            Collections.singletonList("com.facebook.browser.lite.BrowserLiteActivity"));
+            Arrays.asList("com.facebook.browser.lite.BrowserLiteActivity",
+                    "com.microsoft.emmx.webview.browser.InAppBrowserActivity"));
 
     private static final Set<String> WEWORK_LOGIN_ACTIVITIES = new HashSet<>(
             Arrays.asList("com.wework.ondemand/com.auth0.android.provider.AuthenticationActivity",
@@ -102,7 +103,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                             return;
                         }
 
-                        if (blockedActivities.contains(className)) {
+                        if (blockedActivities.contains(className) && whitelistService.getCurrentDelayMillis() > 0) {
                             lastActivity = componentName.flattenToShortString();
                             blockActivity(className);
                             return;
