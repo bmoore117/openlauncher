@@ -67,7 +67,7 @@ public class WhitelistService {
     }
 
     private Set<String> currentActiveApps() {
-        return activePrefs.getStringSet(APPS_KEY, new HashSet<>());
+        return new HashSet<>(activePrefs.getStringSet(APPS_KEY, new HashSet<>()));
     }
 
     public boolean refreshAndCheckWhitelisted(String appName) {
@@ -119,9 +119,9 @@ public class WhitelistService {
             activePrefs.edit().putLong(DELAY_KEY, delayValue).apply();
             currentDelayMillis = delayValue;
         } else {
-            currentActiveApps().add(appName);
-            Set<String> newSet = new HashSet<>(currentActiveApps());
-            activePrefs.edit().putStringSet(APPS_KEY, newSet).apply();
+            Set<String> apps = currentActiveApps();
+            apps.add(appName);
+            activePrefs.edit().putStringSet(APPS_KEY, apps).apply();
         }
 
         pendingValues.edit().remove(appName).apply();
@@ -159,7 +159,7 @@ public class WhitelistService {
 
     public Set<String> getCurrentWhitelistedApps() {
         getPendingApps();
-        return new HashSet<>(currentActiveApps());
+        return currentActiveApps();
     }
 
     public Map<String, Long> getPendingApps() {
