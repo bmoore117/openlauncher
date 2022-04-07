@@ -9,7 +9,12 @@
 #########################################################*/
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.text.SimpleDateFormat
+import java.util.stream.Collectors
 
 buildscript {
     ext {
@@ -79,18 +84,16 @@ task copyRepoFiles(type: Copy) {
 @SuppressWarnings(["UnnecessaryQualifiedReference", "SpellCheckingInspection", "GroovyUnusedDeclaration"])
 // Returns used android languages as a buildConfig array: {'de', 'it', ..}"
 static String findUsedAndroidLocales() {
-    Set<String> langs = new HashSet<>()
-    new File('.').eachFileRecurse(groovy.io.FileType.DIRECTORIES) {
-        final foldername = it.name
-        if (foldername.startsWith('values-') && !it.canonicalPath.contains("build" + File.separator + "intermediates") && !it.canonicalPath.contains("gradle" + File.separator + "daemon")) {
-            new File(it.toString()).eachFileRecurse(groovy.io.FileType.FILES) {
-                if (it.name.toLowerCase().endsWith(".xml") && it.getCanonicalFile().getText('UTF-8').contains("<string")) {
-                    langs.add(foldername.replace("values-", ""))
-                }
-            }
-        }
-    }
-    return '{' + langs.collect { "\"${it}\"" }.join(",") + '}'
+    Set<String> langs = Files.walk(Paths.get("."))
+            .filter(path -> Files.isDirectory(path) && path.getFileName().toString().startsWith("values-")
+                    && !path.toAbsolutePath().toString().contains("build" + File.separator + "intermediates")
+                    && !path.toAbsolutePath().toString().contains("gradle" + File.separator + "daemon"))
+            .flatMap(dir -> Files.walk(dir)
+                    .filter(path -> Files.isRegularFile(path) && path.toString().endsWith(".xml")
+                            && new String(Files.readAllBytes(path), StandardCharsets.UTF_8).contains("<string"))
+                    .map(path -> path.getFileName().toString().replace("values-", "").trim())
+            ).collect(Collectors.toSet())
+    return "{" + langs.stream().map(val -> "\"" + val + "\"").collect(Collectors.joining(",")) + "}"
 }
 
 ext.getGitHash = { ->
