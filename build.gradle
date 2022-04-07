@@ -18,6 +18,7 @@ buildscript {
         enable_plugin_kotlin = false
 
         version_compileSdk = 29
+        version_buildTools = "29.0.3"
         version_minSdk = 29
 
         // https://github.com/guardianproject/NetCipher/releases

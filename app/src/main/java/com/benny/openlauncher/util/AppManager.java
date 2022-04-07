@@ -6,9 +6,12 @@ import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.pm.ShortcutInfo;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Process;
 import android.os.UserHandle;
+import android.os.UserManager;
 import androidx.annotation.NonNull;
 
 import com.benny.openlauncher.activity.HomeActivity;
@@ -103,7 +106,8 @@ public class AppManager {
     public App createApp(Intent intent) {
         try {
             ResolveInfo info = _packageManager.resolveActivity(intent, 0);
-            return new App(_packageManager, info);
+            List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), intent.getComponent().getPackageName());
+            return new App(_packageManager, info, shortcutInfo);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -168,9 +172,24 @@ public class AppManager {
                 for (UserHandle userHandle : profiles) {
                     List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, userHandle);
                     for (LauncherActivityInfo info : apps) {
-                        App app = new App(_packageManager, info);
+                        List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
+                        App app = new App(_packageManager, info, shortcutInfo);
                         app._userHandle = userHandle;
-
+                        LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
+                        nonFilteredAppsTemp.add(app);
+                    }
+                }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                UserManager userManager = (UserManager) _context.getSystemService(Context.USER_SERVICE);
+                // LauncherApps.getProfiles() is not available for API 25, so just get all associated user profile handlers
+                List<UserHandle> profiles = userManager.getUserProfiles();
+                LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
+                for (UserHandle userHandle : profiles) {
+                    List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, userHandle);
+                    for (LauncherActivityInfo info : apps) {
+                        List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
+                        App app = new App(_packageManager, info, shortcutInfo);
+                        app._userHandle = userHandle;
                         LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
                         nonFilteredAppsTemp.add(app);
                     }
@@ -180,8 +199,7 @@ public class AppManager {
                 intent.addCategory(Intent.CATEGORY_LAUNCHER);
                 List<ResolveInfo> activitiesInfo = _packageManager.queryIntentActivities(intent, 0);
                 for (ResolveInfo info : activitiesInfo) {
-                    App app = new App(_packageManager, info);
-
+                    App app = new App(_packageManager, info, null);
                     LOG.debug("adding app to non filtered list: {}, {}, {}", app._label,  app._packageName, app._className);
                     nonFilteredAppsTemp.add(app);
                 }
