@@ -13,6 +13,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
@@ -579,13 +580,17 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                 // here we check for the proper permissions and throw up screens
                 // this is all run on a delay as the OS does not seem to start accessibility services
                 // until a second or two after boot
-                if (!isDeviceAdmin()) {
-                    startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
-                    startupChecksPassed.set(false);
-                } else if (!isHomeApp()) {
+                if (!isHomeApp()) {
                     startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));
                     startupChecksPassed.set(false);
+                } else if (!isDeviceAdmin()) {
+                    startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
+                    startupChecksPassed.set(false);
                 } else if (!isAccessibilityServiceEnabled()) {
+                    if (whitelistService.getCurrentDelayMillis() > 0) {
+                        whitelistService.increaseDelay(0); // should immediately set delay 0
+                        Toast.makeText(this, R.string.accessibility_has_reset, Toast.LENGTH_LONG).show();
+                    }
                     startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                     startupChecksPassed.set(false);
                 }
@@ -605,6 +610,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     private boolean isHomeApp() {
         final Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
         final ResolveInfo res = getPackageManager().resolveActivity(intent, 0);
         return res != null && res.activityInfo != null && getPackageName()
                 .equals(res.activityInfo.packageName);
