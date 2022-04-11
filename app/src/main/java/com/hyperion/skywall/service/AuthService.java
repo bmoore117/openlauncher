@@ -29,7 +29,6 @@ public class AuthService {
 
     private SharedPreferences authCache;
     private boolean isInit;
-
     private static final AuthService instance = new AuthService();
 
     private AuthService() {}
@@ -43,6 +42,7 @@ public class AuthService {
 
     public void init(Context context) {
         authCache = context.getSharedPreferences("AuthService", Context.MODE_PRIVATE);
+        isInit = true;
     }
 
     public Pair<Integer, Boolean> authenticate(String username, String password) throws IOException, InterruptedException, JSONException {
@@ -82,7 +82,8 @@ public class AuthService {
         byte[] base64Bytes = Base64.getEncoder().encode((username + ":" + password).getBytes());
 
         String name = "skywall-android";
-        URL url = new URL(String.format("https://sky-wall.net/wp-json/wp/v2/users/%d/application-passwords?name=" + name, userId));
+        String baseUrl = String.format("https://sky-wall.net/wp-json/wp/v2/users/%d/application-passwords", userId);
+        URL url = new URL(baseUrl);
         HttpURLConnection existsRequest = (HttpURLConnection) url.openConnection();
         existsRequest.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
         existsRequest.setRequestMethod("GET");
@@ -91,23 +92,15 @@ public class AuthService {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String output = reader.lines().collect(Collectors.joining("\n"));
             JSONArray jsonArray = new JSONArray(output);
-            boolean exists = false; // TODO why is this request not as specific as we thought?
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject object = jsonArray.getJSONObject(i);
-                if (name.equals(object.getString("name"))) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (exists) {
-                HttpURLConnection delete = (HttpURLConnection) url.openConnection();
+            String uuid = findExistingAppPasswordUuid(jsonArray, name);
+            if (uuid != null) {
+                HttpURLConnection delete = (HttpURLConnection) new URL(baseUrl + "/" + uuid).openConnection();
                 try {
                     delete.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
                     delete.setRequestMethod("DELETE");
                     delete.setDoOutput(true);
                     delete.connect();
-                    int responseCode = delete.getResponseCode();
-                    String test = null;
+                    Log.i(TAG, "Delete of prior app password finished with status: " + delete.getResponseCode());
                 } finally {
                     delete.disconnect();
                 }
@@ -116,7 +109,7 @@ public class AuthService {
             existsRequest.disconnect();
         }
 
-        HttpURLConnection createRequest = (HttpURLConnection) url.openConnection();
+        HttpURLConnection createRequest = (HttpURLConnection) (new URL(baseUrl + "?name=" + name)).openConnection();
         createRequest.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
         createRequest.setRequestMethod("POST");
         try {
@@ -128,6 +121,16 @@ public class AuthService {
         } finally {
             createRequest.disconnect();
         }
+    }
+
+    private String findExistingAppPasswordUuid(JSONArray jsonArray, String name) throws JSONException {
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject object = jsonArray.getJSONObject(i);
+            if (name.equals(object.getString("name"))) {
+                return object.getString("uuid");
+            }
+        }
+        return null;
     }
 
     //@Scheduled(cron = "0 0 12 * * *")
