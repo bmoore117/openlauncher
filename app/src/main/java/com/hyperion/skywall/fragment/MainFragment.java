@@ -2,6 +2,9 @@ package com.hyperion.skywall.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -11,14 +14,19 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.benny.openlauncher.R;
 import com.google.android.material.tabs.TabLayout;
+import com.hyperion.skywall.activity.SkyWallActivity;
+import com.hyperion.skywall.service.AuthService;
 import com.hyperion.skywall.service.WhitelistService;
 
 public class MainFragment extends Fragment {
 
     private FragmentManager fragmentManager;
+    private AuthService authService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        authService = AuthService.getInstance(getContext());
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         TabLayout tabLayout = view.findViewById(R.id.fragment_main_tablayout);
 
@@ -76,5 +84,21 @@ public class MainFragment extends Fragment {
         ft.replace(R.id.fragment_main_framelayout, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.logout, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_logout_button) {
+            authService.logout();
+            SkyWallActivity.doTransition(SkyWallActivity.getLoginFragment());
+            return true;
+        }
+        return super.onOptionsItemSelected(item); // important line
     }
 }

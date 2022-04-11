@@ -1,26 +1,23 @@
 package com.hyperion.skywall.activity;
 
 import android.os.Bundle;
-import com.google.android.material.tabs.TabLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.benny.openlauncher.R;
 import com.hyperion.skywall.fragment.LoginFragment;
 import com.hyperion.skywall.fragment.MainFragment;
-import com.hyperion.skywall.fragment.PendingFragment;
-import com.hyperion.skywall.fragment.RemoveFragment;
-import com.hyperion.skywall.fragment.WhitelistFragment;
 import com.hyperion.skywall.service.AuthService;
-import com.hyperion.skywall.service.WhitelistService;
 
 public class SkyWallActivity extends AppCompatActivity {
 
     private static FragmentManager fragmentManager;
     private static MainFragment mainFragment;
+    private static LoginFragment loginFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +33,7 @@ public class SkyWallActivity extends AppCompatActivity {
 
         AuthService authService = AuthService.getInstance(this);
         mainFragment = new MainFragment();
-        LoginFragment loginFragment = new LoginFragment();
+        loginFragment = new LoginFragment();
         fragmentManager = getSupportFragmentManager();
 
         if (authService.isLicensed()) {
@@ -55,5 +52,17 @@ public class SkyWallActivity extends AppCompatActivity {
 
     public static MainFragment getMainFragment() {
         return mainFragment;
+    }
+
+    public static LoginFragment getLoginFragment() {
+        return loginFragment;
+    }
+
+    @Override
+    public void onDestroy() {
+        fragmentManager = null;
+        mainFragment = null;
+        loginFragment = null;
+        super.onDestroy();
     }
 }
