@@ -1,12 +1,14 @@
 package com.hyperion.skywall.fragment;
 
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
@@ -36,9 +38,12 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
+        TextView errorMessage = view.findViewById(R.id.fragment_login_error_message);
         EditText username = view.findViewById(R.id.fragment_login_username);
         EditText password = view.findViewById(R.id.fragment_login_password);
         Button loginButton = view.findViewById(R.id.fragment_login_login_button);
+        TextView forgotPassword = view.findViewById(R.id.fragment_login_forgot_password);
+        forgotPassword.setMovementMethod(LinkMovementMethod.getInstance());
 
         loginButton.setOnClickListener(button -> CompletableFuture.runAsync(() -> {
             String usernameVal = username.getText().toString();
@@ -46,18 +51,18 @@ public class LoginFragment extends Fragment {
             try {
                 Pair<Integer, Boolean> authResult = authService.authenticate(usernameVal, passwordVal);
                 if (!authResult.second) {
-                    // TODO set invalid username/password on UI
+                    errorMessage.post(() -> errorMessage.setText(R.string.invalid_credentials));
                     return;
                 }
 
                 String appPassword = authService.createOrReplaceAppPassword(usernameVal, passwordVal, authResult.first);
                 authService.setUsername(usernameVal);
                 authService.setPassword(appPassword);
-                //TODO re-enable this, after correcting DELETE request specificity in AuthService: authService.setLicensed(true);
+                authService.setLicensed(true);
 
                 SkyWallActivity.doTransition(SkyWallActivity.getMainFragment());
             } catch (RuntimeException | IOException | InterruptedException | JSONException e) {
-                //TODO set error on UI
+                errorMessage.post(() -> errorMessage.setText(R.string.unexpected_response_from_server));
                 Log.e(TAG, "Error authenticating", e);
             }
         }));

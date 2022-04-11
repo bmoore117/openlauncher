@@ -27,12 +27,27 @@
 
     </FrameLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="62dp"
+        android:layout_marginEnd="62dp"
+        android:layout_marginTop="30dp">
+
+        <TextView
+            android:id="@+id/fragment_login_error_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:textColor="@color/materialRed" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="62dp"
-        android:layout_marginTop="36.7dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="62dp"
         android:background="@drawable/blue_border_rounded_corner">
 
@@ -42,16 +57,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/fragment_login_username_icon"
+            android:autofillHints="username"
             android:background="@android:color/transparent"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:maxLines="1"
             android:paddingStart="17dp"
+            android:paddingEnd="17dp"
             android:paddingTop="15dp"
             android:paddingBottom="15dp"
-            android:textCursorDrawable="@drawable/cursor_color"
-            android:textSize="12sp"
-            android:autofillHints="username" />
+            android:textCursorDrawable="@drawable/cursor_color" />
 
         <!-- ICON -->
         <ImageView
@@ -62,7 +77,6 @@
             android:layout_marginStart="17dp"
             android:src="@drawable/email"
             android:contentDescription="@string/username" />
-
     </RelativeLayout>
 
 
@@ -87,10 +101,10 @@
             android:maxLength="10"
             android:maxLines="1"
             android:paddingStart="17dp"
+            android:paddingEnd="17dp"
             android:paddingTop="15dp"
             android:paddingBottom="15dp"
-            android:textCursorDrawable="@drawable/cursor_color"
-            android:textSize="12sp" />
+            android:textCursorDrawable="@drawable/cursor_color" />
 
         <!-- ICON -->
         <ImageView
@@ -101,7 +115,6 @@
             android:layout_marginStart="17dp"
             android:src="@drawable/password"
             android:contentDescription="@string/password" />
-
     </RelativeLayout>
 
     <Button
@@ -117,16 +130,16 @@
         android:paddingTop="14dp"
         android:paddingBottom="14dp"
         android:text="@string/login"
-        android:textColor="#ffffff"
-        android:textSize="12sp" />
+        android:textColor="#ffffff" />
 
     <TextView
+        android:id="@+id/fragment_login_forgot_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="12dp"
         android:text="@string/forgot_password"
         android:textColor="#1566e0"
-        android:textSize="11sp" />
+        android:textSize="12sp" />
 
 </LinearLayout>
