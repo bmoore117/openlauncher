@@ -9,14 +9,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.benny.openlauncher.R;
+import com.hyperion.skywall.fragment.LoginFragment;
+import com.hyperion.skywall.fragment.MainFragment;
 import com.hyperion.skywall.fragment.PendingFragment;
 import com.hyperion.skywall.fragment.RemoveFragment;
 import com.hyperion.skywall.fragment.WhitelistFragment;
+import com.hyperion.skywall.service.AuthService;
 import com.hyperion.skywall.service.WhitelistService;
 
 public class SkyWallActivity extends AppCompatActivity {
 
-    private FragmentManager fragmentManager;
+    private static FragmentManager fragmentManager;
+    private static MainFragment mainFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,59 +34,26 @@ public class SkyWallActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setTitle(R.string.skywall);
 
-        TabLayout tabLayout = findViewById(R.id.activity_skywall_tablayout);
-
-        TabLayout.Tab firstTab = tabLayout.newTab();
-        firstTab.setText(R.string.add);
-        tabLayout.addTab(firstTab);
-        TabLayout.Tab secondTab = tabLayout.newTab();
-        secondTab.setText(R.string.remove);
-        tabLayout.addTab(secondTab);
-        TabLayout.Tab thirdTab = tabLayout.newTab();
-        thirdTab.setText(R.string.pending);
-        tabLayout.addTab(thirdTab);
-
-        WhitelistService.getInstance(this);
-        WhitelistFragment whitelistFragment = new WhitelistFragment();
-        PendingFragment pendingFragment = new PendingFragment();
-        RemoveFragment removeFragment = new RemoveFragment();
+        AuthService authService = AuthService.getInstance(this);
+        mainFragment = new MainFragment();
+        LoginFragment loginFragment = new LoginFragment();
         fragmentManager = getSupportFragmentManager();
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                Fragment fragment = null;
-
-                switch (tab.getPosition()) {
-                    case 0:
-                        fragment = whitelistFragment;
-                        break;
-                    case 1:
-                        fragment = removeFragment;
-                        break;
-                    case 2:
-                        fragment = pendingFragment;
-                }
-                doTransition(fragment);
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-        doTransition(whitelistFragment);
+        if (authService.isLicensed()) {
+            SkyWallActivity.doTransition(mainFragment);
+        } else {
+            SkyWallActivity.doTransition(loginFragment);
+        }
     }
 
-    private void doTransition(Fragment fragment) {
+    public static void doTransition(Fragment fragment) {
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.activity_skywall_framelayout, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
+    }
+
+    public static MainFragment getMainFragment() {
+        return mainFragment;
     }
 }
