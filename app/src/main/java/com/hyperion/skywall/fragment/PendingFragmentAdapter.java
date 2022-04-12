@@ -1,6 +1,7 @@
 package com.hyperion.skywall.fragment;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +69,13 @@ public class PendingFragmentAdapter extends BaseAdapter {
                 notifyDataSetChanged();
             });
         } else {
-            imageView.setVisibility(View.INVISIBLE);
+            imageView.setVisibility(View.GONE);
+
+            Resources res = context.getResources();
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) label.getLayoutParams();
+            params.setMargins(Math.round(res.getDimension(R.dimen.default_padding_side)), 0, 0, 0);
+            label.setLayoutParams(params);
+
             cancel.setVisibility(View.INVISIBLE);
             date.setVisibility(View.INVISIBLE);
         }
