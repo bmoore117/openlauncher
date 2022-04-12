@@ -15,6 +15,7 @@ import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +26,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -69,19 +71,27 @@ import com.benny.openlauncher.widget.ItemOptionView;
 import com.benny.openlauncher.widget.MinibarView;
 import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
-import com.hyperion.skywall.service.LicenseJobService;
+import com.hyperion.skywall.Pair;
+import com.hyperion.skywall.service.LicenseAndUpdateService;
 import com.hyperion.skywall.service.WhitelistService;
 import com.hyperion.skywall.service.WindowChangeDetectingService;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import net.gsantner.opoc.util.ContextUtils;
 
+import org.json.JSONException;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class HomeActivity extends Activity implements OnDesktopEditListener {
+
+    private static final String TAG = HomeActivity.class.getSimpleName();
+
     public static final Companion Companion = new Companion();
     public static final int REQUEST_CREATE_APPWIDGET = 0x6475;
     public static final int REQUEST_PERMISSION_STORAGE = 0x3648;
@@ -594,10 +604,36 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                     }
                     startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                     startupChecksPassed.set(false);
+                } else {
+                    Pair<Boolean, Integer> results = updateExists();
+                    if (results.first) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.fromFile(LicenseAndUpdateService.getUpdateLocation(this)), "application/vnd.android.package-archive");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    } else if (results.second == 0) {
+                        LicenseAndUpdateService.deleteUpdateFiles(this);
+                    }
                 }
             }, 5000);
         }
-        LicenseJobService.schedule(this);
+        LicenseAndUpdateService.schedule(this);
+    }
+
+    private Pair<Boolean, Integer> updateExists() {
+        boolean returnVal = false;
+        int returnCode = -1;
+        File updateFile = LicenseAndUpdateService.getUpdateLocation(this);
+        if (updateFile.exists()) {
+            try {
+                returnCode = LicenseAndUpdateService.getUpdateVersion(this)
+                        .compareTo(LicenseAndUpdateService.getVersion(this));
+                returnVal = returnCode > 0;
+            } catch (IOException | JSONException e) {
+                Log.e(TAG,"Error checking downloaded update version file", e);
+            }
+        }
+        return new Pair<>(returnVal, returnCode);
     }
 
     private boolean isDeviceAdmin() {
