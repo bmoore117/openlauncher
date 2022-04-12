@@ -56,23 +56,23 @@ public class AuthService {
             if (urlConnection.getResponseCode() != 200) {
                 return new Pair<>(null, Boolean.FALSE);
             }
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            try (InputStream in = new BufferedInputStream(urlConnection.getInputStream())) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String output = reader.lines().collect(Collectors.joining("\n"));
+                JSONObject results = new JSONObject(output);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String output = reader.lines().collect(Collectors.joining("\n"));
-            JSONObject results = new JSONObject(output);
-
-            JSONArray roles = results.getJSONArray("roles");
-            boolean isSubscriber = false;
-            for (int i = 0; i < roles.length(); i++) {
-                String role = roles.getString(i);
-                if ("paying-subscriber".equalsIgnoreCase(role) || "administrator".equalsIgnoreCase(role)) {
-                    isSubscriber = true;
-                    break;
+                JSONArray roles = results.getJSONArray("roles");
+                boolean isSubscriber = false;
+                for (int i = 0; i < roles.length(); i++) {
+                    String role = roles.getString(i);
+                    if ("paying-subscriber".equalsIgnoreCase(role) || "administrator".equalsIgnoreCase(role)) {
+                        isSubscriber = true;
+                        break;
+                    }
                 }
-            }
 
-            return new Pair<>(results.getInt("id"), isSubscriber);
+                return new Pair<>(results.getInt("id"), isSubscriber);
+            }
         } finally {
             urlConnection.disconnect();
         }
@@ -87,8 +87,7 @@ public class AuthService {
         HttpURLConnection existsRequest = (HttpURLConnection) url.openConnection();
         existsRequest.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
         existsRequest.setRequestMethod("GET");
-        try {
-            InputStream in = new BufferedInputStream(existsRequest.getInputStream());
+        try (InputStream in = new BufferedInputStream(existsRequest.getInputStream())) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String output = reader.lines().collect(Collectors.joining("\n"));
             JSONArray jsonArray = new JSONArray(output);
@@ -112,8 +111,7 @@ public class AuthService {
         HttpURLConnection createRequest = (HttpURLConnection) (new URL(baseUrl + "?name=" + name)).openConnection();
         createRequest.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
         createRequest.setRequestMethod("POST");
-        try {
-            InputStream in = new BufferedInputStream(createRequest.getInputStream());
+        try (InputStream in = new BufferedInputStream(createRequest.getInputStream())) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String output = reader.lines().collect(Collectors.joining("\n"));
             JSONObject responseObj = new JSONObject(output);
