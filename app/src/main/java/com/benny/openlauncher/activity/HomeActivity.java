@@ -13,7 +13,6 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
-import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
@@ -70,6 +69,7 @@ import com.benny.openlauncher.widget.ItemOptionView;
 import com.benny.openlauncher.widget.MinibarView;
 import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
+import com.hyperion.skywall.service.LicenseJobService;
 import com.hyperion.skywall.service.WhitelistService;
 import com.hyperion.skywall.service.WindowChangeDetectingService;
 import com.jakewharton.threetenabp.AndroidThreeTen;
@@ -86,6 +86,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     public static final int REQUEST_CREATE_APPWIDGET = 0x6475;
     public static final int REQUEST_PERMISSION_STORAGE = 0x3648;
     public static final int REQUEST_PICK_APPWIDGET = 0x2678;
+    public static final int JOB_ID = 1337;
     public static WidgetHost _appWidgetHost;
     public static AppWidgetManager _appWidgetManager;
     public static boolean ignoreResume;
@@ -588,7 +589,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                     startupChecksPassed.set(false);
                 } else if (!isAccessibilityServiceEnabled()) {
                     if (whitelistService.getCurrentDelayMillis() > 0) {
-                        whitelistService.increaseDelay(0); // should immediately set delay 0
+                        whitelistService.setDelay(0); // should immediately set delay 0
                         Toast.makeText(this, R.string.accessibility_has_reset, Toast.LENGTH_LONG).show();
                     }
                     startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
@@ -596,6 +597,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                 }
             }, 5000);
         }
+        LicenseJobService.schedule(this);
     }
 
     private boolean isDeviceAdmin() {

@@ -2,11 +2,11 @@ package com.hyperion.skywall.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import androidx.core.util.Pair;
 
 import com.benny.openlauncher.R;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -128,7 +128,7 @@ public class WhitelistService {
         pendingChanges.edit().remove(appName).apply();
     }
 
-    public void increaseDelay(long newDelayMillis) {
+    public void setDelay(long newDelayMillis) {
         currentDelayMillis = newDelayMillis;
         activePrefs.edit().putLong(DELAY_KEY, currentDelayMillis).apply();
     }
@@ -216,9 +216,9 @@ public class WhitelistService {
         if ("0".equals(parts[0])) {
             return 0;
         } else if (parts[1].contains("minute")) {
-            return Integer.parseInt(parts[0])*60*1000;
+            return Long.parseLong(parts[0])*60*1000;
         } else {
-            return Integer.parseInt(parts[0])*60*60*1000;
+            return Long.parseLong(parts[0])*60*60*1000;
         }
     }
 }

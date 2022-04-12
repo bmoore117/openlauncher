@@ -50,8 +50,8 @@
         <activity
             android:name="com.benny.openlauncher.activity.OnBoardActivity"
             android:clearTaskOnLaunch="true"
-            android:label="@string/app_name"
-            android:theme="@style/IntroTheme">
+            android:theme="@style/IntroTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -59,12 +59,12 @@
         </activity>
         <activity
             android:name="com.benny.openlauncher.activity.HomeActivity"
-            android:label="@string/app_name"
             android:launchMode="singleTask"
             android:clearTaskOnLaunch="true"
             android:stateNotNeeded="true"
             android:taskAffinity=""
-            android:windowSoftInputMode="adjustNothing">
+            android:windowSoftInputMode="adjustNothing"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
@@ -87,7 +87,6 @@
             android:theme="@style/NormalActivity.Light" />
         <activity
             android:name="com.benny.openlauncher.activity.HideAppsActivity"
-            android:label="@string/app_name"
             android:theme="@style/NormalActivity.Light" />
         <activity
             android:name="com.benny.openlauncher.activity.MoreInfoActivity"
@@ -99,8 +98,8 @@
         </activity>
         <activity
             android:name="com.nononsenseapps.filepicker.FilePickerActivity"
-            android:label="@string/app_name"
-            android:theme="@style/FilePickerTheme">
+            android:theme="@style/FilePickerTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -110,8 +109,8 @@
             android:name="com.benny.openlauncher.activity.AddShortcutActivity"
             android:autoRemoveFromRecents="true"
             android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:theme="@style/FilePickerTheme">
+            android:theme="@style/FilePickerTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.content.pm.action.CONFIRM_PIN_SHORTCUT" />
             </intent-filter>
@@ -119,7 +118,8 @@
 
         <receiver
             android:name="com.benny.openlauncher.receivers.DeviceAdminReceiver"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
@@ -129,7 +129,8 @@
         </receiver>
         <receiver
             android:name="com.benny.openlauncher.receivers.ShortcutReceiver"
-            android:permission="com.android.launcher.permission.INSTALL_SHORTCUT">
+            android:permission="com.android.launcher.permission.INSTALL_SHORTCUT"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.android.launcher.action.INSTALL_SHORTCUT" />
             </intent-filter>
@@ -139,7 +140,8 @@
             android:name="com.benny.openlauncher.notifications.NotificationListener"
             android:label="@string/icon_badge_service_title"
             android:enabled="true"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
@@ -148,7 +150,8 @@
         <service
             android:label="@string/accessibility_service_name"
             android:name="com.hyperion.skywall.service.WindowChangeDetectingService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService"/>
             </intent-filter>
@@ -156,6 +159,10 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibilityservice"/>
         </service>
+
+        <service android:name="com.hyperion.skywall.service.LicenseJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -74,7 +74,7 @@ public class WhitelistFragment extends Fragment {
             String spinnerValue = delayList.getSelectedItem().toString();
             long millisValue = WhitelistService.valueInMilliSeconds(spinnerValue);
             if (millisValue >= whitelistService.getCurrentDelayMillis()) {
-                whitelistService.increaseDelay(millisValue);
+                whitelistService.setDelay(millisValue);
                 Toast.makeText(getContext(), R.string.delay_set, Toast.LENGTH_SHORT).show();
             } else {
                 whitelistService.queueDelayReduction(millisValue);

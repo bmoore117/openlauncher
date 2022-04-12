@@ -134,7 +134,7 @@ public class AuthService {
     }
 
     //@Scheduled(cron = "0 0 12 * * *")
-    public void checkSubscriberActive() {
+    public boolean checkSubscriberActive() {
         String appPassword = getPassword();
         if (appPassword != null) {
             try {
@@ -146,6 +146,7 @@ public class AuthService {
                 Log.e(TAG, "Error authenticating", e);
             }
         }
+        return isLicensed();
     }
 
     public boolean isLicensed() {
