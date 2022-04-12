@@ -9,11 +9,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.benny.openlauncher.R;
+import com.benny.openlauncher.activity.ColorActivity;
 import com.hyperion.skywall.fragment.LoginFragment;
 import com.hyperion.skywall.fragment.MainFragment;
 import com.hyperion.skywall.service.AuthService;
 
-public class SkyWallActivity extends AppCompatActivity {
+public class SkyWallActivity extends ColorActivity {
 
     private static FragmentManager fragmentManager;
     private static MainFragment mainFragment;

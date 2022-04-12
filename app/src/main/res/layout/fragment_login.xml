@@ -66,7 +66,9 @@
             android:paddingEnd="17dp"
             android:paddingTop="15dp"
             android:paddingBottom="15dp"
-            android:textCursorDrawable="@drawable/cursor_color" />
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:textColor="@color/black"
+            android:textColorHint="@color/Light.TextColorSecondary" />
 
         <!-- ICON -->
         <ImageView
@@ -104,17 +106,19 @@
             android:paddingEnd="17dp"
             android:paddingTop="15dp"
             android:paddingBottom="15dp"
-            android:textCursorDrawable="@drawable/cursor_color" />
+            android:textCursorDrawable="@drawable/cursor_color"
+            android:textColor="@color/black"
+            android:textColorHint="@color/Light.TextColorSecondary" />
 
         <!-- ICON -->
         <ImageView
             android:id="@+id/fragment_login_password_icon"
-            android:layout_width="14.7dp"
-            android:layout_height="10.3dp"
+            android:layout_width="19dp"
+            android:layout_height="15dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="17dp"
-            android:src="@drawable/password"
-            android:contentDescription="@string/password" />
+            android:layout_marginStart="14dp"
+            android:contentDescription="@string/password"
+            android:src="@drawable/password" />
     </RelativeLayout>
 
     <Button
