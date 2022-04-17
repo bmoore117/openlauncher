@@ -1,5 +1,7 @@
 package com.benny.openlauncher.activity;
 
+import static com.hyperion.skywall.service.LicenseAndUpdateService.PACKAGE_INSTALLED_ACTION;
+
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -13,16 +15,10 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
+import android.content.pm.PackageInstaller;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
-import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.viewpager.widget.ViewPager;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
@@ -34,6 +30,12 @@ import android.view.accessibility.AccessibilityManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.viewpager.widget.ViewPager;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -86,6 +88,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class HomeActivity extends Activity implements OnDesktopEditListener {
@@ -262,7 +265,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             getDock().initDock();
             return false;
         });
-        AppManager.getInstance(this).init();
+        AppManager.getInstance(this).getAllApps();
     }
 
     protected void initViews() {
@@ -604,20 +607,23 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                     }
                     startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                     startupChecksPassed.set(false);
-                } else {
-                    Pair<Boolean, Integer> results = updateExists();
-                    if (results.first) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.fromFile(LicenseAndUpdateService.getUpdateLocation(this)), "application/vnd.android.package-archive");
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    } else if (results.second == 0) {
-                        LicenseAndUpdateService.deleteUpdateFiles(this);
-                    }
                 }
             }, 5000);
         }
         LicenseAndUpdateService.schedule(this);
+        CompletableFuture.runAsync(() -> {
+            try {
+                LicenseAndUpdateService.downloadUpdateIfAvailable(this);
+            } catch (IOException | JSONException e) {
+                Log.i(TAG, "Error downloading update", e);
+            }
+        });
+
+        Pair<Boolean, Integer> results = updateExists();
+        if (results.first) {
+            Log.i(TAG, "Performing update");
+            LicenseAndUpdateService.installPackage(this);
+        }
     }
 
     private Pair<Boolean, Integer> updateExists() {
@@ -626,8 +632,10 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         File updateFile = LicenseAndUpdateService.getUpdateLocation(this);
         if (updateFile.exists()) {
             try {
-                returnCode = LicenseAndUpdateService.getUpdateVersion(this)
-                        .compareTo(LicenseAndUpdateService.getVersion(this));
+                String updateVersion = LicenseAndUpdateService.getUpdateVersion(this);
+                String version = LicenseAndUpdateService.getVersion(this);
+                Log.i(TAG, "Update version: " + updateVersion + ", current version " + version);
+                returnCode = updateVersion.compareTo(version);
                 returnVal = returnCode > 0;
             } catch (IOException | JSONException e) {
                 Log.e(TAG,"Error checking downloaded update version file", e);

@@ -11,3 +11,6 @@ get those accounts to disappear. Make sure to re-enable them afterwards
 
 Then do:
     .\adb.exe shell dpm set-device-owner com.benny.openlauncher/com.benny.openlauncher.receivers.DeviceAdminReceiver
+
+For emulators, do:
+.\adb.exe shell dpm set-device-owner com.benny.openlauncher.nightly.debug/com.benny.openlauncher.receivers.DeviceAdminReceiver

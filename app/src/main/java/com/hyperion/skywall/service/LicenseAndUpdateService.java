@@ -1,14 +1,18 @@
 package com.hyperion.skywall.service;
 
+import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
 import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.content.pm.PackageInstaller;
 import android.util.Log;
+
+import net.gsantner.opoc.util.ContextUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -34,7 +39,12 @@ import java.util.stream.Collectors;
 public class LicenseAndUpdateService extends JobService {
 
     private static final String TAG = LicenseAndUpdateService.class.getSimpleName();
+
+    public static final String PACKAGE_INSTALLED_ACTION =
+            "com.example.android.apis.content.SESSION_API_PACKAGE_INSTALLED";
+
     public static final String VERSION = "version";
+    public static final String SKYWALL = "skywall";
 
     private static boolean isScheduled = false;
 
@@ -47,7 +57,7 @@ public class LicenseAndUpdateService extends JobService {
             ComponentName componentName = new ComponentName(context, LicenseAndUpdateService.class);
             JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, componentName);
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-            builder.setPeriodic(ONE_DAY_INTERVAL);
+            builder.setPeriodic(60000L);
             jobScheduler.schedule(builder.build());
             isScheduled = true;
         }
@@ -65,7 +75,7 @@ public class LicenseAndUpdateService extends JobService {
             }
 
             try {
-                downloadUpdateIfAvailable();
+                downloadUpdateIfAvailable(this);
             } catch (IOException | JSONException e) {
                 Log.e(TAG, "Error checking for updates", e);
             }
@@ -80,7 +90,7 @@ public class LicenseAndUpdateService extends JobService {
         return true; // do retry this run instance if we got cancelled for whatever reason
     }
 
-    private void downloadUpdateIfAvailable() throws IOException, JSONException {
+    public static void downloadUpdateIfAvailable(Context context) throws IOException, JSONException {
         URL url = new URL("https://sky-wall.net/wp-content/uploads/app-version.json");
         HttpURLConnection versionRequest = (HttpURLConnection) url.openConnection();
         versionRequest.setRequestMethod("GET");
@@ -90,16 +100,16 @@ public class LicenseAndUpdateService extends JobService {
             JSONObject results = new JSONObject(output);
 
             String newVersion = results.getString(VERSION);
-            String currentVersion = getVersion(this);
+            String currentVersion = getVersion(context);
 
             if (newVersion.compareTo(currentVersion) > 0) {
-                HttpURLConnection apkRequest = (HttpURLConnection) new URL("https://sky-wall.net/wp-content/uploads/skywall.apk").openConnection();
+                HttpURLConnection apkRequest = (HttpURLConnection) new URL("https://sky-wall.net/wp-content/uploads/" + SKYWALL + ".apk").openConnection();
                 apkRequest.setRequestMethod("GET");
-                try (InputStream apk = new BufferedInputStream(versionRequest.getInputStream())) {
-                    Path appPath = getUpdateLocation(this).toPath().toAbsolutePath();
+                try (InputStream apk = new BufferedInputStream(apkRequest.getInputStream())) {
+                    Path appPath = getUpdateLocation(context).toPath().toAbsolutePath();
                     Files.copy(apk, appPath, StandardCopyOption.REPLACE_EXISTING);
 
-                    Path versionPath = getUpdateVersionLocation(this).toPath().toAbsolutePath();
+                    Path versionPath = getUpdateVersionLocation(context).toPath().toAbsolutePath();
                     Files.write(versionPath, output.getBytes());
                 } finally {
                     apkRequest.disconnect();
@@ -108,17 +118,12 @@ public class LicenseAndUpdateService extends JobService {
         } finally {
             versionRequest.disconnect();
         }
+        Log.i(TAG, "Finished update check");
     }
 
     public static String getVersion(Context context) {
-        String result = null;
-        PackageManager pm = context.getPackageManager();
-        String pkgName = context.getPackageName();
-        try {
-            PackageInfo pkgInfo = pm.getPackageInfo(pkgName, 0);
-            result = pkgInfo.versionName;
-        } catch (PackageManager.NameNotFoundException ignored) {}
-        return result;
+        ContextUtils contextUtils = new ContextUtils(context);
+        return contextUtils.getAppVersionName();
     }
 
     public static String getUpdateVersion(Context context) throws IOException, JSONException {
@@ -129,7 +134,7 @@ public class LicenseAndUpdateService extends JobService {
     }
 
     public static File getUpdateLocation(Context context) {
-        return new File(context.getFilesDir(), "skywall.apk");
+        return new File(context.getFilesDir(), SKYWALL + ".apk");
     }
 
     private static File getUpdateVersionLocation(Context context) {
@@ -138,10 +143,42 @@ public class LicenseAndUpdateService extends JobService {
 
     public static void deleteUpdateFiles(Context context) {
         try {
-            Files.delete(getUpdateLocation(context).toPath());
-            Files.delete(getUpdateVersionLocation(context).toPath());
+            Files.deleteIfExists(getUpdateLocation(context).toPath());
+            Files.deleteIfExists(getUpdateVersionLocation(context).toPath());
         } catch (IOException e) {
             Log.e(TAG, "Error deleting update files", e);
+        }
+    }
+
+    public static void installPackage(Context context) {
+        PackageInstaller.Session session = null;
+        try {
+            PackageInstaller packageInstaller = context.getPackageManager().getPackageInstaller();
+            PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(
+                    PackageInstaller.SessionParams.MODE_FULL_INSTALL);
+            int sessionId = packageInstaller.createSession(params);
+            session = packageInstaller.openSession(sessionId);
+            try (OutputStream packageInSession = session.openWrite("package", 0, -1)) {
+                Files.copy(LicenseAndUpdateService.getUpdateLocation(context).toPath(), packageInSession);
+            }
+
+            LicenseAndUpdateService.deleteUpdateFiles(context);
+
+            // Create an install status receiver.
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            IntentSender statusReceiver = pendingIntent.getIntentSender();
+            // Commit the session (this will start the installation workflow).
+            session.commit(statusReceiver);
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't install package", e);
+        } catch (RuntimeException e) {
+            if (session != null) {
+                session.abandon();
+            }
+            throw e;
         }
     }
 }
