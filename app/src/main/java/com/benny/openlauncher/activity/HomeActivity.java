@@ -1,7 +1,5 @@
 package com.benny.openlauncher.activity;
 
-import static com.hyperion.skywall.service.LicenseAndUpdateService.PACKAGE_INSTALLED_ACTION;
-
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -15,14 +13,12 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
-import android.content.pm.PackageInstaller;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -73,7 +69,6 @@ import com.benny.openlauncher.widget.ItemOptionView;
 import com.benny.openlauncher.widget.MinibarView;
 import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
-import com.hyperion.skywall.Pair;
 import com.hyperion.skywall.service.LicenseAndUpdateService;
 import com.hyperion.skywall.service.WhitelistService;
 import com.hyperion.skywall.service.WindowChangeDetectingService;
@@ -81,14 +76,9 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import net.gsantner.opoc.util.ContextUtils;
 
-import org.json.JSONException;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class HomeActivity extends Activity implements OnDesktopEditListener {
@@ -611,37 +601,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             }, 5000);
         }
         LicenseAndUpdateService.schedule(this);
-        CompletableFuture.runAsync(() -> {
-            try {
-                LicenseAndUpdateService.downloadUpdateIfAvailable(this);
-            } catch (IOException | JSONException e) {
-                Log.i(TAG, "Error downloading update", e);
-            }
-        });
-
-        Pair<Boolean, Integer> results = updateExists();
-        if (results.first) {
-            Log.i(TAG, "Performing update");
-            LicenseAndUpdateService.installPackage(this);
-        }
-    }
-
-    private Pair<Boolean, Integer> updateExists() {
-        boolean returnVal = false;
-        int returnCode = -1;
-        File updateFile = LicenseAndUpdateService.getUpdateLocation(this);
-        if (updateFile.exists()) {
-            try {
-                String updateVersion = LicenseAndUpdateService.getUpdateVersion(this);
-                String version = LicenseAndUpdateService.getVersion(this);
-                Log.i(TAG, "Update version: " + updateVersion + ", current version " + version);
-                returnCode = updateVersion.compareTo(version);
-                returnVal = returnCode > 0;
-            } catch (IOException | JSONException e) {
-                Log.e(TAG,"Error checking downloaded update version file", e);
-            }
-        }
-        return new Pair<>(returnVal, returnCode);
     }
 
     private boolean isDeviceAdmin() {

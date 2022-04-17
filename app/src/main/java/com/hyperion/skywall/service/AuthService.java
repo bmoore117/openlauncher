@@ -132,7 +132,7 @@ public class AuthService {
     }
 
     //@Scheduled(cron = "0 0 12 * * *")
-    public boolean checkSubscriberActive() {
+    public boolean checkAndUpdateLicense() {
         String appPassword = getPassword();
         if (appPassword != null) {
             try {
