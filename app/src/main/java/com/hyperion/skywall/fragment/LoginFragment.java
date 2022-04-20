@@ -51,6 +51,7 @@ public class LoginFragment extends Fragment {
 
         loginButton.setOnClickListener(button -> {
             progressBarPlate.setVisibility(View.VISIBLE);
+            progressBarPlate.setZ(1000.0f);
             progressBar.setIndeterminate(true);
             CompletableFuture.runAsync(() -> {
                 String usernameVal = username.getText().toString();
