@@ -74,7 +74,7 @@ public class LicenseAndUpdateService extends JobService {
                 installPackage(this);
             }
 
-            jobFinished(params, true); // do not reschedule this job, it is periodic already
+            jobFinished(params, false); // do not reschedule this job, it is periodic already
         });
         return true;
     }
