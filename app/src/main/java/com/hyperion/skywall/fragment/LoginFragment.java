@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -43,29 +45,37 @@ public class LoginFragment extends Fragment {
         EditText password = view.findViewById(R.id.fragment_login_password);
         Button loginButton = view.findViewById(R.id.fragment_login_login_button);
         TextView forgotPassword = view.findViewById(R.id.fragment_login_forgot_password);
+        ProgressBar progressBar = view.findViewById(R.id.fragment_login_progress_bar);
+        LinearLayout progressBarPlate = view.findViewById(R.id.fragment_login_progress_bar_plate);
         forgotPassword.setMovementMethod(LinkMovementMethod.getInstance());
 
-        loginButton.setOnClickListener(button -> CompletableFuture.runAsync(() -> {
-            String usernameVal = username.getText().toString();
-            String passwordVal = password.getText().toString();
-            try {
-                Pair<Integer, Boolean> authResult = authService.authenticate(usernameVal, passwordVal);
-                if (!authResult.second) {
-                    errorMessage.post(() -> errorMessage.setText(R.string.invalid_credentials));
-                    return;
+        loginButton.setOnClickListener(button -> {
+            progressBarPlate.setVisibility(View.VISIBLE);
+            progressBar.setIndeterminate(true);
+            CompletableFuture.runAsync(() -> {
+                String usernameVal = username.getText().toString();
+                String passwordVal = password.getText().toString();
+                try {
+                    Pair<Integer, Boolean> authResult = authService.authenticate(usernameVal, passwordVal);
+                    if (!authResult.second) {
+                        errorMessage.post(() -> errorMessage.setText(R.string.invalid_credentials));
+                        progressBarPlate.post(() -> progressBarPlate.setVisibility(View.GONE));
+                        return;
+                    }
+
+                    String appPassword = authService.createOrReplaceAppPassword(usernameVal, passwordVal, authResult.first);
+                    authService.setUsername(usernameVal);
+                    authService.setPassword(appPassword);
+                    authService.setLicensed(true);
+
+                    SkyWallActivity.doTransition(SkyWallActivity.getMainFragment());
+                } catch (RuntimeException | IOException | InterruptedException | JSONException e) {
+                    errorMessage.post(() -> errorMessage.setText(R.string.unexpected_response_from_server));
+                    progressBarPlate.post(() -> progressBarPlate.setVisibility(View.GONE));
+                    Log.e(TAG, "Error authenticating", e);
                 }
-
-                String appPassword = authService.createOrReplaceAppPassword(usernameVal, passwordVal, authResult.first);
-                authService.setUsername(usernameVal);
-                authService.setPassword(appPassword);
-                authService.setLicensed(true);
-
-                SkyWallActivity.doTransition(SkyWallActivity.getMainFragment());
-            } catch (RuntimeException | IOException | InterruptedException | JSONException e) {
-                errorMessage.post(() -> errorMessage.setText(R.string.unexpected_response_from_server));
-                Log.e(TAG, "Error authenticating", e);
-            }
-        }));
+            });
+        });
 
         return view;
     }

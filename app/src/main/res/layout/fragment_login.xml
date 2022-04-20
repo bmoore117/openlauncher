@@ -51,6 +51,22 @@
         android:layout_marginRight="62dp"
         android:background="@drawable/blue_border_rounded_corner">
 
+        <LinearLayout
+            android:id="@+id/fragment_login_progress_bar_plate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:background="@drawable/login_plate">
+            <ProgressBar
+                android:id="@+id/fragment_login_progress_bar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+
         <!-- INPUT -->
         <EditText
             android:id="@+id/fragment_login_username"
