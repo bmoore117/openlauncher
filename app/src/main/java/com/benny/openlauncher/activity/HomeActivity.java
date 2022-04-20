@@ -1,12 +1,9 @@
 package com.benny.openlauncher.activity;
 
-import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.admin.DevicePolicyManager;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,7 +11,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.content.pm.ResolveInfo;
-import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,7 +18,6 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.accessibility.AccessibilityManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,7 +66,6 @@ import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
 import com.hyperion.skywall.service.LicenseAndUpdateService;
 import com.hyperion.skywall.service.WhitelistService;
-import com.hyperion.skywall.service.WindowChangeDetectingService;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import net.gsantner.opoc.util.ContextUtils;
@@ -338,20 +332,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         registerReceiver(_timeChangedReceiver, _timeChangedIntentFilter);
     }
 
-    public boolean isAccessibilityServiceEnabled() {
-        AccessibilityManager am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
-        List<AccessibilityServiceInfo> enabledServices = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK);
-
-        for (AccessibilityServiceInfo enabledService : enabledServices) {
-            ServiceInfo enabledServiceInfo = enabledService.getResolveInfo().serviceInfo;
-            if (enabledServiceInfo.packageName.equals(getPackageName()) && enabledServiceInfo.name.equals(WindowChangeDetectingService.class.getName())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public final void onStartApp(@NonNull Context context, @NonNull App app, @Nullable View view) {
         if (BuildConfig.APPLICATION_ID.equals(app._packageName)) {
             LauncherAction.RunAction(Action.LauncherSettings, context);
@@ -587,29 +567,10 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                 if (!isHomeApp()) {
                     startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));
                     startupChecksPassed.set(false);
-                } else if (!isDeviceAdmin()) {
-                    startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
-                    startupChecksPassed.set(false);
-                } else if (!isAccessibilityServiceEnabled()) {
-                    if (whitelistService.getCurrentDelayMillis() > 0) {
-                        whitelistService.setDelay(0); // should immediately set delay 0
-                        Toast.makeText(this, R.string.accessibility_has_reset, Toast.LENGTH_LONG).show();
-                    }
-                    startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
-                    startupChecksPassed.set(false);
                 }
             }, 5000);
         }
         LicenseAndUpdateService.schedule(this);
-    }
-
-    private boolean isDeviceAdmin() {
-        DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        List<ComponentName> activeAdmins = dpm.getActiveAdmins();
-        if (activeAdmins != null) {
-            return activeAdmins.stream().anyMatch(componentName -> componentName.getPackageName().equals(BuildConfig.APPLICATION_ID));
-        }
-        return false;
     }
 
     private boolean isHomeApp() {
