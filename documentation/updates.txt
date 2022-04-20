@@ -1,0 +1,13 @@
+Update verification scenario:
+    1. Create new emulator, API 31 x86_64 (pixel 4 XL)
+    2. Change scheduling interval in LicenseAndUpdateService to 1L. Will cause Android to default
+       you to 15 minutes, with a flex period of 5 minutes
+    3. Build > Generate Signed Bundle / APK > flavorGplay
+    4. Upload to sky-wall.net
+    5. Download via chrome in emulator
+    6. Install, and don't forget to make app device owner
+    7. Generate app-version.json ( { "version": "0.7.5" } ) and upload to sky-wall.net
+    8. Go to app/build.gradle, edit versionName to 0.7.5, generate APK as in 3, rename to skywall.apk
+       and upload
+    9. Wait for it to get picked up
+   10. Verify install completes successfully
