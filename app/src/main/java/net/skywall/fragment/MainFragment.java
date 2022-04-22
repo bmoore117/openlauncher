@@ -1,11 +1,10 @@
-package com.hyperion.skywall.fragment;
+package net.skywall.fragment;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,10 +27,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.benny.openlauncher.BuildConfig;
 import com.benny.openlauncher.R;
 import com.google.android.material.tabs.TabLayout;
-import com.hyperion.skywall.activity.SkyWallActivity;
-import com.hyperion.skywall.service.AuthService;
-import com.hyperion.skywall.service.WhitelistService;
-import com.hyperion.skywall.service.WindowChangeDetectingService;
+import net.skywall.activity.SkyWallActivity;
+import net.skywall.service.AuthService;
+import net.skywall.service.WhitelistService;
+import net.skywall.service.WindowChangeDetectingService;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;

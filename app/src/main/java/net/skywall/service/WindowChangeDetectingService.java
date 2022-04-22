@@ -1,4 +1,4 @@
-package com.hyperion.skywall.service;
+package net.skywall.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.ComponentName;
@@ -10,13 +10,11 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.benny.openlauncher.BuildConfig;
-import com.hyperion.skywall.activity.BlockedActivity;
+import net.skywall.activity.BlockedActivity;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class WindowChangeDetectingService extends AccessibilityService {
 

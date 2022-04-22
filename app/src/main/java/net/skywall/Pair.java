@@ -1,4 +1,4 @@
-package com.hyperion.skywall;
+package net.skywall;
 
 public class Pair<T,U>
 {

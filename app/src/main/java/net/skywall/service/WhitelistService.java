@@ -1,11 +1,11 @@
-package com.hyperion.skywall.service;
+package net.skywall.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.core.util.Pair;
-
 import com.benny.openlauncher.R;
+
+import net.skywall.Pair;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -193,7 +193,7 @@ public class WhitelistService {
         if (delayTimeChange == Long.MAX_VALUE) {
             return Optional.empty();
         } else {
-            return Optional.of(Pair.create(delayTimeChange, pendingValues.getLong(DELAY_KEY, Long.MAX_VALUE)));
+            return Optional.of(new Pair<>(delayTimeChange, pendingValues.getLong(DELAY_KEY, Long.MAX_VALUE)));
         }
     }
 

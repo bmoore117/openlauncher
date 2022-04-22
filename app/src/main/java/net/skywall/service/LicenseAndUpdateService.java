@@ -1,4 +1,4 @@
-package com.hyperion.skywall.service;
+package net.skywall.service;
 
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
@@ -65,10 +65,7 @@ public class LicenseAndUpdateService extends JobService {
         Context applicationContext = getApplicationContext();
         CompletableFuture.runAsync(() -> {
             AuthService authService = AuthService.getInstance(applicationContext);
-            WhitelistService whitelistService = WhitelistService.getInstance(applicationContext);
-            if (!authService.checkAndUpdateLicense()) {
-                whitelistService.setDelay(0);
-            }
+            authService.checkAndUpdateLicense();
 
             if (downloadUpdateIfAvailable(this)) {
                 installPackage(this);

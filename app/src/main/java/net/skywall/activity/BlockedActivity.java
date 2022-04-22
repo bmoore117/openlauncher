@@ -1,4 +1,4 @@
-package com.hyperion.skywall.activity;
+package net.skywall.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.benny.openlauncher.R;
-import com.hyperion.skywall.service.WindowChangeDetectingService;
+import net.skywall.service.WindowChangeDetectingService;
 
 public class BlockedActivity extends AppCompatActivity {
 

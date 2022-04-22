@@ -1,4 +1,4 @@
-package com.hyperion.skywall.fragment;
+package net.skywall.fragment;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.benny.openlauncher.R;
-import com.hyperion.skywall.fragment.view.DisplayApp;
-import com.hyperion.skywall.service.WhitelistService;
+import net.skywall.fragment.view.DisplayApp;
+import net.skywall.service.WhitelistService;
 
 import java.util.List;
 

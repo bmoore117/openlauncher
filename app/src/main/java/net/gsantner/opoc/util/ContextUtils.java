@@ -10,6 +10,10 @@
 #########################################################*/
 package net.gsantner.opoc.util;
 
+import static android.content.Context.VIBRATOR_SERVICE;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.graphics.Bitmap.CompressFormat;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -43,19 +47,6 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.Nullable;
-import androidx.annotation.RawRes;
-import androidx.annotation.StringRes;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
-import androidx.core.app.ActivityManagerCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.core.text.TextUtilsCompat;
-import androidx.core.util.Pair;
-import androidx.core.view.ViewCompat;
 import android.text.Html;
 import android.text.InputFilter;
 import android.text.SpannableString;
@@ -74,7 +65,21 @@ import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
+import androidx.annotation.StringRes;
+import androidx.core.app.ActivityManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.text.TextUtilsCompat;
+import androidx.core.view.ViewCompat;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+
 import net.gsantner.opoc.format.markdown.SimpleMarkdownParser;
+import net.skywall.Pair;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -87,10 +92,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import static android.content.Context.VIBRATOR_SERVICE;
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static android.graphics.Bitmap.CompressFormat;
 
 @SuppressWarnings({"WeakerAccess", "unused", "SameParameterValue", "ObsoleteSdkInt", "deprecation", "SpellCheckingInspection", "TryFinallyCanBeTryWithResources", "UnusedAssignment", "UnusedReturnValue"})
 public class ContextUtils {

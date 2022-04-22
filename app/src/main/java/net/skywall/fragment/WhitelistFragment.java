@@ -1,4 +1,4 @@
-package com.hyperion.skywall.fragment;
+package net.skywall.fragment;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -19,8 +19,8 @@ import com.benny.openlauncher.BuildConfig;
 import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
-import com.hyperion.skywall.fragment.view.DisplayApp;
-import com.hyperion.skywall.service.WhitelistService;
+import net.skywall.fragment.view.DisplayApp;
+import net.skywall.service.WhitelistService;
 
 import java.util.ArrayList;
 import java.util.Arrays;

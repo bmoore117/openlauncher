@@ -1,4 +1,4 @@
-package com.hyperion.skywall.activity;
+package net.skywall.activity;
 
 import android.os.Bundle;
 
@@ -10,9 +10,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.benny.openlauncher.R;
 import com.benny.openlauncher.activity.ColorActivity;
-import com.hyperion.skywall.fragment.LoginFragment;
-import com.hyperion.skywall.fragment.MainFragment;
-import com.hyperion.skywall.service.AuthService;
+import net.skywall.fragment.LoginFragment;
+import net.skywall.fragment.MainFragment;
+import net.skywall.service.AuthService;
 
 public class SkyWallActivity extends ColorActivity {
 
@@ -37,10 +37,10 @@ public class SkyWallActivity extends ColorActivity {
         loginFragment = new LoginFragment();
         fragmentManager = getSupportFragmentManager();
 
-        if (authService.isLicensed()) {
-            SkyWallActivity.doTransition(mainFragment);
-        } else {
+        if (!authService.isLicensed() && authService.getUsername() == null) {
             SkyWallActivity.doTransition(loginFragment);
+        } else {
+            SkyWallActivity.doTransition(mainFragment);
         }
     }
 

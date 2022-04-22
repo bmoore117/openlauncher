@@ -18,7 +18,7 @@ import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.activity.MinibarEditActivity;
 import com.benny.openlauncher.activity.SettingsActivity;
 import com.benny.openlauncher.viewutil.DialogHelper;
-import com.hyperion.skywall.activity.SkyWallActivity;
+import net.skywall.activity.SkyWallActivity;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

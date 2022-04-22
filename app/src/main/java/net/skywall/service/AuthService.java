@@ -1,10 +1,10 @@
-package com.hyperion.skywall.service;
+package net.skywall.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.hyperion.skywall.Pair;
+import net.skywall.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;

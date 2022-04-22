@@ -1,39 +1,35 @@
-package com.hyperion.skywall.fragment;
+package net.skywall.fragment;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.benny.openlauncher.R;
-import com.hyperion.skywall.fragment.view.DisplayApp;
-import com.hyperion.skywall.service.WhitelistService;
+import net.skywall.fragment.view.DisplayApp;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RemoveFragmentAdapter extends BaseAdapter implements Filterable {
+public class WhitelistFragmentAdapter extends BaseAdapter implements Filterable {
 
     private final Context context;
     private final List<DisplayApp> filterableAppList;
     private final List<DisplayApp> originalAppList;
-    private final RemoveFilter filter;
-    private final WhitelistService whitelistService;
+    private final WhitelistFilter filter;
 
-    public RemoveFragmentAdapter(Context context, List<DisplayApp> appList, WhitelistService whitelistService) {
+    public WhitelistFragmentAdapter(Context context, List<DisplayApp> appList) {
         this.context = context;
         this.filterableAppList = appList;
         this.originalAppList = new ArrayList<>(appList);
-        filter = new RemoveFilter();
-        this.whitelistService = whitelistService;
+        filter = new WhitelistFilter();
     }
 
     @Override
@@ -56,35 +52,21 @@ public class RemoveFragmentAdapter extends BaseAdapter implements Filterable {
         View v;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = inflater.inflate(R.layout.item_remove, parent, false);
+            v = inflater.inflate(R.layout.item_whitelist, parent, false);
         } else {
             v = convertView;
         }
 
-        ImageView imageView = v.findViewById(R.id.item_remove_imageview);
-        TextView label = v.findViewById(R.id.item_remove_name);
-        Button cancel = v.findViewById(R.id.item_remove_button);
+        ImageView imageView = v.findViewById(R.id.item_whitelist_imageview);
+        TextView label = v.findViewById(R.id.item_whitelist_textview);
+        CheckBox checkBox = v.findViewById(R.id.item_whitelist_checkbox);
 
-        DisplayApp displayApp = filterableAppList.get(position);
-
-        if (displayApp.getIcon() != null) {
-            imageView.setImageDrawable(displayApp.getIcon());
-            cancel.setOnClickListener(view -> {
-                whitelistService.removeWhitelistedApp(displayApp.getActivityName());
-                filterableAppList.remove(position);
-                notifyDataSetChanged();
-            });
-        } else {
-            imageView.setVisibility(View.GONE);
-
-            Resources res = context.getResources();
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) label.getLayoutParams();
-            params.setMargins(Math.round(res.getDimension(R.dimen.default_padding_side)), 0, 0, 0);
-            label.setLayoutParams(params);
-
-            cancel.setVisibility(View.INVISIBLE);
-        }
-        label.setText(displayApp.getName());
+        DisplayApp app = filterableAppList.get(position);
+        imageView.setImageDrawable(app.getIcon());
+        label.setText(app.getName());
+        // note, the listener has to come first before the setting of checked, otherwise it unsets :/
+        checkBox.setOnCheckedChangeListener((cb, checked) -> app.setSelected(checked));
+        checkBox.setChecked(app.isSelected());
 
         return v;
     }
@@ -94,7 +76,7 @@ public class RemoveFragmentAdapter extends BaseAdapter implements Filterable {
         return filter;
     }
 
-    private class RemoveFilter extends Filter {
+    private class WhitelistFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
             String input = charSequence.toString().toLowerCase();

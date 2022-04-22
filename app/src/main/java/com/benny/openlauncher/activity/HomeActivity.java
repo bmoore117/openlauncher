@@ -64,8 +64,8 @@ import com.benny.openlauncher.widget.ItemOptionView;
 import com.benny.openlauncher.widget.MinibarView;
 import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
-import com.hyperion.skywall.service.LicenseAndUpdateService;
-import com.hyperion.skywall.service.WhitelistService;
+import net.skywall.service.LicenseAndUpdateService;
+import net.skywall.service.WhitelistService;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import net.gsantner.opoc.util.ContextUtils;

@@ -1,4 +1,4 @@
-package com.hyperion.skywall.fragment;
+package net.skywall.fragment;
 
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -15,9 +15,10 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.benny.openlauncher.R;
-import com.hyperion.skywall.Pair;
-import com.hyperion.skywall.activity.SkyWallActivity;
-import com.hyperion.skywall.service.AuthService;
+
+import net.skywall.Pair;
+import net.skywall.activity.SkyWallActivity;
+import net.skywall.service.AuthService;
 
 import org.json.JSONException;
 
