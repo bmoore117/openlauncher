@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import net.skywall.Pair;
+import net.skywall.utils.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;

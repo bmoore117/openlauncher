@@ -1,4 +1,4 @@
-package net.skywall;
+package net.skywall.utils;
 
 public class Pair<T,U>
 {

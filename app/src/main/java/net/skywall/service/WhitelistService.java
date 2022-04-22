@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import com.benny.openlauncher.R;
 
-import net.skywall.Pair;
+import net.skywall.utils.Pair;
 
 import java.util.Date;
 import java.util.HashMap;

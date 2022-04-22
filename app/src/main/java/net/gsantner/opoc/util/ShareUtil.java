@@ -60,7 +60,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
-import net.skywall.Pair;
+import net.skywall.utils.Pair;
 
 import java.io.File;
 import java.io.FileDescriptor;

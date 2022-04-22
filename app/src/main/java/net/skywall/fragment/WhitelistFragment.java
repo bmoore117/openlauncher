@@ -20,7 +20,9 @@ import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 import net.skywall.fragment.view.DisplayApp;
+import net.skywall.service.AuthService;
 import net.skywall.service.WhitelistService;
+import net.skywall.utils.LicenseUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +37,7 @@ public class WhitelistFragment extends Fragment {
     private static final String TAG = WhitelistFragment.class.getSimpleName();
 
     private final WhitelistService whitelistService;
+    private final AuthService authService;
     private List<DisplayApp> nonWhitelistedApps;
 
     // these are apps that either don't need to be whitelisted, such as the Skywall app itself, or
@@ -43,6 +46,7 @@ public class WhitelistFragment extends Fragment {
 
     public WhitelistFragment() {
         whitelistService = WhitelistService.getInstance(getContext());
+        authService = AuthService.getInstance(getContext());
         nonWhitelistedApps = new ArrayList<>();
     }
 
@@ -101,7 +105,7 @@ public class WhitelistFragment extends Fragment {
         });
 
         Button whitelist = view.findViewById(R.id.fragment_whitelist_button);
-        whitelist.setOnClickListener(button -> {
+        whitelist.setOnClickListener(button -> LicenseUtils.performOrShowMessage(() -> {
             boolean queued = false;
             Iterator<DisplayApp> it = nonWhitelistedApps.iterator();
             while (it.hasNext()) {
@@ -116,7 +120,7 @@ public class WhitelistFragment extends Fragment {
                 fragmentAdapter.notifyDataSetChanged();
                 Toast.makeText(getContext(), R.string.changes_queued, Toast.LENGTH_SHORT).show();
             }
-        });
+        }, authService::isLicensed, getContext()));
 
         return view;
     }

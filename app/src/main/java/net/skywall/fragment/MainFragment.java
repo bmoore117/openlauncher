@@ -40,6 +40,7 @@ public class MainFragment extends Fragment {
     private FragmentManager fragmentManager;
     private AuthService authService;
     private static final AtomicBoolean startupChecksPassed = new AtomicBoolean(false);
+    private WhitelistService whitelistService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,7 +59,8 @@ public class MainFragment extends Fragment {
         thirdTab.setText(R.string.pending);
         tabLayout.addTab(thirdTab);
 
-        WhitelistService.getInstance(getContext());
+        whitelistService = WhitelistService.getInstance(getContext());
+        AuthService.getInstance(getContext());
         WhitelistFragment whitelistFragment = new WhitelistFragment();
         PendingFragment pendingFragment = new PendingFragment();
         RemoveFragment removeFragment = new RemoveFragment();
@@ -100,7 +102,6 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        WhitelistService whitelistService = WhitelistService.getInstance(getContext());
         Context context = getContext();
         if (startupChecksPassed.compareAndSet(false, true)) {
             final Handler handler = new Handler(Looper.getMainLooper());

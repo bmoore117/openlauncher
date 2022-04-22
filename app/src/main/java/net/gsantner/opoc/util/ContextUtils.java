@@ -79,7 +79,7 @@ import androidx.core.view.ViewCompat;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import net.gsantner.opoc.format.markdown.SimpleMarkdownParser;
-import net.skywall.Pair;
+import net.skywall.utils.Pair;
 
 import java.io.BufferedReader;
 import java.io.File;

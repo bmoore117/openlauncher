@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.benny.openlauncher.R;
 
-import net.skywall.Pair;
+import net.skywall.utils.Pair;
 import net.skywall.activity.SkyWallActivity;
 import net.skywall.service.AuthService;
 

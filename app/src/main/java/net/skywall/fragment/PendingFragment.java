@@ -14,7 +14,7 @@ import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 
-import net.skywall.Pair;
+import net.skywall.utils.Pair;
 import net.skywall.fragment.view.DisplayApp;
 import net.skywall.service.WhitelistService;
 
