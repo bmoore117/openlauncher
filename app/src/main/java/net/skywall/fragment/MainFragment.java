@@ -106,19 +106,21 @@ public class MainFragment extends Fragment {
         if (startupChecksPassed.compareAndSet(false, true)) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(() -> {
-                // here we check for the proper permissions and throw up screens
-                // this is all run on a delay as the OS does not seem to start accessibility services
-                // until a second or two after boot
-                if (!isDeviceAdmin(context)) {
-                    startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
-                    startupChecksPassed.set(false);
-                } else if (!isAccessibilityServiceEnabled(context)) {
-                    if (whitelistService.getCurrentDelayMillis() > 0) {
-                        whitelistService.setDelay(0); // should immediately set delay 0
-                        Toast.makeText(context, R.string.accessibility_has_reset, Toast.LENGTH_LONG).show();
+                if (authService.isLicensed()) {
+                    // here we check for the proper permissions and throw up screens
+                    // this is all run on a delay as the OS does not seem to start accessibility services
+                    // until a second or two after boot
+                    if (!isDeviceAdmin(context)) {
+                        startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
+                        startupChecksPassed.set(false);
+                    } else if (!isAccessibilityServiceEnabled(context)) {
+                        if (whitelistService.getCurrentDelayMillis() > 0) {
+                            whitelistService.setDelay(0); // should immediately set delay 0
+                            Toast.makeText(context, R.string.accessibility_has_reset, Toast.LENGTH_LONG).show();
+                        }
+                        startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                        startupChecksPassed.set(false);
                     }
-                    startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
-                    startupChecksPassed.set(false);
                 }
             }, 5000);
         }

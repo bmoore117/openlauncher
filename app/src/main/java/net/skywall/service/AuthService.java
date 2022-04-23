@@ -87,28 +87,17 @@ public class AuthService {
         HttpURLConnection existsRequest = (HttpURLConnection) url.openConnection();
         existsRequest.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
         existsRequest.setRequestMethod("GET");
+        int max;
         try (InputStream in = new BufferedInputStream(existsRequest.getInputStream())) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String output = reader.lines().collect(Collectors.joining("\n"));
             JSONArray jsonArray = new JSONArray(output);
-            String uuid = findExistingAppPasswordUuid(jsonArray, name);
-            if (uuid != null) {
-                HttpURLConnection delete = (HttpURLConnection) new URL(baseUrl + "/" + uuid).openConnection();
-                try {
-                    delete.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
-                    delete.setRequestMethod("DELETE");
-                    delete.setDoOutput(true);
-                    delete.connect();
-                    Log.i(TAG, "Delete of prior app password finished with status: " + delete.getResponseCode());
-                } finally {
-                    delete.disconnect();
-                }
-            }
+            max = findMaxSuffix(jsonArray);
         } finally {
             existsRequest.disconnect();
         }
 
-        HttpURLConnection createRequest = (HttpURLConnection) (new URL(baseUrl + "?name=" + name)).openConnection();
+        HttpURLConnection createRequest = (HttpURLConnection) (new URL(baseUrl + "?name=" + name + "-" + (max + 1))).openConnection();
         createRequest.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
         createRequest.setRequestMethod("POST");
         try (InputStream in = new BufferedInputStream(createRequest.getInputStream())) {
@@ -121,14 +110,20 @@ public class AuthService {
         }
     }
 
-    private String findExistingAppPasswordUuid(JSONArray jsonArray, String name) throws JSONException {
+    private int findMaxSuffix(JSONArray jsonArray) throws JSONException {
+        int max = 0;
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject object = jsonArray.getJSONObject(i);
-            if (name.equals(object.getString("name"))) {
-                return object.getString("uuid");
+            String name = object.getString("name");
+            if (!name.contains("android")) {
+                continue;
+            }
+            int idx = Integer.parseInt(name.split("-")[2]);
+            if (idx > max) {
+                max = idx;
             }
         }
-        return null;
+        return max;
     }
 
     //@Scheduled(cron = "0 0 12 * * *")
