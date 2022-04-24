@@ -67,9 +67,9 @@ public class LicenseAndUpdateService extends JobService {
             AuthService authService = AuthService.getInstance(applicationContext);
             authService.checkAndUpdateLicense();
 
-            if (downloadUpdateIfAvailable(this)) {
+            /*if (downloadUpdateIfAvailable(this)) {
                 installPackage(this);
-            }
+            }*/
 
             jobFinished(params, false); // do not reschedule this job, it is periodic already
         });
