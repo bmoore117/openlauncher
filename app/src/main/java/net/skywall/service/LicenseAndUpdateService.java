@@ -84,7 +84,7 @@ public class LicenseAndUpdateService extends JobService {
     public static boolean downloadUpdateIfAvailable(Context context) {
         boolean result = false;
         try {
-            URL url = new URL("https://sky-wall.net/wp-content/uploads/app-version.json");
+            URL url = new URL("https://skywall.net/wp-content/uploads/app-version.json");
             HttpURLConnection versionRequest = (HttpURLConnection) url.openConnection();
             versionRequest.setRequestMethod("GET");
             try (InputStream versionJson = new BufferedInputStream(versionRequest.getInputStream())) {
@@ -96,7 +96,7 @@ public class LicenseAndUpdateService extends JobService {
                 String currentVersion = getVersion(context);
 
                 if (newVersion.compareTo(currentVersion) > 0) {
-                    HttpURLConnection apkRequest = (HttpURLConnection) new URL("https://sky-wall.net/wp-content/uploads/" + SKYWALL + ".apk").openConnection();
+                    HttpURLConnection apkRequest = (HttpURLConnection) new URL("https://skywall.net/wp-content/uploads/" + SKYWALL + ".apk").openConnection();
                     apkRequest.setRequestMethod("GET");
                     try (InputStream apk = new BufferedInputStream(apkRequest.getInputStream())) {
                         Path appPath = getUpdateLocation(context).toPath().toAbsolutePath();

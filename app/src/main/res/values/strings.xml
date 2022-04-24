@@ -280,7 +280,7 @@
     <string name="accessibility_service_description">SkyWall needs your approval to run as an Accessibility Service to be able to monitor the screen contents to block apps.</string>
     <string name="accessibility_service_name">SkyWall</string>
     <string name="login">Login</string>
-    <string name="forgot_password"><a href="https://sky-wall.net/my-account/lost-password/">FORGOT PASSWORD?</a></string>
+    <string name="forgot_password"><a href="https://skywall.net/my-account/lost-password/">FORGOT PASSWORD?</a></string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="username">username</string>

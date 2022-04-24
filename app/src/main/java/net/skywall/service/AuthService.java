@@ -48,7 +48,7 @@ public class AuthService {
     public Pair<Integer, Boolean> authenticate(String username, String password) throws IOException, InterruptedException, JSONException {
         byte[] base64Bytes = Base64.getEncoder().encode((username + ":" + password).getBytes());
 
-        URL url = new URL("https://sky-wall.net/wp-json/wp/v2/users/me?context=edit&_fields=roles,id");
+        URL url = new URL("https://skywall.net/wp-json/wp/v2/users/me?context=edit&_fields=roles,id");
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
         urlConnection.setRequestMethod("GET");
@@ -82,7 +82,7 @@ public class AuthService {
         byte[] base64Bytes = Base64.getEncoder().encode((username + ":" + password).getBytes());
 
         String name = "skywall-android";
-        String baseUrl = String.format("https://sky-wall.net/wp-json/wp/v2/users/%d/application-passwords", userId);
+        String baseUrl = String.format("https://skywall.net/wp-json/wp/v2/users/%d/application-passwords", userId);
         URL url = new URL(baseUrl);
         HttpURLConnection existsRequest = (HttpURLConnection) url.openConnection();
         existsRequest.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
