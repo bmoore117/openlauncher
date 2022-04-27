@@ -24,11 +24,14 @@ public class WindowChangeDetectingService extends AccessibilityService {
     public static final String ACTIVITY_NAME = "activityName";
 
     private static final Set<String> allowedActivities = new HashSet<>(
-            Arrays.asList("com.android.documentsui.picker.PickActivity",
+            Arrays.asList("com.android.cellbroadcastreceiver.CellBroadcastAlertDialog",
+                    "com.android.certinstaller.CertInstallerMain",
+                    "com.android.documentsui.picker.PickActivity",
                     "com.android.internal.app.ResolverActivity",
                     "com.android.internal.app.ChooserActivity",
                     "com.android.packageinstaller.UninstallerActivity",
                     "com.android.permissioncontroller.permission.ui.GrantPermissionsActivity",
+                    "com.android.permissioncontroller.permission.ui.ManagePermissionsActivity",
                     "com.android.permissioncontroller.role.ui.RequestRoleActivity",
                     "com.android.quickstep.RecentsActivity",
                     "com.android.settings.bluetooth.BluetoothPairingDialog",
@@ -47,6 +50,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.facebook.katana.gdp.WebViewProxyAuth",
                     "com.google.android.apps.inputmethod.latin.preference.SettingsActivity",
                     "com.google.android.gms.appinvite.AppInviteAcceptInvitationActivity",
+                    "com.google.android.gms.auth.api.credentials.assistedsignin.ui.AssistedSignInActivity",
                     "com.google.android.gms.auth.api.credentials.ui.CredentialPickerActivity",
                     "com.google.android.gms.auth.api.signin.ui.SignInActivity",
                     "com.google.android.gms.auth.uiflows.addaccount.PreAddAccountActivity",
@@ -54,9 +58,11 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.google.android.gms.auth.uiflows.minutemaid.MinuteMaidActivity",
                     "com.google.android.gms.common.account.AccountPickerActivity",
                     "com.google.android.gms.common.api.GoogleApiActivity",
+                    "com.google.android.gms.pay.main.PayActivity",
                     "com.google.android.gms.octarine.ui.OctarineWebviewActivity",
                     "com.google.android.gms.setupservices.GoogleServicesActivity",
                     "com.google.android.gms.signin.activity.SignInActivity",
+                    "com.google.android.gms.update.phone.PopupDialog",
                     "com.google.android.gms.update.SystemUpdateActivity",
                     "com.google.android.gms.wallet.activity.GenericDelegatorInternalActivity",
                     "com.google.android.location.settings.LocationSettingsCheckerActivity"));
