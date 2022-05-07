@@ -41,6 +41,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.android.settings.Settings$ManageExternalStorageActivity",
                     "com.android.settings.Settings$NetworkProviderSettingsActivity",
                     "com.android.settings.Settings$SoundSettingsActivity",
+                    "com.android.settings.Settings$WifiSettingsActivity",
                     "com.android.settings.Settings$WifiSettings2Activity",
                     "com.android.settings.SubSettings",
                     "com.android.settings.wifi.dpp.WifiDppConfiguratorActivity",
