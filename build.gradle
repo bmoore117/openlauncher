@@ -24,7 +24,7 @@ buildscript {
 
         version_compileSdk = 29
         version_buildTools = "29.0.3"
-        version_minSdk = 29
+        version_minSdk = 27
 
         // https://github.com/guardianproject/NetCipher/releases
         version_library_netcipher = "2.0.0-alpha1"
