@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.benny.openlauncher.R;
+import com.benny.openlauncher.util.AppSettings;
 
 import net.skywall.utils.Pair;
 import net.skywall.activity.SkyWallActivity;
@@ -45,10 +46,17 @@ public class LoginFragment extends Fragment {
         EditText username = view.findViewById(R.id.fragment_login_username);
         EditText password = view.findViewById(R.id.fragment_login_password);
         Button loginButton = view.findViewById(R.id.fragment_login_login_button);
-        TextView forgotPassword = view.findViewById(R.id.fragment_login_forgot_password);
         ProgressBar progressBar = view.findViewById(R.id.fragment_login_progress_bar);
         LinearLayout progressBarPlate = view.findViewById(R.id.fragment_login_progress_bar_plate);
+
+        TextView forgotPassword = view.findViewById(R.id.fragment_login_forgot_password);
         forgotPassword.setMovementMethod(LinkMovementMethod.getInstance());
+
+        TextView signupLink = view.findViewById(R.id.fragment_login_signup_link);
+        signupLink.setMovementMethod(LinkMovementMethod.getInstance());
+
+        String theme = AppSettings.get().getTheme();
+
 
         loginButton.setOnClickListener(button -> {
             progressBarPlate.setVisibility(View.VISIBLE);
