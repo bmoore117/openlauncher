@@ -61,6 +61,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.google.android.gms.common.api.GoogleApiActivity",
                     "com.google.android.gms.pay.main.PayActivity",
                     "com.google.android.gms.octarine.ui.OctarineWebviewActivity",
+                    "com.google.android.gms.security.recaptcha.RecaptchaActivity",
                     "com.google.android.gms.setupservices.GoogleServicesActivity",
                     "com.google.android.gms.signin.activity.SignInActivity",
                     "com.google.android.gms.update.phone.PopupDialog",
