@@ -167,7 +167,7 @@ public class SettingsAboutFragment extends GsPreferenceFragmentCompat<AppSetting
 
         // Basic app info
         if ((pref = findPreference(R.string.pref_key__more_info__app)) != null && pref.getSummary() == null) {
-            pref.setIcon(R.mipmap.ic_launcher);
+            pref.setIcon(R.mipmap.ic_launcher_2);
             pref.setSummary(String.format(locale, "%s\nVersion v%s (%d)", _cu.getPackageIdReal(), _cu.getAppVersionName(), _cu.bcint("VERSION_CODE", 0)));
         }
 
