@@ -8,7 +8,7 @@
     <Preference
         android:key="@string/pref_key__more_info__app"
         android:title="@string/app_name"
-        tools:icon="@drawable/ic_launcher"
+        tools:icon="@drawable/ic_launcher_2"
         tools:summary="Version v0.5" />
 
     <Preference

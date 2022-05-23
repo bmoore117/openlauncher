@@ -133,7 +133,7 @@ public class DialogHelper {
                 .title((activity.getString(R.string.select_icon_pack)))
                 .build();
 
-        fastItemAdapter.add(new IconLabelItem(activity, R.mipmap.ic_launcher, R.string.default_icons)
+        fastItemAdapter.add(new IconLabelItem(activity, R.mipmap.ic_launcher_2, R.string.default_icons)
                 .withIconPadding(16)
                 .withIconGravity(Gravity.START)
                 .withOnClickListener(new View.OnClickListener() {
