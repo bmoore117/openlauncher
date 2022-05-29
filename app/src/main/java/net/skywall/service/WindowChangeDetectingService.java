@@ -43,6 +43,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.android.settings.Settings$SoundSettingsActivity",
                     "com.android.settings.Settings$WifiSettingsActivity",
                     "com.android.settings.Settings$WifiSettings2Activity",
+                    "com.android.settings.Settings$WifiTetherSettingsActivity",
                     "com.android.settings.SubSettings",
                     "com.android.settings.wifi.dpp.WifiDppConfiguratorActivity",
                     "com.android.systemui.pip.phone.PipMenuActivity",
