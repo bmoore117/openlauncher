@@ -24,7 +24,8 @@ public class WindowChangeDetectingService extends AccessibilityService {
     public static final String ACTIVITY_NAME = "activityName";
 
     private static final Set<String> allowedActivities = new HashSet<>(
-            Arrays.asList("com.android.cellbroadcastreceiver.CellBroadcastAlertDialog",
+            Arrays.asList("com.android.captiveportallogin.CaptivePortalLoginActivity",
+                    "com.android.cellbroadcastreceiver.CellBroadcastAlertDialog",
                     "com.android.certinstaller.CertInstallerMain",
                     "com.android.documentsui.picker.PickActivity",
                     "com.android.internal.app.ResolverActivity",
@@ -35,6 +36,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.android.permissioncontroller.role.ui.RequestRoleActivity",
                     "com.android.quickstep.RecentsActivity",
                     "com.android.settings.bluetooth.BluetoothPairingDialog",
+                    "com.android.settings.network.telephony.MobileNetworkActivity",
                     "com.android.settings.panel.SettingsPanelActivity",
                     "com.android.settings.password.ConfirmDeviceCredentialActivity",
                     "com.android.settings.Settings$ConnectedDeviceDashboardActivity",
