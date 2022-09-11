@@ -141,6 +141,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         _db.delete(TABLE_HOME, COLUMN_TIME + " = ?", new String[]{String.valueOf(item.getId())});
     }
 
+    public void deleteItems(App app) {
+        _db.delete(TABLE_HOME,
+                COLUMN_TYPE + " = '" + Item.Type.WIDGET + "' AND " + COLUMN_LABEL + " LIKE ?",
+                new String[]{app.getPackageName() + Definitions.DELIMITER + "%"});
+        _db.delete(TABLE_HOME,
+                COLUMN_TYPE + " = '" + Item.Type.APP + "' AND " + COLUMN_DATA + " = ?",
+                new String[]{Tool.getIntentAsString(Tool.getIntentFromApp(app))});
+    }
+
     public List<List<Item>> getDesktop() {
         String SQL_QUERY_DESKTOP = SQL_QUERY + TABLE_HOME;
         Cursor cursor = _db.rawQuery(SQL_QUERY_DESKTOP, null);
@@ -276,8 +285,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             case SHORTCUT: {
                 item.setIntent(Tool.getIntentFromString(data));
-                App app = Setup.get().getAppLoader().findItemApp(item);
-                item.setIcon(app != null ? app.getIcon() : null);
+                item.setIcon(Tool.getIcon(_context, Integer.toString(item.getId())));
+                if (item.getIcon() == null) {
+                    App app = Setup.get().getAppLoader().findItemApp(item);
+                    item.setIcon(app != null ? app.getIcon() : null);
+                }
                 break;
             }
             case GROUP: {
@@ -306,6 +318,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return item;
+    }
+
+    public void addPage(int position) {
+        _db.execSQL("UPDATE " + TABLE_HOME + " SET " + COLUMN_PAGE + " = " + COLUMN_PAGE + " + 1 WHERE " + COLUMN_PAGE + " >= ?",
+                new String[] {String.valueOf(position)});
+    }
+
+    public void removePage(int position) {
+        _db.execSQL("UPDATE " + TABLE_HOME + " SET " + COLUMN_PAGE + " = " + COLUMN_PAGE + " - 1 WHERE " + COLUMN_PAGE + " > ?",
+                new String[] {String.valueOf(position)});
     }
 
     public void open() {

@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
@@ -191,6 +192,10 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         }
 
         public void addPageLeft() {
+            // Shift pages to the right (including home page)
+            HomeActivity._db.addPage(0);
+            Setup.appSettings().setDesktopPageCurrent(Setup.appSettings().getDesktopPageCurrent()+1);
+
             _desktop.getPages().add(0, getItemLayout());
             notifyDataSetChanged();
         }
@@ -209,6 +214,13 @@ public final class Desktop extends ViewPager implements DesktopCallback {
                     }
                 }
             }
+
+            // Shift pages to the left (including home page)
+            HomeActivity._db.removePage(position);
+            if (Setup.appSettings().getDesktopPageCurrent() > position) {
+                Setup.appSettings().setDesktopPageCurrent(Setup.appSettings().getDesktopPageCurrent() - 1);
+            }
+
             _desktop.getPages().remove(position);
             notifyDataSetChanged();
         }
@@ -310,13 +322,19 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         _pageIndicator = pageIndicator;
     }
 
+
     public final void initDesktop() {
         _adapter = new DesktopAdapter(this);
         setAdapter(_adapter);
         setCurrentItem(Setup.appSettings().getDesktopPageCurrent());
+
         if (Setup.appSettings().getDesktopShowIndicator() && _pageIndicator != null) {
             _pageIndicator.setViewPager(this);
         }
+        addItemsToPage();
+    }
+
+    private void addItemsToPage() {
         int columns = Setup.appSettings().getDesktopColumnCount();
         int rows = Setup.appSettings().getDesktopRowCount();
         List<List<Item>> desktopItems = HomeActivity._db.getDesktop();
@@ -329,7 +347,12 @@ public final class Desktop extends ViewPager implements DesktopCallback {
                     addItemToPage(item, pageCount);
                 }
             }
+
         }
+    }
+
+    public final void updateDesktop() {
+        addItemsToPage();
     }
 
     public final void addPageRight(boolean showGrid) {
@@ -348,7 +371,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         int previousPage = getCurrentItem();
         _adapter.addPageLeft();
         setCurrentItem(previousPage + 1, false);
-        setCurrentItem(previousPage - 1);
+        setCurrentItem(previousPage);
         if (Setup.appSettings().getDesktopShowGrid()) {
             for (CellContainer cellContainer : _pages) {
                 cellContainer.setHideGrid(!showGrid);
