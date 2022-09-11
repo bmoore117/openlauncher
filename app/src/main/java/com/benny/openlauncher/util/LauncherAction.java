@@ -30,7 +30,7 @@ public class LauncherAction {
         EditMinibar, SetWallpaper, LockScreen, LauncherSettings, VolumeDialog, DeviceSettings, AppDrawer, SearchBar, MobileNetworkSettings, ShowNotifications, TurnOffScreen, Camera, SkyWall
     }
 
-    public static ActionDisplayItem SkyWallItem = new ActionDisplayItem(Action.SkyWall, "SkyWall", "Manage whitelisted apps", R.drawable.ic_skywall, 117);
+    public static ActionDisplayItem SkyWallItem = new ActionDisplayItem(Action.SkyWall, "SkyWall", "Manage whitelisted apps", R.drawable.logo_white, 117);
 
     public static ActionDisplayItem[] actionDisplayItems = new ActionDisplayItem[]{
             new ActionDisplayItem(Action.EditMinibar, HomeActivity._launcher.getResources().getString(R.string.minibar_title__edit_minibar), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__edit_minibar), R.drawable.ic_edit, 98),
