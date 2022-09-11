@@ -79,10 +79,11 @@ public class WhitelistFragment extends Fragment {
             long millisValue = WhitelistService.valueInMilliSeconds(spinnerValue);
             if (millisValue >= whitelistService.getCurrentDelayMillis()) {
                 whitelistService.setDelay(millisValue);
-                Toast.makeText(getContext(), R.string.delay_set, Toast.LENGTH_SHORT).show();
+                // making toast with getContext() will use the custom theme, breaks in android 13. Use system theme from application
+                Toast.makeText(getContext().getApplicationContext(), R.string.delay_set, Toast.LENGTH_SHORT).show();
             } else {
                 whitelistService.queueDelayReduction(millisValue);
-                Toast.makeText(getContext(), R.string.change_queued, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext().getApplicationContext(), R.string.change_queued, Toast.LENGTH_SHORT).show();
             }
         });
 
