@@ -64,7 +64,7 @@ import com.benny.openlauncher.widget.ItemOptionView;
 import com.benny.openlauncher.widget.MinibarView;
 import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
-import net.skywall.service.LicenseAndUpdateService;
+import net.skywall.service.LicenseService;
 import net.skywall.service.WhitelistService;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
@@ -570,7 +570,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
                 }
             }, 5000);
         }
-        LicenseAndUpdateService.schedule(this);
+        LicenseService.schedule(this);
     }
 
     private boolean isHomeApp() {

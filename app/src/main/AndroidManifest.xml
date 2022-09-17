@@ -19,7 +19,6 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
 
     <application
@@ -162,7 +161,7 @@
                 android:resource="@xml/accessibilityservice"/>
         </service>
 
-        <service android:name="net.skywall.service.LicenseAndUpdateService"
+        <service android:name="net.skywall.service.LicenseService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="true" />
 
