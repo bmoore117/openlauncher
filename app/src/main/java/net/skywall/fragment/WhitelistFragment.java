@@ -120,7 +120,7 @@ public class WhitelistFragment extends Fragment {
             if (queued) {
                 fragmentAdapter.notifyDataSetChanged();
                 if (whitelistService.getCurrentDelayMillis() > 0) {
-                    Toast.makeText(getContext(), R.string.changes_queued, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext().getApplicationContext(), R.string.changes_queued, Toast.LENGTH_SHORT).show();
                 }
             }
         }, authService::isLicensed, getContext()));

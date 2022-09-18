@@ -13,7 +13,7 @@ public class LicenseUtils {
         if (isLicensed.get()) {
             runnable.run();
         } else {
-            Toast.makeText(context, R.string.invalid_license_message, Toast.LENGTH_LONG).show();
+            Toast.makeText(context.getApplicationContext(), R.string.invalid_license_message, Toast.LENGTH_LONG).show();
         }
     }
 }
