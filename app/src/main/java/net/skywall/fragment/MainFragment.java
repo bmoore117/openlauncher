@@ -116,7 +116,7 @@ public class MainFragment extends Fragment {
                     } else if (!isAccessibilityServiceEnabled(context)) {
                         if (whitelistService.getCurrentDelayMillis() > 0) {
                             whitelistService.setDelay(0); // should immediately set delay 0
-                            Toast.makeText(context, R.string.accessibility_has_reset, Toast.LENGTH_LONG).show();
+                            Toast.makeText(context.getApplicationContext(), R.string.accessibility_has_reset, Toast.LENGTH_LONG).show();
                         }
                         startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                         startupChecksPassed.set(false);
