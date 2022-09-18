@@ -8,17 +8,21 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.benny.openlauncher.BuildConfig;
 import net.skywall.activity.BlockedActivity;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class WindowChangeDetectingService extends AccessibilityService {
 
     private static final String TAG = WindowChangeDetectingService.class.getSimpleName();
+    public static final String SUB_SETTINGS = "com.android.settings/.SubSettings";
+    public static final String DEFAULT_APP_ACTIVITY = "com.google.android.permissioncontroller/com.android.permissioncontroller.role.ui.DefaultAppActivity";
 
     private WhitelistService whitelistService;
     public static final String ACTIVITY_NAME = "activityName";
@@ -35,19 +39,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.android.permissioncontroller.permission.ui.ManagePermissionsActivity",
                     "com.android.permissioncontroller.role.ui.RequestRoleActivity",
                     "com.android.quickstep.RecentsActivity",
-                    "com.android.settings.bluetooth.BluetoothPairingDialog",
-                    "com.android.settings.network.telephony.MobileNetworkActivity",
-                    "com.android.settings.panel.SettingsPanelActivity",
-                    "com.android.settings.password.ConfirmDeviceCredentialActivity",
-                    "com.android.settings.Settings$ConnectedDeviceDashboardActivity",
-                    "com.android.settings.Settings$ManageExternalStorageActivity",
-                    "com.android.settings.Settings$NetworkProviderSettingsActivity",
-                    "com.android.settings.Settings$SoundSettingsActivity",
-                    "com.android.settings.Settings$WifiSettingsActivity",
-                    "com.android.settings.Settings$WifiSettings2Activity",
-                    "com.android.settings.Settings$WifiTetherSettingsActivity",
-                    "com.android.settings.SubSettings",
-                    "com.android.settings.wifi.dpp.WifiDppConfiguratorActivity",
                     "com.android.systemui.pip.phone.PipMenuActivity",
                     "com.facebook.gdp.LightWeightProxyAuthActivity",
                     "com.facebook.katana.gdp.ProxyAuthDialog",
@@ -113,6 +104,25 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     boolean isActivity = activityInfo != null;
                     if (isActivity) {
                         Log.i(TAG, "CurrentActivity: " + componentName.flattenToShortString());
+
+                        // here we prevent the user from being able to disable the accessibility service
+                        // or deactivate device admin for this app, or change the home screen to something else
+                        // this enables us to allow the rest of the settings app
+                        if (whitelistService.getCurrentDelayMillis() > 0) {
+                            if (SUB_SETTINGS.equals(componentName.flattenToShortString())) {
+                                String screenTitle = event.getText().isEmpty() ? "" : event.getText().get(0).toString();
+                                List<AccessibilityNodeInfo> nodes = event.getSource().findAccessibilityNodeInfosByText("Use SkyWall");
+                                if (!nodes.isEmpty() || "device admin apps".equalsIgnoreCase(screenTitle)) {
+                                    performGlobalAction(GLOBAL_ACTION_BACK);
+                                }
+                            } else if (DEFAULT_APP_ACTIVITY.equals(componentName.flattenToShortString())) {
+                                String screenTitle = event.getText().isEmpty() ? "" : event.getText().get(0).toString();
+                                if ("default home app".equalsIgnoreCase(screenTitle)) {
+                                    performGlobalAction(GLOBAL_ACTION_BACK);
+                                }
+                            }
+                        }
+
                         if (allowedActivities.contains(className)) {
                             lastActivity = componentName.flattenToShortString();
                             return;

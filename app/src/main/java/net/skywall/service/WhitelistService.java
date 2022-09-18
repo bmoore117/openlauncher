@@ -23,7 +23,16 @@ public class WhitelistService {
     public static final String DELAY_KEY = "skywall.delay";
     private static final String APPS_KEY = "skywall.apps";
 
-    private static final String[] ALLOWED_PACKAGES = new String[] {"com.benny.openlauncher", "net.skywall", "com.android.internal.app.ResolverActivity"};
+    private static final String[] ALLOWED_PACKAGES = new String[] {"com.benny",
+            "com.flask",
+            "net.skywall",
+            "net.gsantner",
+            "com.android.internal.app.ResolverActivity",
+            "com.android.permissioncontroller",
+            "com.android.settings",
+            "com.google.android.permissioncontroller",
+            "com.google.android.settings"
+    };
 
     private static long currentDelayMillis;
 
