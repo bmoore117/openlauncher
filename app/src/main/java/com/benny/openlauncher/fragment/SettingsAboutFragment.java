@@ -21,7 +21,7 @@ import android.net.Uri;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceGroup;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.SettingsActivity;
 import com.benny.openlauncher.util.AppSettings;
 

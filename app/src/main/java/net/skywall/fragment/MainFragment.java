@@ -24,8 +24,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.benny.openlauncher.BuildConfig;
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.BuildConfig;
+import net.skywall.openlauncher.R;
 import com.google.android.material.tabs.TabLayout;
 import net.skywall.activity.SkyWallActivity;
 import net.skywall.service.AuthService;

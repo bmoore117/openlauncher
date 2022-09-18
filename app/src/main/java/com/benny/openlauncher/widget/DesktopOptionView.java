@@ -17,7 +17,7 @@ import android.view.ViewTreeObserver;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.util.Tool;
 import com.benny.openlauncher.viewutil.IconLabelItem;

@@ -11,7 +11,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import net.skywall.fragment.view.DisplayApp;
 
 import java.util.ArrayList;

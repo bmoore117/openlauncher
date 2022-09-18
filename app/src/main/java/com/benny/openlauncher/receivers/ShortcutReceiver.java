@@ -1,4 +1,4 @@
-package com.benny.openlauncher.receivers;
+package net.skywall.openlauncher.Receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,7 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;

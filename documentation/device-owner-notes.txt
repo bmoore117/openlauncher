@@ -10,7 +10,7 @@ As a note, you may have to disable some built-in apps, such as gmail and google 
 get those accounts to disappear. Make sure to re-enable them afterwards
 
 Then do:
-    .\adb.exe shell dpm set-device-owner com.benny.openlauncher/com.benny.openlauncher.receivers.DeviceAdminReceiver
+    .\adb.exe shell dpm set-device-owner com.benny.openlauncher/net.skywall.openlauncher.Receivers.DeviceAdminReceiver
 
 For emulators, do:
-.\adb.exe shell dpm set-device-owner com.benny.openlauncher.nightly.debug/com.benny.openlauncher.receivers.DeviceAdminReceiver
+.\adb.exe shell dpm set-device-owner com.benny.openlauncher.nightly.debug/net.skywall.openlauncher.Receivers.DeviceAdminReceiver

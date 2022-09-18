@@ -6,7 +6,7 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 import android.view.View;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.interfaces.DropTargetListener;
 import com.benny.openlauncher.manager.Setup;

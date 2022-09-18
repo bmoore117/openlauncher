@@ -9,7 +9,7 @@ import android.content.pm.ResolveInfo;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
-import com.benny.openlauncher.BuildConfig;
+import net.skywall.openlauncher.BuildConfig;
 import net.skywall.activity.BlockedActivity;
 
 import java.util.Arrays;

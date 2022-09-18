@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.interfaces.DialogListener;
 import com.benny.openlauncher.manager.Setup;

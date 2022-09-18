@@ -3,7 +3,7 @@ package net.skywall.service;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 
 import net.skywall.utils.Pair;
 
@@ -23,7 +23,7 @@ public class WhitelistService {
     public static final String DELAY_KEY = "skywall.delay";
     private static final String APPS_KEY = "skywall.apps";
 
-    private static final String[] ALLOWED_PACKAGES = new String[] {"com.benny.openlauncher", "net.skywall", "com.android.internal.app.ResolverActivity"};
+    private static final String[] ALLOWED_PACKAGES = new String[] {"com.benny", "com.flask", "net.skywall", "net.gsantner", "com.android.internal.app.ResolverActivity"};
 
     private static long currentDelayMillis;
 

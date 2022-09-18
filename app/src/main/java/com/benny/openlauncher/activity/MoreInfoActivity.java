@@ -4,7 +4,7 @@ import android.os.Bundle;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.widget.Toolbar;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.fragment.SettingsAboutFragment;
 
 public class MoreInfoActivity extends ColorActivity {

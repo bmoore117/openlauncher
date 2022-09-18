@@ -16,11 +16,11 @@ android {
         buildConfigField "String[]", "DETECTED_ANDROID_LOCALES", "${findUsedAndroidLocales()}"
         buildConfigField "String", "BUILD_DATE", "\"${getBuildDate()}\""
         buildConfigField "String", "GITHASH", "\"${getGitHash()}\""
-        resValue "string", "manifest_package_id", "com.benny.openlauncher"
+        resValue "string", "manifest_package_id", "net.skywall.openlauncher"
 
         resValue 'string', 'app_name', "SkyWall"
 
-        applicationId "com.benny.openlauncher"
+        applicationId "net.skywall.openlauncher"
         versionCode 42
         versionName "0.7.4"
     }
@@ -37,7 +37,7 @@ android {
           buildConfigField "boolean", "IS_NIGHTLY_BUILD", "true"
           versionCode = Integer.parseInt(new Date().format('yyMMdd'))
           versionName = new Date().format('yyMMdd')
-          applicationId "com.benny.openlauncher.nightly"
+          applicationId "net.skywall.openlauncher.nightly"
           resValue 'string', 'app_name', "SkyWall"
         }
 

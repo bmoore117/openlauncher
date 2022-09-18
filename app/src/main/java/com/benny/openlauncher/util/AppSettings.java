@@ -7,7 +7,7 @@ import android.graphics.Color;
 import androidx.core.content.ContextCompat;
 
 import com.benny.openlauncher.AppObject;
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.widget.AppDrawerController;
 import com.benny.openlauncher.widget.PagerIndicator;

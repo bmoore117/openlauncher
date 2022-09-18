@@ -15,8 +15,8 @@ import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.benny.openlauncher.BuildConfig;
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.BuildConfig;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 import net.skywall.fragment.view.DisplayApp;

@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import net.skywall.service.WindowChangeDetectingService;
 
 public class BlockedActivity extends AppCompatActivity {
