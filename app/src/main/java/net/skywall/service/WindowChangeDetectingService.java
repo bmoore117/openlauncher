@@ -115,6 +115,9 @@ public class WindowChangeDetectingService extends AccessibilityService {
                                 if (!nodes.isEmpty() || "device admin apps".equalsIgnoreCase(screenTitle)
                                         || "install unknown apps".equalsIgnoreCase(screenTitle)) {
                                     performGlobalAction(GLOBAL_ACTION_BACK);
+                                } else if ("app info".equalsIgnoreCase(screenTitle) &&
+                                        !event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()) {
+                                    performGlobalAction(GLOBAL_ACTION_BACK);
                                 }
                             } else if (DEFAULT_APP_ACTIVITY.equals(componentName.flattenToShortString())) {
                                 String screenTitle = event.getText().isEmpty() ? "" : event.getText().get(0).toString();
