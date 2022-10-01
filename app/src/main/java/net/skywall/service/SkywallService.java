@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import net.skywall.fragment.view.Phone;
 import net.skywall.utils.Pair;
 
 import org.json.JSONArray;
@@ -17,23 +18,26 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class AuthService {
+public class SkywallService {
 
-    private static final String TAG = AuthService.class.getSimpleName();
+    private static final String TAG = SkywallService.class.getSimpleName();
     public static final String IS_LICENSED = "isLicensed";
     public static final String USERNAME = "USERNAME";
     public static final String PASSWORD = "PASSWORD";
 
     private SharedPreferences authCache;
     private boolean isInit;
-    private static final AuthService instance = new AuthService();
+    private static final SkywallService instance = new SkywallService();
 
-    private AuthService() {}
+    private SkywallService() {}
 
-    public static AuthService getInstance(Context context) {
+    public static SkywallService getInstance(Context context) {
         if (!instance.isInit) {
             instance.init(context.getApplicationContext());
         }
@@ -126,7 +130,6 @@ public class AuthService {
         return max;
     }
 
-    //@Scheduled(cron = "0 0 12 * * *")
     public void checkAndUpdateLicense() {
         String appPassword = getPassword();
         if (appPassword != null) {
@@ -138,6 +141,69 @@ public class AuthService {
             } catch (IOException | InterruptedException | JSONException e) {
                 Log.e(TAG, "Error authenticating", e);
             }
+        }
+    }
+
+    public List<Phone> fetchUserPhones() throws IOException, JSONException {
+        String appPassword = getPassword();
+        if (appPassword == null) {
+            return Collections.emptyList();
+        }
+
+        byte[] base64Bytes = Base64.getEncoder().encode((getUsername() + ":" + appPassword).getBytes());
+
+        URL url = new URL("https://skywall-361905.uc.r.appspot.com/get-user-phones");
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        urlConnection.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
+        urlConnection.setRequestProperty("Content-Type", "application/json");
+        urlConnection.setRequestProperty("Accept", "application/json");
+        urlConnection.setRequestMethod("POST");
+        urlConnection.setDoOutput(true);
+        JSONObject body = new JSONObject();
+        body.put("skywallUsername", getUsername());
+        body.put("skywallPassword", appPassword);
+        urlConnection.getOutputStream().write(body.toString(4).getBytes());
+        try {
+            if (urlConnection.getResponseCode() != 200) {
+                return Collections.emptyList();
+            }
+            try (InputStream in = new BufferedInputStream(urlConnection.getInputStream())) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String output = reader.lines().collect(Collectors.joining("\n"));
+                JSONArray results = new JSONArray(output);
+                List<Phone> phones = new ArrayList<>(results.length());
+                for (int i = 0; i < results.length(); i++) {
+                    JSONObject object = results.getJSONObject(i);
+                    phones.add(new Phone(object.getString("phoneName"), object.getString("enrollmentTokenName")));
+                }
+                return phones;
+            }
+        } finally {
+            urlConnection.disconnect();
+        }
+    }
+
+    public void deprovisionPhone(Phone phone) throws IOException, JSONException {
+        String appPassword = getPassword();
+        if (appPassword == null) {
+            return;
+        }
+
+        byte[] base64Bytes = Base64.getEncoder().encode((getUsername() + ":" + appPassword).getBytes());
+        HttpURLConnection request = (HttpURLConnection) (new URL("https://skywall-361905.uc.r.appspot.com/deprovision")).openConnection();
+        request.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
+        request.setRequestProperty("Accept", "application/json");
+        request.setRequestMethod("POST");
+        request.setDoOutput(true);
+        JSONObject body = new JSONObject();
+        body.put("skywallUsername", getUsername());
+        body.put("skywallPassword", appPassword);
+        body.put("enrollmentTokenName", phone.getEnrollmentTokenName());
+        request.getOutputStream().write(body.toString(4).getBytes());
+        try {
+            request.getResponseCode(); // forces sending
+        } finally {
+            request.disconnect();
         }
     }
 

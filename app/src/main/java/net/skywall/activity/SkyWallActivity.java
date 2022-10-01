@@ -2,7 +2,6 @@ package net.skywall.activity;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -12,7 +11,7 @@ import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.ColorActivity;
 import net.skywall.fragment.LoginFragment;
 import net.skywall.fragment.MainFragment;
-import net.skywall.service.AuthService;
+import net.skywall.service.SkywallService;
 
 public class SkyWallActivity extends ColorActivity {
 
@@ -32,12 +31,12 @@ public class SkyWallActivity extends ColorActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setTitle(R.string.skywall);
 
-        AuthService authService = AuthService.getInstance(this);
+        SkywallService skywallService = SkywallService.getInstance(this);
         mainFragment = new MainFragment();
         loginFragment = new LoginFragment();
         fragmentManager = getSupportFragmentManager();
 
-        if (!authService.isLicensed() && authService.getUsername() == null) {
+        if (!skywallService.isLicensed() && skywallService.getUsername() == null) {
             SkyWallActivity.doTransition(loginFragment);
         } else {
             SkyWallActivity.doTransition(mainFragment);

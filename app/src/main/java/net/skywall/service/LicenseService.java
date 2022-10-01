@@ -43,8 +43,8 @@ public class LicenseService extends JobService {
         Log.i(TAG, "Starting LicenseJobService");
         Context applicationContext = getApplicationContext();
         CompletableFuture.runAsync(() -> {
-            AuthService authService = AuthService.getInstance(applicationContext);
-            authService.checkAndUpdateLicense();
+            SkywallService skywallService = SkywallService.getInstance(applicationContext);
+            skywallService.checkAndUpdateLicense();
 
             jobFinished(params, false); // do not reschedule this job, it is periodic already
         });

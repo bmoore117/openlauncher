@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
@@ -20,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -31,7 +29,7 @@ import net.skywall.openlauncher.BuildConfig;
 import net.skywall.openlauncher.R;
 import com.google.android.material.tabs.TabLayout;
 import net.skywall.activity.SkyWallActivity;
-import net.skywall.service.AuthService;
+import net.skywall.service.SkywallService;
 import net.skywall.service.WhitelistService;
 import net.skywall.service.WindowChangeDetectingService;
 
@@ -41,14 +39,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MainFragment extends Fragment {
 
     private FragmentManager fragmentManager;
-    private AuthService authService;
+    private SkywallService skywallService;
     private static final AtomicBoolean startupChecksPassed = new AtomicBoolean(false);
     private WhitelistService whitelistService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        authService = AuthService.getInstance(getContext());
+        skywallService = SkywallService.getInstance(getContext());
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         TabLayout tabLayout = view.findViewById(R.id.fragment_main_tablayout);
 
@@ -61,19 +59,23 @@ public class MainFragment extends Fragment {
         TabLayout.Tab thirdTab = tabLayout.newTab();
         thirdTab.setText(R.string.pending);
         tabLayout.addTab(thirdTab);
+        TabLayout.Tab fourthTab = tabLayout.newTab();
+        fourthTab.setText(R.string.deprovision);
+        tabLayout.addTab(fourthTab);
+
 
         whitelistService = WhitelistService.getInstance(getContext());
-        AuthService.getInstance(getContext());
+        SkywallService.getInstance(getContext());
         WhitelistFragment whitelistFragment = new WhitelistFragment();
         PendingFragment pendingFragment = new PendingFragment();
         RemoveFragment removeFragment = new RemoveFragment();
+        DeprovisionFragment deprovisionFragment = new DeprovisionFragment();
         fragmentManager = getChildFragmentManager();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Fragment fragment = null;
-
                 switch (tab.getPosition()) {
                     case 0:
                         fragment = whitelistFragment;
@@ -83,6 +85,9 @@ public class MainFragment extends Fragment {
                         break;
                     case 2:
                         fragment = pendingFragment;
+                        break;
+                    case 3:
+                        fragment = deprovisionFragment;
                 }
                 doTransition(fragment);
             }
@@ -109,7 +114,7 @@ public class MainFragment extends Fragment {
         if (startupChecksPassed.compareAndSet(false, true)) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(() -> {
-                if (authService.isLicensed()) {
+                if (skywallService.isLicensed()) {
                     // here we check for the proper permissions and throw up screens
                     // this is all run on a delay as the OS does not seem to start accessibility services
                     // until a second or two after boot
@@ -199,7 +204,7 @@ public class MainFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_logout_button) {
-            authService.logout();
+            skywallService.logout();
             SkyWallActivity.doTransition(SkyWallActivity.getLoginFragment());
             return true;
         }

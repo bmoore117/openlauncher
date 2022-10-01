@@ -269,6 +269,7 @@
     <string name="add">Add</string>
     <string name="pending">Pending</string>
     <string name="remove_apps">Remove any apps you no longer wish to allow</string>
+    <string name="deprovision_prompt">Uninstalling SkyWall requires that you deprovision your phone from SkyWall\'s management. Deprovisioning will factory reset your phone, similar to the process you followed during original enrollment. Make sure to backup your data before doing this! If you don\'t want to reset your phone, you can simply set delay to 0 and choose another default home app.</string>
     <string name="no_pending_apps">No pending apps</string>
     <string name="no_whitelisted_apps">No whitelisted apps</string>
     <string name="ignoring_app">Ignoring non-whitelisted app</string>
@@ -294,6 +295,7 @@
     <string name="accessibility_prompt_title">Accessibility Service Setup</string>
     <string name="default_home_app_prompt">SkyWall needs to be the default home app in order to function properly.\n\nClick OK to launch the settings and change SkyWall to the default home app</string>
     <string name="default_home_app_title">Default Home App</string>
+    <string name="deprovision">Deprovision</string>
 
     <string-array name="delay_values">
         <item>0</item>

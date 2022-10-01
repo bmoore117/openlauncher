@@ -15,7 +15,7 @@ import net.skywall.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 import net.skywall.fragment.view.DisplayApp;
-import net.skywall.service.AuthService;
+import net.skywall.service.SkywallService;
 import net.skywall.service.WhitelistService;
 
 import java.util.ArrayList;
@@ -30,12 +30,12 @@ public class RemoveFragment extends Fragment {
     private static final String TAG = RemoveFragment.class.getSimpleName();
 
     private final WhitelistService whitelistService;
-    private final AuthService authService;
+    private final SkywallService skywallService;
     private final List<DisplayApp> whitelistedApps;
 
     public RemoveFragment() {
         whitelistService = WhitelistService.getInstance(getContext());
-        authService = AuthService.getInstance(getContext());
+        skywallService = SkywallService.getInstance(getContext());
         whitelistedApps = new ArrayList<>();
     }
 
@@ -72,7 +72,7 @@ public class RemoveFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_remove, container, false);
 
         RemoveFragmentAdapter fragmentAdapter = new RemoveFragmentAdapter(getContext(),
-                whitelistedApps, whitelistService, authService);
+                whitelistedApps, whitelistService, skywallService);
 
         GridView gridView = view.findViewById(R.id.fragment_remove_grid);
         gridView.setAdapter(fragmentAdapter);

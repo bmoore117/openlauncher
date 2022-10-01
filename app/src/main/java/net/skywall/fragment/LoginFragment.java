@@ -15,11 +15,10 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import net.skywall.openlauncher.R;
-import com.benny.openlauncher.util.AppSettings;
 
 import net.skywall.utils.Pair;
 import net.skywall.activity.SkyWallActivity;
-import net.skywall.service.AuthService;
+import net.skywall.service.SkywallService;
 
 import org.json.JSONException;
 
@@ -30,12 +29,12 @@ public class LoginFragment extends Fragment {
 
     private static final String TAG = LoginFragment.class.getSimpleName();
 
-    private AuthService authService;
+    private SkywallService skywallService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        authService = AuthService.getInstance(getContext());
+        skywallService = SkywallService.getInstance(getContext());
     }
 
     @Override
@@ -63,17 +62,17 @@ public class LoginFragment extends Fragment {
                 String usernameVal = username.getText().toString();
                 String passwordVal = password.getText().toString();
                 try {
-                    Pair<Integer, Boolean> authResult = authService.authenticate(usernameVal, passwordVal);
+                    Pair<Integer, Boolean> authResult = skywallService.authenticate(usernameVal, passwordVal);
                     if (!authResult.second) {
                         errorMessage.post(() -> errorMessage.setText(R.string.invalid_credentials));
                         progressBarPlate.post(() -> progressBarPlate.setVisibility(View.GONE));
                         return;
                     }
 
-                    String appPassword = authService.createOrReplaceAppPassword(usernameVal, passwordVal, authResult.first);
-                    authService.setUsername(usernameVal);
-                    authService.setPassword(appPassword);
-                    authService.setLicensed(true);
+                    String appPassword = skywallService.createOrReplaceAppPassword(usernameVal, passwordVal, authResult.first);
+                    skywallService.setUsername(usernameVal);
+                    skywallService.setPassword(appPassword);
+                    skywallService.setLicensed(true);
 
                     SkyWallActivity.doTransition(SkyWallActivity.getMainFragment());
                 } catch (RuntimeException | IOException | InterruptedException | JSONException e) {

@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import net.skywall.openlauncher.R;
 import net.skywall.fragment.view.DisplayApp;
-import net.skywall.service.AuthService;
+import net.skywall.service.SkywallService;
 import net.skywall.service.WhitelistService;
 import net.skywall.utils.LicenseUtils;
 
@@ -29,16 +29,16 @@ public class RemoveFragmentAdapter extends BaseAdapter implements Filterable {
     private final List<DisplayApp> originalAppList;
     private final RemoveFilter filter;
     private final WhitelistService whitelistService;
-    private final AuthService authService;
+    private final SkywallService skywallService;
 
     public RemoveFragmentAdapter(Context context, List<DisplayApp> appList, WhitelistService whitelistService,
-                                 AuthService authService) {
+                                 SkywallService skywallService) {
         this.context = context;
         this.filterableAppList = appList;
         this.originalAppList = new ArrayList<>(appList);
         filter = new RemoveFilter();
         this.whitelistService = whitelistService;
-        this.authService = authService;
+        this.skywallService = skywallService;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class RemoveFragmentAdapter extends BaseAdapter implements Filterable {
                 whitelistService.removeWhitelistedApp(displayApp.getActivityName());
                 filterableAppList.remove(position);
                 notifyDataSetChanged();
-            }, authService::isLicensed, context));
+            }, skywallService::isLicensed, context));
         } else {
             imageView.setVisibility(View.GONE);
 
