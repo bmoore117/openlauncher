@@ -55,9 +55,6 @@ public class LoginFragment extends Fragment {
         TextView signupLink = view.findViewById(R.id.fragment_login_signup_link);
         signupLink.setMovementMethod(LinkMovementMethod.getInstance());
 
-        String theme = AppSettings.get().getTheme();
-
-
         loginButton.setOnClickListener(button -> {
             progressBarPlate.setVisibility(View.VISIBLE);
             progressBarPlate.setZ(1000.0f);

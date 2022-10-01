@@ -1,10 +1,13 @@
 package net.skywall.fragment;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.app.AlertDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -110,20 +113,51 @@ public class MainFragment extends Fragment {
                     // here we check for the proper permissions and throw up screens
                     // this is all run on a delay as the OS does not seem to start accessibility services
                     // until a second or two after boot
-                    if (!isDeviceAdmin(context)) {
-                        startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
-                        startupChecksPassed.set(false);
+                    if (!isHomeApp(context)) {
+                        showDialog(getString(R.string.default_home_app_prompt), getString(R.string.default_home_app_title), () -> {
+                            startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));
+                            startupChecksPassed.set(false);
+                        });
+                    } else if (!isDeviceAdmin(context)) {
+                        showDialog(getString(R.string.device_admin_prompt), getString(R.string.device_admin_prompt_title), () -> {
+                            startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
+                            startupChecksPassed.set(false);
+                        });
                     } else if (!isAccessibilityServiceEnabled(context)) {
+                        String prompt;
                         if (whitelistService.getCurrentDelayMillis() > 0) {
                             whitelistService.setDelay(0); // should immediately set delay 0
-                            Toast.makeText(context.getApplicationContext(), R.string.accessibility_has_reset, Toast.LENGTH_LONG).show();
+                            prompt = getString(R.string.accessibility_has_reset);
+                        } else {
+                            prompt = getString(R.string.accessibility_prompt);
                         }
-                        startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
-                        startupChecksPassed.set(false);
+                        showDialog(prompt, getString(R.string.accessibility_prompt_title), () -> {
+                            startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                            startupChecksPassed.set(false);
+                        });
                     }
                 }
-            }, 5000);
+            }, 2500);
         }
+    }
+
+    private void showDialog(String message, String title, Runnable positiveAction) {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        (dialog, id) -> positiveAction.run()).create();
+        alertDialog.show();
+    }
+
+    private boolean isHomeApp(Context context) {
+        final Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        final ResolveInfo res = context.getPackageManager().resolveActivity(intent, 0);
+        return res != null && res.activityInfo != null && context.getPackageName()
+                .equals(res.activityInfo.packageName);
     }
 
     private boolean isDeviceAdmin(Context context) {

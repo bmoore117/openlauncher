@@ -108,7 +108,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     // SkyWall variables
     private WhitelistService whitelistService;
-    private static final AtomicBoolean startupChecksPassed = new AtomicBoolean(false);
 
     public static final class Companion {
         private Companion() {
@@ -557,29 +556,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         handleLauncherResume();
-
-        if (startupChecksPassed.compareAndSet(false, true)) {
-            final Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(() -> {
-                // here we check for the proper permissions and throw up screens
-                // this is all run on a delay as the OS does not seem to start accessibility services
-                // until a second or two after boot
-                if (!isHomeApp()) {
-                    startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));
-                    startupChecksPassed.set(false);
-                }
-            }, 5000);
-        }
         LicenseService.schedule(this);
-    }
-
-    private boolean isHomeApp() {
-        final Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        final ResolveInfo res = getPackageManager().resolveActivity(intent, 0);
-        return res != null && res.activityInfo != null && getPackageName()
-                .equals(res.activityInfo.packageName);
     }
 
     @Override
