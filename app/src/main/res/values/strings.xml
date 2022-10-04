@@ -234,6 +234,7 @@
     <string name="info">Info</string>
     <string name="uninstall">Uninstall</string>
     <string name="remove">Remove</string>
+    <string name="reset">Reset</string>
     <string name="resize">Resize</string>
 
     <!-- Desktop Option View -->
@@ -295,7 +296,11 @@
     <string name="accessibility_prompt_title">Accessibility Service Setup</string>
     <string name="default_home_app_prompt">SkyWall needs to be the default home app in order to function properly.\n\nClick OK to launch the settings and change SkyWall to the default home app</string>
     <string name="default_home_app_title">Default Home App</string>
-    <string name="deprovision">Deprovision</string>
+    <string name="deprovision">Reset</string>
+    <string name="reset_initiated">Reset Initiated</string>
+    <string name="reset_initiated_message">Reset process initiated, your phone will automatically reset in a moment. Sorry to see you go!</string>
+    <string name="confirm_reset">Confirm Reset</string>
+    <string name="confirm_reset_message">Are you sure you want to completely reset your phone? Make sure you have backed up all important data first!</string>
 
     <string-array name="delay_values">
         <item>0</item>

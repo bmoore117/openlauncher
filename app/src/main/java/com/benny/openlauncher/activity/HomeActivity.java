@@ -10,11 +10,7 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
-import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.provider.Settings;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -30,8 +26,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import net.skywall.openlauncher.BuildConfig;
-import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.homeparts.HpAppDrawer;
 import com.benny.openlauncher.activity.homeparts.HpDesktopOption;
 import com.benny.openlauncher.activity.homeparts.HpDragOption;
@@ -41,8 +35,6 @@ import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 import com.benny.openlauncher.model.Item;
 import com.benny.openlauncher.notifications.NotificationListener;
-import net.skywall.openlauncher.Receivers.AppUpdateReceiver;
-import net.skywall.openlauncher.Receivers.ShortcutReceiver;
 import com.benny.openlauncher.util.AppManager;
 import com.benny.openlauncher.util.AppSettings;
 import com.benny.openlauncher.util.DatabaseHelper;
@@ -64,16 +56,19 @@ import com.benny.openlauncher.widget.ItemOptionView;
 import com.benny.openlauncher.widget.MinibarView;
 import com.benny.openlauncher.widget.PagerIndicator;
 import com.benny.openlauncher.widget.SearchBar;
-import net.skywall.service.LicenseService;
-import net.skywall.service.WhitelistService;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import net.gsantner.opoc.util.ContextUtils;
+import net.skywall.openlauncher.BuildConfig;
+import net.skywall.openlauncher.R;
+import net.skywall.openlauncher.Receivers.AppUpdateReceiver;
+import net.skywall.openlauncher.Receivers.ShortcutReceiver;
+import net.skywall.service.LicenseService;
+import net.skywall.service.WhitelistService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class HomeActivity extends Activity implements OnDesktopEditListener {
 

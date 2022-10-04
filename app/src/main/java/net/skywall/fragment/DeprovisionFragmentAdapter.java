@@ -1,6 +1,9 @@
 package net.skywall.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +21,8 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DeprovisionFragmentAdapter extends BaseAdapter {
 
@@ -65,18 +70,43 @@ public class DeprovisionFragmentAdapter extends BaseAdapter {
         Button cancel = v.findViewById(R.id.item_deprovision_button);
 
         Phone phone = phones.get(position);
-        cancel.setOnClickListener(view -> {
-            try {
-                skywallService.deprovisionPhone(phone);
-            } catch (IOException | JSONException e) {
-                Log.e(TAG, "Error deprovisioning phone", e);
-            }
-            phones.remove(position);
-            notifyDataSetChanged();
-        });
+        cancel.setOnClickListener(view -> showConfirmDialog(() -> {
+            showInitiatedDialog();
+            CompletableFuture.runAsync(() -> {
+                try {
+                    skywallService.deprovisionPhone(phone);
+                } catch (IOException | JSONException e) {
+                    Log.e(TAG, "Error deprovisioning phone", e);
+                }
+
+                phones.remove(position);
+                notifyDataSetChanged();
+            });
+        }));
         cancel.setEnabled(whitelistService.getCurrentDelayMillis() == 0);
         label.setText(phone.getPhoneName());
 
         return v;
+    }
+
+    private void showConfirmDialog(Runnable positiveAction) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle(R.string.confirm_reset)
+                .setMessage(R.string.confirm_reset_message)
+                .setCancelable(true)
+                .setPositiveButton("OK", (dialog, id) -> positiveAction.run())
+                .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel())
+                .create();
+        alertDialog.show();
+    }
+
+    private void showInitiatedDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle(R.string.reset_initiated)
+                .setMessage(R.string.reset_initiated_message)
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss())
+                .create();
+        alertDialog.show();
     }
 }

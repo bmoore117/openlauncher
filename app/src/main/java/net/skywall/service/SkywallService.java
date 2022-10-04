@@ -1,5 +1,7 @@
 package net.skywall.service;
 
+import static net.skywall.utils.StringUtils.capitalizeFirst;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -174,7 +176,7 @@ public class SkywallService {
                 List<Phone> phones = new ArrayList<>(results.length());
                 for (int i = 0; i < results.length(); i++) {
                     JSONObject object = results.getJSONObject(i);
-                    phones.add(new Phone(object.getString("phoneName"), object.getString("enrollmentTokenName")));
+                    phones.add(new Phone(capitalizeFirst(object.getString("phoneName")), object.getString("enrollmentTokenName")));
                 }
                 return phones;
             }
@@ -193,6 +195,7 @@ public class SkywallService {
         HttpURLConnection request = (HttpURLConnection) (new URL("https://skywall-361905.uc.r.appspot.com/deprovision")).openConnection();
         request.setRequestProperty("Authorization", "Basic " + new String(base64Bytes));
         request.setRequestProperty("Accept", "application/json");
+        request.setRequestProperty("Content-Type", "application/json");
         request.setRequestMethod("POST");
         request.setDoOutput(true);
         JSONObject body = new JSONObject();
