@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.skywall.fragment.view.Phone;
 import net.skywall.openlauncher.R;
@@ -67,23 +68,25 @@ public class DeprovisionFragmentAdapter extends BaseAdapter {
         }
 
         TextView label = v.findViewById(R.id.item_deprovision_name);
-        Button cancel = v.findViewById(R.id.item_deprovision_button);
+        Button deprovision = v.findViewById(R.id.item_deprovision_button);
+
+        final Handler handler = new Handler(Looper.getMainLooper());
 
         Phone phone = phones.get(position);
-        cancel.setOnClickListener(view -> showConfirmDialog(() -> {
+        deprovision.setOnClickListener(view -> showConfirmDialog(() -> {
             showInitiatedDialog();
             CompletableFuture.runAsync(() -> {
                 try {
                     skywallService.deprovisionPhone(phone);
+                    phones.remove(position);
+                    notifyDataSetChanged();
                 } catch (IOException | JSONException e) {
                     Log.e(TAG, "Error deprovisioning phone", e);
+                    handler.post(() -> Toast.makeText(context, "Error deprovisioning phone, try again later", Toast.LENGTH_LONG).show());
                 }
-
-                phones.remove(position);
-                notifyDataSetChanged();
             });
         }));
-        cancel.setEnabled(whitelistService.getCurrentDelayMillis() == 0);
+        deprovision.setEnabled(whitelistService.getCurrentDelayMillis() == 0);
         label.setText(phone.getPhoneName());
 
         return v;
