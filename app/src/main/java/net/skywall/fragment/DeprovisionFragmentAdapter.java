@@ -79,7 +79,7 @@ public class DeprovisionFragmentAdapter extends BaseAdapter {
                 try {
                     skywallService.deprovisionPhone(phone);
                     phones.remove(position);
-                    notifyDataSetChanged();
+                    handler.post(this::notifyDataSetChanged);
                 } catch (IOException | JSONException e) {
                     Log.e(TAG, "Error deprovisioning phone", e);
                     handler.post(() -> Toast.makeText(context.getApplicationContext(), "Error deprovisioning phone, try again later", Toast.LENGTH_LONG).show());
