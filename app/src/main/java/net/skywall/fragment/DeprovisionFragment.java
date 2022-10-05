@@ -28,6 +28,7 @@ public class DeprovisionFragment extends Fragment {
     private final WhitelistService whitelistService;
     private final SkywallService skywallService;
     private final List<Phone> phones;
+    private DeprovisionFragmentAdapter fragmentAdapter;
 
     public DeprovisionFragment() {
         whitelistService = WhitelistService.getInstance(getContext());
@@ -35,7 +36,12 @@ public class DeprovisionFragment extends Fragment {
         phones = new ArrayList<>();
         CompletableFuture.runAsync(() -> {
             try {
-                phones.addAll(skywallService.fetchUserPhones());
+                List<Phone> fetched = skywallService.fetchUserPhones();
+                phones.clear();
+                phones.addAll(fetched);
+                if (fragmentAdapter != null) {
+                    fragmentAdapter.notifyDataSetChanged();
+                }
             } catch (IOException | JSONException e) {
                 Log.e(TAG, "Error fetching user phones", e);
             }
@@ -45,14 +51,12 @@ public class DeprovisionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fragmentAdapter = new DeprovisionFragmentAdapter(getContext(), phones, whitelistService, skywallService);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_deprovision, container, false);
-
-        DeprovisionFragmentAdapter fragmentAdapter = new DeprovisionFragmentAdapter(getContext(),
-                phones, whitelistService, skywallService);
 
         GridView gridView = view.findViewById(R.id.fragment_deprovision_grid);
         gridView.setAdapter(fragmentAdapter);
