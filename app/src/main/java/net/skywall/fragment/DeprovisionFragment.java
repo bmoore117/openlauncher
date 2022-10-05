@@ -1,11 +1,16 @@
 package net.skywall.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import androidx.fragment.app.Fragment;
 
@@ -34,24 +39,11 @@ public class DeprovisionFragment extends Fragment {
         whitelistService = WhitelistService.getInstance(getContext());
         skywallService = SkywallService.getInstance(getContext());
         phones = new ArrayList<>();
-        CompletableFuture.runAsync(() -> {
-            try {
-                List<Phone> fetched = skywallService.fetchUserPhones();
-                phones.clear();
-                phones.addAll(fetched);
-                if (fragmentAdapter != null) {
-                    fragmentAdapter.notifyDataSetChanged();
-                }
-            } catch (IOException | JSONException e) {
-                Log.e(TAG, "Error fetching user phones", e);
-            }
-        });
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragmentAdapter = new DeprovisionFragmentAdapter(getContext(), phones, whitelistService, skywallService);
     }
 
     @Override
@@ -59,7 +51,31 @@ public class DeprovisionFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_deprovision, container, false);
 
         GridView gridView = view.findViewById(R.id.fragment_deprovision_grid);
-        gridView.setAdapter(fragmentAdapter);
+
+        ProgressBar progressBar = view.findViewById(R.id.fragment_deprovision_progress_bar);
+        LinearLayout progressBarPlate = view.findViewById(R.id.fragment_deprovision_progress_bar_plate);
+
+        progressBarPlate.setVisibility(View.VISIBLE);
+        progressBarPlate.setZ(1000.0f);
+        progressBar.setIndeterminate(true);
+
+        final Context context = getContext();
+        final Handler handler = new Handler(Looper.getMainLooper());
+        CompletableFuture.runAsync(() -> {
+            try {
+                List<Phone> fetched = skywallService.fetchUserPhones();
+                phones.clear();
+                phones.addAll(fetched);
+                handler.post(() -> {
+                    fragmentAdapter = new DeprovisionFragmentAdapter(context, phones, whitelistService, skywallService);
+                    gridView.setAdapter(fragmentAdapter);
+                    progressBarPlate.setVisibility(View.GONE);
+                    fragmentAdapter.notifyDataSetChanged();
+                });
+            } catch (IOException | JSONException e) {
+                Log.e(TAG, "Error fetching user phones", e);
+            }
+        });
 
         return view;
     }

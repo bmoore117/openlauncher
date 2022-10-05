@@ -82,7 +82,7 @@ public class DeprovisionFragmentAdapter extends BaseAdapter {
                     notifyDataSetChanged();
                 } catch (IOException | JSONException e) {
                     Log.e(TAG, "Error deprovisioning phone", e);
-                    handler.post(() -> Toast.makeText(context, "Error deprovisioning phone, try again later", Toast.LENGTH_LONG).show());
+                    handler.post(() -> Toast.makeText(context.getApplicationContext(), "Error deprovisioning phone, try again later", Toast.LENGTH_LONG).show());
                 }
             });
         }));
