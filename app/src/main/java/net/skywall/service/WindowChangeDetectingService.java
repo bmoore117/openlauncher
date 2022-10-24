@@ -58,6 +58,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.google.android.gms.security.recaptcha.RecaptchaActivity",
                     "com.google.android.gms.setupservices.GoogleServicesActivity",
                     "com.google.android.gms.signin.activity.SignInActivity",
+                    "com.google.android.gms.tapandpay.tap.TapUiActivity",
                     "com.google.android.gms.update.phone.PopupDialog",
                     "com.google.android.gms.update.SystemUpdateActivity",
                     "com.google.android.gms.wallet.activity.GenericDelegatorInternalActivity",
