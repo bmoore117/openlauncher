@@ -22,10 +22,11 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
     private static final String TAG = WindowChangeDetectingService.class.getSimpleName();
     public static final String SUB_SETTINGS = "com.android.settings/.SubSettings";
-    public static final String DEFAULT_APP_ACTIVITY = "com.google.android.permissioncontroller/com.android.permissioncontroller.role.ui.DefaultAppActivity";
+    public static final String DEFAULT_HOME_APP_ACTIVITY = "com.google.android.permissioncontroller/com.android.permissioncontroller.role.ui.DefaultAppActivity";
 
     private WhitelistService whitelistService;
     public static final String ACTIVITY_NAME = "activityName";
+    public static final String APP_NAME = "appName";
 
     private static final Set<String> allowedActivities = new HashSet<>(
             Arrays.asList("com.android.captiveportallogin.CaptivePortalLoginActivity",
@@ -105,6 +106,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     boolean isActivity = activityInfo != null;
                     if (isActivity) {
                         Log.i(TAG, "CurrentActivity: " + componentName.flattenToShortString());
+                        String appName = activityInfo.applicationInfo.loadLabel(getPackageManager()).toString();
 
                         // here we prevent the user from being able to disable the accessibility service
                         // or deactivate device admin for this app, or change the home screen to something else
@@ -121,7 +123,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                                         !event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()) {
                                     performGlobalAction(GLOBAL_ACTION_BACK);
                                 }
-                            } else if (DEFAULT_APP_ACTIVITY.equals(componentName.flattenToShortString())) {
+                            } else if (DEFAULT_HOME_APP_ACTIVITY.equals(componentName.flattenToShortString())) {
                                 String screenTitle = event.getText().isEmpty() ? "" : event.getText().get(0).toString();
                                 if ("default home app".equalsIgnoreCase(screenTitle)) {
                                     performGlobalAction(GLOBAL_ACTION_BACK);
@@ -136,7 +138,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
                         if (blockedActivities.contains(className) && whitelistService.getCurrentDelayMillis() > 0) {
                             lastActivity = componentName.flattenToShortString();
-                            blockActivity(className);
+                            blockActivity(className, appName);
                             return;
                         }
 
@@ -147,7 +149,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
                         if (!whitelistService.refreshAndCheckWhitelisted(packageName)) {
                             Log.i(TAG, "Found non-whitelisted foreground activity: " + className);
-                            blockActivity(className);
+                            blockActivity(className, appName);
                         }
                         lastActivity = componentName.flattenToShortString();
                     }
@@ -178,13 +180,14 @@ public class WindowChangeDetectingService extends AccessibilityService {
                 .equals(res.activityInfo.packageName);
     }
 
-    private void blockActivity(String className) {
+    private void blockActivity(String className, String appName) {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         String canonicalName = BlockedActivity.class.getCanonicalName();
         intent.setClassName(BuildConfig.APPLICATION_ID, canonicalName);
         intent.putExtra(ACTIVITY_NAME, className);
+        intent.putExtra(APP_NAME, appName);
         getApplicationContext().startActivity(intent);
     }
 
