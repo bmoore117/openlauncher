@@ -293,9 +293,9 @@
     <string name="invalid_license_message">Current subscription invalid or expired; visit your account at skywall.net or login with a different account. Functionality restricted to delay changes</string>
     <string name="device_admin_prompt">To keep from being uninstalled, SkyWall needs to be made a device administrator. Click OK to go to the security settings and activate SkyWall.\n\nOn certain versions of Android, you may need to click \"More Security Settings\" to see the device admin section.</string>
     <string name="device_admin_prompt_title">Device Administrator Setup</string>
-    <string name="accessibility_prompt">SkyWall needs your approval to run as an Accessibility Service to be able to monitor the screen contents to block apps.\n\nSkyWall does not collect or share user data, and only uses this permission to control which apps are allowed or blocked.\n\nClick OK to go to the security settings and activate SkyWall.</string>
+    <string name="accessibility_prompt">SkyWall needs your approval to run as an Accessibility Service to be able to monitor the screen contents to block apps.\n\nSkyWall does not collect or share user data, and only uses this permission to control which apps are allowed or blocked.\n\nClick OK to go to the accessibility settings and activate SkyWall.</string>
     <string name="accessibility_prompt_title">Accessibility Service Setup</string>
-    <string name="default_home_app_prompt">SkyWall needs to be the default home app in order to function properly.\n\nClick OK to launch the settings and change SkyWall to the default home app</string>
+    <string name="default_home_app_prompt">SkyWall needs to be the default home app in order to be used as intended.\n\nClick OK to launch the settings and change SkyWall to the default home app</string>
     <string name="default_home_app_title">Default Home App</string>
     <string name="deprovision">Reset</string>
     <string name="reset_initiated">Reset Initiated</string>
