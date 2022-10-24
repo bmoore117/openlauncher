@@ -1,0 +1,2 @@
+when changing branches, expand gradle menu, right click, reload gradle project.
+Then Build -> rebuild project
