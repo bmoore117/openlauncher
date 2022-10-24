@@ -20,8 +20,12 @@ public class BlockedActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String activityName = intent.getStringExtra(WindowChangeDetectingService.ACTIVITY_NAME);
+        String appName = intent.getStringExtra(WindowChangeDetectingService.APP_NAME);
 
-        TextView label = findViewById(R.id.activity_blocked_label);
-        label.setText(getResources().getString(R.string.blocked_activity) + ": " + activityName);
+        TextView activity = findViewById(R.id.activity_blocked_activity_name);
+        activity.setText(getResources().getString(R.string.blocked_activity) + ": " + activityName);
+
+        TextView app = findViewById(R.id.activity_blocked_app_name);
+        app.setText(getResources().getString(R.string.blocked_app) + ": " + appName);
     }
 }

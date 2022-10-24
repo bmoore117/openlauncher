@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
 
     <TextView
-        android:id="@+id/activity_blocked_label"
+        android:id="@+id/activity_blocked_app_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/blocked_activity"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"/>
+        android:textAlignment="center"
+        android:gravity="center"
+        android:layout_marginBottom="@dimen/default_margin_1"/>
+
+    <TextView
+        android:id="@+id/activity_blocked_activity_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/blocked_activity"
+        android:textAlignment="center"
+        android:gravity="center"/>
 </LinearLayout>
