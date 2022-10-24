@@ -106,13 +106,14 @@ public class MainFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Context context = getContext();
-        if (startupChecksPassed.compareAndSet(false, true)) {
+        if (!startupChecksPassed.get()) {
             final Handler handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(() -> {
                 if (authService.isLicensed()) {
                     // here we check for the proper permissions and throw up screens
                     // this is all run on a delay as the OS does not seem to start accessibility services
-                    // until a second or two after boot
+                    // until a second or two after boot. Of note, without being the default home app
+                    // the accessibility service will not light up and run, at least on the emulator
                     if (!isHomeApp(context)) {
                         showDialog(getString(R.string.default_home_app_prompt), getString(R.string.default_home_app_title), () -> {
                             startActivity(new Intent(Settings.ACTION_HOME_SETTINGS));
@@ -135,9 +136,11 @@ public class MainFragment extends Fragment {
                             startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                             startupChecksPassed.set(false);
                         });
+                    } else {
+                        startupChecksPassed.set(true);
                     }
                 }
-            }, 2500);
+            }, 1500);
         }
     }
 
@@ -145,7 +148,8 @@ public class MainFragment extends Fragment {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle(title)
                 .setMessage(message)
-                .setCancelable(false)
+                .setCancelable(true)
+                .setNegativeButton("Cancel", (dialog, id) -> dialog.cancel())
                 .setPositiveButton("OK",
                         (dialog, id) -> positiveAction.run()).create();
         alertDialog.show();
