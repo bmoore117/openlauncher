@@ -29,7 +29,8 @@ public class WindowChangeDetectingService extends AccessibilityService {
     public static final String APP_NAME = "appName";
 
     private static final Set<String> allowedActivities = new HashSet<>(
-            Arrays.asList("com.facebook.gdp.LightWeightProxyAuthActivity",
+            Arrays.asList("com.android.quickstep.RecentsActivity",
+                    "com.facebook.gdp.LightWeightProxyAuthActivity",
                     "com.facebook.katana.gdp.ProxyAuthDialog",
                     "com.facebook.katana.gdp.WebViewProxyAuth"));
 
