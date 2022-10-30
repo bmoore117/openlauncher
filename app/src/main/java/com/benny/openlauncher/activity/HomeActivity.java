@@ -83,7 +83,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     public static final int REQUEST_CREATE_APPWIDGET = 0x6475;
     public static final int REQUEST_PERMISSION_STORAGE = 0x3648;
     public static final int REQUEST_PICK_APPWIDGET = 0x2678;
-    public static final int JOB_ID = 1337;
     public static WidgetHost _appWidgetHost;
     public static AppWidgetManager _appWidgetManager;
     public static boolean ignoreResume;
