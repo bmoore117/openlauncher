@@ -10,8 +10,8 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import com.benny.openlauncher.BuildConfig;
 import net.skywall.activity.BlockedActivity;
-import net.skywall.openlauncher.BuildConfig;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,41 +29,10 @@ public class WindowChangeDetectingService extends AccessibilityService {
     public static final String APP_NAME = "appName";
 
     private static final Set<String> allowedActivities = new HashSet<>(
-            Arrays.asList("com.android.captiveportallogin.CaptivePortalLoginActivity",
-                    "com.android.cellbroadcastreceiver.CellBroadcastAlertDialog",
-                    "com.android.certinstaller.CertInstallerMain",
-                    "com.android.documentsui.picker.PickActivity",
-                    "com.android.internal.app.ResolverActivity",
-                    "com.android.internal.app.ChooserActivity",
-                    "com.android.packageinstaller.UninstallerActivity",
-                    "com.android.permissioncontroller.permission.ui.GrantPermissionsActivity",
-                    "com.android.permissioncontroller.permission.ui.ManagePermissionsActivity",
-                    "com.android.permissioncontroller.role.ui.RequestRoleActivity",
-                    "com.android.quickstep.RecentsActivity",
-                    "com.android.systemui.pip.phone.PipMenuActivity",
+            Arrays.asList("com.android.quickstep.RecentsActivity",
                     "com.facebook.gdp.LightWeightProxyAuthActivity",
                     "com.facebook.katana.gdp.ProxyAuthDialog",
-                    "com.facebook.katana.gdp.WebViewProxyAuth",
-                    "com.google.android.apps.inputmethod.latin.preference.SettingsActivity",
-                    "com.google.android.gms.appinvite.AppInviteAcceptInvitationActivity",
-                    "com.google.android.gms.auth.api.credentials.assistedsignin.ui.AssistedSignInActivity",
-                    "com.google.android.gms.auth.api.credentials.ui.CredentialPickerActivity",
-                    "com.google.android.gms.auth.api.signin.ui.SignInActivity",
-                    "com.google.android.gms.auth.uiflows.addaccount.PreAddAccountActivity",
-                    "com.google.android.gms.auth.uiflows.addaccount.WrapperControlledActivity",
-                    "com.google.android.gms.auth.uiflows.minutemaid.MinuteMaidActivity",
-                    "com.google.android.gms.common.account.AccountPickerActivity",
-                    "com.google.android.gms.common.api.GoogleApiActivity",
-                    "com.google.android.gms.pay.main.PayActivity",
-                    "com.google.android.gms.octarine.ui.OctarineWebviewActivity",
-                    "com.google.android.gms.security.recaptcha.RecaptchaActivity",
-                    "com.google.android.gms.setupservices.GoogleServicesActivity",
-                    "com.google.android.gms.signin.activity.SignInActivity",
-                    "com.google.android.gms.tapandpay.tap.TapUiActivity",
-                    "com.google.android.gms.update.phone.PopupDialog",
-                    "com.google.android.gms.update.SystemUpdateActivity",
-                    "com.google.android.gms.wallet.activity.GenericDelegatorInternalActivity",
-                    "com.google.android.location.settings.LocationSettingsCheckerActivity"));
+                    "com.facebook.katana.gdp.WebViewProxyAuth"));
 
     private static final Set<String> blockedActivities = new HashSet<>(
             Arrays.asList("com.facebook.browser.lite.BrowserLiteActivity",
@@ -119,14 +88,17 @@ public class WindowChangeDetectingService extends AccessibilityService {
                                         || "install unknown apps".equalsIgnoreCase(screenTitle)
                                         || "developer options".equalsIgnoreCase(screenTitle)) {
                                     performGlobalAction(GLOBAL_ACTION_BACK);
+                                    return;
                                 } else if ("app info".equalsIgnoreCase(screenTitle) &&
                                         !event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()) {
                                     performGlobalAction(GLOBAL_ACTION_BACK);
+                                    return;
                                 }
                             } else if (DEFAULT_HOME_APP_ACTIVITY.equals(componentName.flattenToShortString())) {
                                 String screenTitle = event.getText().isEmpty() ? "" : event.getText().get(0).toString();
                                 if ("default home app".equalsIgnoreCase(screenTitle)) {
                                     performGlobalAction(GLOBAL_ACTION_BACK);
+                                    return;
                                 }
                             }
                         }
