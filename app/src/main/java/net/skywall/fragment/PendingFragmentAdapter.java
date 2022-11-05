@@ -64,7 +64,7 @@ public class PendingFragmentAdapter extends BaseAdapter {
             imageView.setImageDrawable(displayApp.getIcon());
             date.setText(PendingFragment.simpleDateFormat.format(appList.get(position).getWhitelistTime()));
             cancel.setOnClickListener(view -> {
-                whitelistService.cancelPendingChange(displayApp.getActivityName());
+                whitelistService.cancelPendingChange(displayApp.getPackageName());
                 appList.remove(position);
                 notifyDataSetChanged();
             });

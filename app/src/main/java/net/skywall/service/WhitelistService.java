@@ -27,6 +27,7 @@ public class WhitelistService {
             "com.benny",
             "com.flask",
             "com.google.android.apps.inputmethod",
+            "com.google.android.documentsui",
             "com.google.android.gms",
             "com.google.android.location",
             "com.google.android.permissioncontroller",
@@ -95,7 +96,10 @@ public class WhitelistService {
 
         for (String val : ALLOWED_PACKAGES) {
             if (packageName.startsWith(val)) {
-                return true;
+                if (!"com.android.chrome".equals(packageName)
+                        && !"com.android.vending".equals(packageName)) {
+                    return true;
+                }
             }
         }
 
