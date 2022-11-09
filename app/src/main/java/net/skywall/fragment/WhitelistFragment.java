@@ -40,10 +40,6 @@ public class WhitelistFragment extends Fragment {
     private final AuthService authService;
     private List<DisplayApp> nonWhitelistedApps;
 
-    // these are apps that either don't need to be whitelisted, such as the Skywall app itself, or
-    // are implicitly whitelisted, such as settings
-    private static final Set<String> excludedApps = new HashSet<>(Arrays.asList(BuildConfig.APPLICATION_ID, "com.android.settings"));
-
     public WhitelistFragment() {
         whitelistService = WhitelistService.getInstance(getContext());
         authService = AuthService.getInstance(getContext());
@@ -57,7 +53,7 @@ public class WhitelistFragment extends Fragment {
         Set<String> whiteListedApps = whitelistService.getCurrentWhitelistedApps();
         nonWhitelistedApps = apps.stream()
                 .filter(app -> !whiteListedApps.contains(app.getPackageName())
-                        && !excludedApps.contains(app.getPackageName())
+                        && !WhitelistService.isPredefinedAllowedApp(app.getPackageName())
                         && !whitelistService.isAppPending(app.getPackageName()))
                 .map(app -> new DisplayApp(app.getLabel(), app.getPackageName(), app.getIcon(), null))
                 .collect(Collectors.toList());

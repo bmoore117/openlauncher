@@ -94,13 +94,8 @@ public class WhitelistService {
             return true;
         }
 
-        for (String val : ALLOWED_PACKAGES) {
-            if (packageName.startsWith(val)) {
-                if (!"com.android.chrome".equals(packageName)
-                        && !"com.android.vending".equals(packageName)) {
-                    return true;
-                }
-            }
+        if (isPredefinedAllowedApp(packageName)) {
+            return true;
         }
 
         long now = new Date().getTime();
@@ -124,6 +119,18 @@ public class WhitelistService {
             }
         }
 
+        return false;
+    }
+
+    public static boolean isPredefinedAllowedApp(String packageName) {
+        for (String val : ALLOWED_PACKAGES) {
+            if (packageName.startsWith(val)) {
+                if (!"com.android.chrome".equals(packageName)
+                        && !"com.android.vending".equals(packageName)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
