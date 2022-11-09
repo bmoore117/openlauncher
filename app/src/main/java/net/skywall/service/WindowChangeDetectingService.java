@@ -10,8 +10,8 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import com.benny.openlauncher.BuildConfig;
 import net.skywall.activity.BlockedActivity;
+import net.skywall.openlauncher.BuildConfig;
 
 import java.util.Arrays;
 import java.util.HashSet;
