@@ -75,7 +75,7 @@ public class RemoveFragmentAdapter extends BaseAdapter implements Filterable {
         if (displayApp.getIcon() != null) {
             imageView.setImageDrawable(displayApp.getIcon());
             cancel.setOnClickListener(view -> LicenseUtils.performOrShowMessage(() -> {
-                whitelistService.removeWhitelistedApp(displayApp.getActivityName());
+                whitelistService.removeWhitelistedApp(displayApp.getPackageName());
                 filterableAppList.remove(position);
                 notifyDataSetChanged();
             }, skywallService::isLicensed, context));

@@ -23,12 +23,11 @@ public class WhitelistService {
     public static final String DELAY_KEY = "skywall.delay";
     private static final String APPS_KEY = "skywall.apps";
 
-    private static final String[] ALLOWED_PACKAGES = new String[] { "com.android.internal.app.ResolverActivity",
-            "com.android.permissioncontroller",
-            "com.android.settings",
+    private static final String[] ALLOWED_PACKAGES = new String[] { "com.android",
             "com.benny",
             "com.flask",
             "com.google.android.apps.inputmethod",
+            "com.google.android.documentsui",
             "com.google.android.gms",
             "com.google.android.location",
             "com.google.android.permissioncontroller",
@@ -82,46 +81,56 @@ public class WhitelistService {
         return new HashSet<>(activePrefs.getStringSet(APPS_KEY, new HashSet<>()));
     }
 
-    public boolean refreshAndCheckWhitelisted(String appName) {
+    public boolean refreshAndCheckWhitelisted(String packageName) {
         if (getCurrentDelayMillis() == 0) {
             return true;
         }
 
-        return refreshAndCheckWhitelistedInternal(appName);
+        return refreshAndCheckWhitelistedInternal(packageName);
     }
 
-    private boolean refreshAndCheckWhitelistedInternal(String appName) {
-        if (currentActiveApps().contains(appName)) {
+    private boolean refreshAndCheckWhitelistedInternal(String packageName) {
+        if (currentActiveApps().contains(packageName)) {
             return true;
         }
 
-        for (String val : ALLOWED_PACKAGES) {
-            if (appName.startsWith(val)) {
-                return true;
-            }
+        if (isPredefinedAllowedApp(packageName)) {
+            return true;
         }
 
         long now = new Date().getTime();
 
         long delayTimeChange = pendingChanges.getLong(DELAY_KEY, Long.MAX_VALUE);
-        long appTimeChange = pendingChanges.getLong(appName, Long.MAX_VALUE);
+        long appTimeChange = pendingChanges.getLong(packageName, Long.MAX_VALUE);
         long delayTimeValue = pendingValues.getLong(DELAY_KEY, 0);
 
         if (delayTimeChange == Long.MAX_VALUE) {
             // if no delay pending change, just look at scheduled app time vs now
             if (appTimeChange <= now) {
-                updateFiles(appName);
+                updateFiles(packageName);
                 return true;
             }
         } else if (delayTimeChange <= now) {
-            long appQueueStartTime = pendingValues.getLong(appName, 0);
+            long appQueueStartTime = pendingValues.getLong(packageName, 0);
             if (appQueueStartTime + delayTimeValue <= now) {
-                updateFiles(appName);
+                updateFiles(packageName);
                 updateFiles(DELAY_KEY);
                 return true;
             }
         }
 
+        return false;
+    }
+
+    public static boolean isPredefinedAllowedApp(String packageName) {
+        for (String val : ALLOWED_PACKAGES) {
+            if (packageName.startsWith(val)) {
+                if (!"com.android.chrome".equals(packageName)
+                        && !"com.android.vending".equals(packageName)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

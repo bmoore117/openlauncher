@@ -7,14 +7,14 @@ import java.util.Date;
 public class DisplayApp {
 
     private String name;
-    private String activityName;
+    private String packageName;
     private Drawable icon;
     private Date whitelistTime;
     private boolean isSelected;
 
-    public DisplayApp(String name, String activityName, Drawable icon, Date whitelistTime) {
+    public DisplayApp(String name, String packageName, Drawable icon, Date whitelistTime) {
         this.name = name;
-        this.activityName = activityName;
+        this.packageName = packageName;
         this.icon = icon;
         this.whitelistTime = whitelistTime;
         isSelected = false;
@@ -28,12 +28,12 @@ public class DisplayApp {
         this.name = name;
     }
 
-    public String getActivityName() {
-        return activityName;
+    public String getPackageName() {
+        return packageName;
     }
 
-    public void setActivityName(String activityName) {
-        this.activityName = activityName;
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public Drawable getIcon() {
