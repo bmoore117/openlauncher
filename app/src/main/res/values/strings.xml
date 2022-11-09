@@ -270,7 +270,7 @@
     <string name="add">Add</string>
     <string name="pending">Pending</string>
     <string name="remove_apps">Remove any apps you no longer wish to allow</string>
-    <string name="deprovision_prompt">Uninstalling SkyWall requires that you deprovision your phone from SkyWall\'s management. Deprovisioning will factory reset your phone, similar to the process you followed during original enrollment. Make sure to backup your data before doing this! If you don\'t want to reset your phone, you can simply set delay to 0 and choose another default home app.</string>
+    <string name="deprovision_prompt">If you enrolled your device using a QR code on skywall.net, fully deprovisioning and going back to factory defaults requires that you reset your device, which can be done on this screen.\n\nDeprovisioning will factory reset your device, similar to the process you followed during original enrollment. Make sure to backup your data before doing this!\n\nIf you don\'t want to reset, you can uninstall SkyWall, however your device will continue to be enrolled as a managed device.</string>
     <string name="no_pending_apps">No pending apps</string>
     <string name="no_whitelisted_apps">No whitelisted apps</string>
     <string name="ignoring_app">Ignoring non-whitelisted app</string>
