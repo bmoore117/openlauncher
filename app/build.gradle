@@ -1,15 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion version_compileSdk
+    compileSdk version_compileSdk
 
     defaultConfig {
-        minSdkVersion version_minSdk
-        targetSdkVersion version_compileSdk
+        applicationId "net.skywall.openlauncher"
+        minSdk version_minSdk
+        targetSdk version_compileSdk
+        versionCode 42
+        versionName "0.7.4"
 
         flavorDimensions "versionCode"
         multiDexEnabled false
-
 
         buildConfigField "boolean", "IS_TEST_BUILD", "false"
         buildConfigField "boolean", "IS_GPLAY_BUILD", "false"
@@ -19,10 +21,6 @@ android {
         resValue "string", "manifest_package_id", "net.skywall.openlauncher"
 
         resValue 'string', 'app_name', "SkyWall"
-
-        applicationId "net.skywall.openlauncher"
-        versionCode 42
-        versionName "0.7.4"
     }
 
     productFlavors {
@@ -38,7 +36,7 @@ android {
           versionCode = Integer.parseInt(new Date().format('yyMMdd'))
           versionName = new Date().format('yyMMdd')
           applicationId "net.skywall.openlauncher.nightly"
-          resValue 'string', 'app_name', "SkyWall"
+          resValue 'string', 'app_name', "SkyWall Nightly"
         }
 
         flavorGsantner {
