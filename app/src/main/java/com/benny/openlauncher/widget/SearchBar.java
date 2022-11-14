@@ -2,16 +2,6 @@ package com.benny.openlauncher.widget;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
-import androidx.annotation.AttrRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -29,8 +19,18 @@ import android.view.WindowInsets;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.benny.openlauncher.R;
-import com.benny.openlauncher.interfaces.AppUpdateListener;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 import com.benny.openlauncher.model.Item;
@@ -40,7 +40,6 @@ import com.benny.openlauncher.util.DragHandler;
 import com.benny.openlauncher.util.Tool;
 import com.benny.openlauncher.viewutil.CircleDrawable;
 import com.benny.openlauncher.viewutil.IconLabelItem;
-import com.mikepenz.fastadapter.IItemAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 
 import org.slf4j.Logger;
@@ -54,6 +53,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class SearchBar extends FrameLayout {
     private static Logger LOG = LoggerFactory.getLogger("SearchBar");
@@ -66,16 +66,12 @@ public class SearchBar extends FrameLayout {
     public RecyclerView _searchRecycler;
     private CircleDrawable _icon;
     private CardView _searchCardContainer;
-    private FastItemAdapter<IconLabelItem> _adapter = new FastItemAdapter<>();
+    private final FastItemAdapter<IconLabelItem> _adapter = new FastItemAdapter<>();
     private CallBack _callback;
     private boolean _expanded;
-    private int _searchClockTextSize = 28;
-    private float _searchClockSubTextFactor = 0.5f;
     private int bottomInset;
 
-    private HashMap<Integer, DateTimeFormatter> _clockModes = new HashMap<>(4);
-    private Integer _clockFormatterIndex = -1;
-    private DateTimeFormatter _clockFormatter = null;
+    private final HashMap<Integer, DateTimeFormatter> _clockModes = new HashMap<>(4);
 
     public SearchBar(@NonNull Context context) {
         super(context);
@@ -124,19 +120,17 @@ public class SearchBar extends FrameLayout {
         _clockModes.put(4, DateTimeFormatter.ofPattern("HH:mm\nMMMM dd, yyyy", Locale.getDefault()));
 
         _searchClock = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.view_search_clock, this, false);
+        int _searchClockTextSize = 28;
         _searchClock.setTextSize(TypedValue.COMPLEX_UNIT_DIP, _searchClockTextSize);
         LayoutParams clockParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         clockParams.setMargins(iconMarginOutside, dp1 * 4, 0, dp1 * 4);
         clockParams.gravity = Gravity.START;
 
         _switchButton = new AppCompatImageView(getContext());
-        _switchButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Setup.appSettings().setSearchUseGrid(!Setup.appSettings().getSearchUseGrid());
-                updateSwitchIcon();
-                updateRecyclerViewLayoutManager();
-            }
+        _switchButton.setOnClickListener(view -> {
+            Setup.appSettings().setSearchUseGrid(!Setup.appSettings().getSearchUseGrid());
+            updateSwitchIcon();
+            updateRecyclerViewLayoutManager();
         });
         _switchButton.setVisibility(View.GONE);
         _switchButton.setPadding(0, iconPadding, 0, iconPadding);
@@ -148,22 +142,21 @@ public class SearchBar extends FrameLayout {
 
         if (isInEditMode()) return;
 
-        _icon = new CircleDrawable(getContext(), getResources().getDrawable(R.drawable.ic_search), Color.WHITE, Color.BLACK, 100);
+        _icon = new CircleDrawable(getContext(),
+                Objects.requireNonNull(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_search, getContext().getTheme())),
+                Color.WHITE, Color.BLACK, 100);
         _searchButton = new AppCompatImageView(getContext());
         _searchButton.setImageDrawable(_icon);
-        _searchButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (_expanded && _searchInput.getText().length() > 0) {
-                    _searchInput.getText().clear();
-                    return;
-                }
-                _expanded = !_expanded;
-                if (_expanded) {
-                    expandInternal();
-                } else {
-                    collapseInternal();
-                }
+        _searchButton.setOnClickListener(v -> {
+            if (_expanded && _searchInput.getText().length() > 0) {
+                _searchInput.getText().clear();
+                return;
+            }
+            _expanded = !_expanded;
+            if (_expanded) {
+                expandInternal();
+            } else {
+                collapseInternal();
             }
         });
 
@@ -199,16 +192,13 @@ public class SearchBar extends FrameLayout {
             }
         });
 
-        _searchInput.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if ((event != null) && (event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    _callback.onInternetSearch(_searchInput.getText().toString());
-                    _searchInput.getText().clear();
-                    return true;
-                }
-                return false;
+        _searchInput.setOnKeyListener((v, keyCode, event) -> {
+            if ((event != null) && (event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                _callback.onInternetSearch(_searchInput.getText().toString());
+                _searchInput.getText().clear();
+                return true;
             }
+            return false;
         });
         LayoutParams inputCardParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         inputCardParams.setMargins(0, searchTextMarginTop, 0, 0);
@@ -221,60 +211,43 @@ public class SearchBar extends FrameLayout {
 
         initRecyclerView();
 
-        Setup.appLoader().addUpdateListener(new AppUpdateListener() {
-            @Override
-            public boolean onAppUpdated(List<App> apps) {
-                _adapter.clear();
-                if (Setup.appSettings().getSearchBarShouldShowHiddenApps()) {
-                    apps = Setup.appLoader().getAllApps(true);
-                }
-                List<IconLabelItem> items = new ArrayList<>();
-                for (int i = 0; i < apps.size(); i++) {
-                    final App app = apps.get(i);
-                    items.add(new IconLabelItem(app.getIcon(), app.getLabel())
-                            .withIconSize(50)
-                            .withTextColor(Color.WHITE)
-                            .withIsAppLauncher(true)
-                            .withIconPadding(8)
-                            .withOnClickAnimate(false)
-                            .withTextGravity(Setup.appSettings().getSearchUseGrid() ? Gravity.CENTER : Gravity.CENTER_VERTICAL)
-                            .withIconGravity(Setup.appSettings().getSearchUseGrid() ? Gravity.TOP : Gravity.START)
-                            .withOnClickListener(new OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Tool.startApp(v.getContext(), app, null);
-                                }
-                            })
-                            .withOnLongClickListener(DragHandler.getLongClick(Item.newAppItem(app), DragAction.Action.SEARCH, null)));
-                }
-                _adapter.set(items);
-
-                return false;
+        Setup.appLoader().addUpdateListener(apps -> {
+            _adapter.clear();
+            if (Setup.appSettings().getSearchBarShouldShowHiddenApps()) {
+                apps = Setup.appLoader().getAllApps(true);
             }
+            List<IconLabelItem> items = new ArrayList<>();
+            for (int i = 0; i < apps.size(); i++) {
+                final App app = apps.get(i);
+                items.add(new IconLabelItem(app.getIcon(), app.getLabel())
+                        .withIconSize(50)
+                        .withTextColor(Color.WHITE)
+                        .withIsAppLauncher(true)
+                        .withIconPadding(8)
+                        .withOnClickAnimate(false)
+                        .withTextGravity(Setup.appSettings().getSearchUseGrid() ? Gravity.CENTER : Gravity.CENTER_VERTICAL)
+                        .withIconGravity(Setup.appSettings().getSearchUseGrid() ? Gravity.TOP : Gravity.START)
+                        .withOnClickListener(v -> Tool.startApp(v.getContext(), app, null))
+                        .withOnLongClickListener(DragHandler.getLongClick(Item.newAppItem(app), DragAction.Action.SEARCH, null)));
+            }
+            _adapter.set(items);
+
+            return false;
         });
-        _adapter.getItemFilter().withFilterPredicate(new IItemAdapter.Predicate<IconLabelItem>() {
-            @Override
-            public boolean filter(IconLabelItem item, CharSequence constraint) {
-                if (constraint.length() == 0) {
-                    return true;
-                }
+        _adapter.getItemFilter().withFilterPredicate((item, constraint) -> {
+            if (constraint.length() == 0) {
+                return true;
+            }
 
-                String s = constraint.toString().toLowerCase();
-                s = Normalizer.normalize(s, Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-                String itemLabel = item._label.toLowerCase();
-                itemLabel = Normalizer.normalize(itemLabel, Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+            String s = constraint.toString().toLowerCase();
+            s = Normalizer.normalize(s, Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+            String itemLabel = item._label.toLowerCase();
+            itemLabel = Normalizer.normalize(itemLabel, Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
-                if (Setup.appSettings().getSearchBarStartsWith()) {
-                    if (itemLabel.startsWith(s)) {
-                        return true;
-                    }
-                } else {
-                    if (itemLabel.contains(s)) {
-                        return true;
-                    }
-                }
-
-                return false;
+            if (Setup.appSettings().getSearchBarStartsWith()) {
+                return itemLabel.startsWith(s);
+            } else {
+                return itemLabel.contains(s);
             }
         });
 
@@ -302,7 +275,7 @@ public class SearchBar extends FrameLayout {
             _callback.onCollapse();
         }
 
-        _icon.setIcon(getResources().getDrawable(R.drawable.ic_search));
+        _icon.setIcon(Objects.requireNonNull(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_search, getContext().getTheme())));
 
         Tool.visibleViews(ANIM_TIME, _searchClock);
         Tool.goneViews(ANIM_TIME, _searchCardContainer, _searchRecycler, _switchButton);
@@ -315,7 +288,7 @@ public class SearchBar extends FrameLayout {
             _callback.onExpand();
         }
 
-        _icon.setIcon(getResources().getDrawable(R.drawable.ic_clear));
+        _icon.setIcon(Objects.requireNonNull(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_clear, getContext().getTheme())));
 
         Tool.visibleViews(ANIM_TIME, _searchCardContainer, _searchRecycler, _switchButton);
         Tool.goneViews(ANIM_TIME, _searchClock);
@@ -366,7 +339,7 @@ public class SearchBar extends FrameLayout {
         }
 
         ZonedDateTime now = ZonedDateTime.now();
-        _clockFormatter = getSearchBarClockFormat(Setup.appSettings().getDesktopDateMode());
+        DateTimeFormatter _clockFormatter = getSearchBarClockFormat(Setup.appSettings().getDesktopDateMode());
 
         String text = now.format(_clockFormatter);
         String[] lines = text.split("\n");
@@ -374,6 +347,7 @@ public class SearchBar extends FrameLayout {
             _searchClock.setText(lines[0]);
         } else {
             Spannable span = new SpannableString(text);
+            float _searchClockSubTextFactor = 0.5f;
             span.setSpan(new RelativeSizeSpan(_searchClockSubTextFactor), lines[0].length() + 1, lines[0].length() + 1 + lines[1].length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             _searchClock.setText(span);
         }
@@ -381,16 +355,14 @@ public class SearchBar extends FrameLayout {
 
     @Override
     public WindowInsets onApplyWindowInsets(WindowInsets insets) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-            bottomInset = insets.getSystemWindowInsetBottom();
-            setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
-            return insets;
-        }
+        bottomInset = insets.getSystemWindowInsetBottom();
+        setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
         return insets;
     }
 
     public DateTimeFormatter getSearchBarClockFormat(Integer id) {
-        if (_clockFormatterIndex != id && id > 0) {
+        Integer _clockFormatterIndex = -1;
+        if (!Objects.equals(_clockFormatterIndex, id) && id > 0) {
             if (_clockModes.containsKey(id)) {
                 return _clockModes.get(id);
             }

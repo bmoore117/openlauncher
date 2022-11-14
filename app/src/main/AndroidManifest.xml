@@ -10,6 +10,7 @@
         </intent>
     </queries>
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
@@ -130,7 +131,7 @@
                 android:resource="@xml/device_admin" />
         </receiver>
         <receiver
-            android:name="com.benny.openlauncher.Receivers.ShortcutReceiver"
+            android:name="com.benny.openlauncher.receivers.ShortcutReceiver"
             android:permission="com.android.launcher.permission.INSTALL_SHORTCUT"
             android:exported="true">
             <intent-filter>

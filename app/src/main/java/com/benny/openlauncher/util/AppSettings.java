@@ -244,7 +244,7 @@ public class AppSettings extends SharedPreferencesPropertyBackend {
     }
 
     public int getPrimaryColor() {
-        return getInt(R.string.pref_key__primary_color, _context.getResources().getColor(R.color.colorPrimary));
+        return getInt(R.string.pref_key__primary_color, _context.getResources().getColor(R.color.colorPrimary, _context.getTheme()));
     }
 
     public int getIconSize() {

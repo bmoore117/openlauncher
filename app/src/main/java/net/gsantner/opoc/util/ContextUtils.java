@@ -40,7 +40,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -420,14 +421,14 @@ public class ContextUtils {
      * @return True if internet connection available
      */
     public boolean isConnectedToInternet() {
-        try {
-            ConnectivityManager con = (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            @SuppressLint("MissingPermission") NetworkInfo activeNetInfo =
-                    con == null ? null : con.getActiveNetworkInfo();
-            return activeNetInfo != null && activeNetInfo.isConnectedOrConnecting();
-        } catch (Exception ignored) {
-            throw new RuntimeException("Error: Developer forgot to declare a permission");
-        }
+        ConnectivityManager con = (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network nw = con.getActiveNetwork();
+        if (nw == null) return false;
+        NetworkCapabilities actNw = con.getNetworkCapabilities(nw);
+        return actNw != null && (actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                || actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                || actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                || actNw.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH));
     }
 
     /**
@@ -446,7 +447,7 @@ public class ContextUtils {
     /**
      * Restart the current app. Supply the class to start on startup
      */
-    public void restartApp(Class classToStart) {
+    public void restartApp(Class<?> classToStart) {
         Intent intent = new Intent(_context, classToStart);
         PendingIntent pendi = PendingIntent.getActivity(_context, 555, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager mgr = (AlarmManager) _context.getSystemService(Context.ALARM_SERVICE);
@@ -644,7 +645,6 @@ public class ContextUtils {
             return null;
         }
         for (Pair<File, String> storage : getStorages(false, true)) {
-            //noinspection ConstantConditions
             if (filepath.startsWith(storage.first.getAbsolutePath())) {
                 return storage.first;
             }
@@ -1014,19 +1014,6 @@ public class ContextUtils {
         } else {
             vibrator.vibrate(ms_v);
         }
-    }
-
-    /*
-    Check if Wifi is connected. Requires these permissions in AndroidManifest:
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-     */
-    @SuppressLint("MissingPermission")
-    public boolean isWifiConnected(boolean... enabledOnly) {
-        final boolean doEnabledCheckOnly = enabledOnly != null && enabledOnly.length > 0 && enabledOnly[0];
-        final ConnectivityManager connectivityManager = (ConnectivityManager) _context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return wifiInfo != null && (doEnabledCheckOnly ? wifiInfo.isAvailable() : wifiInfo.isConnected());
     }
 
     // Returns if the device is currently in portrait orientation (landscape=false)
