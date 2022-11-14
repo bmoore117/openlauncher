@@ -7,16 +7,16 @@ import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ShortcutInfo;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Process;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.UserHandle;
-import android.os.UserManager;
+
 import androidx.annotation.NonNull;
 
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.interfaces.AppDeleteListener;
 import com.benny.openlauncher.interfaces.AppUpdateListener;
+import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 import com.benny.openlauncher.model.Item;
 
@@ -25,13 +25,12 @@ import org.slf4j.LoggerFactory;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class AppManager {
-    private static final Logger LOG = LoggerFactory.getLogger("AppManager");
+    private static final Logger LOG = LoggerFactory.getLogger(AppManager.class.getSimpleName());
 
     private static AppManager appManager;
 
@@ -39,26 +38,31 @@ public class AppManager {
         return appManager == null ? (appManager = new AppManager(context)) : appManager;
     }
 
-    private PackageManager _packageManager;
+    private final PackageManager _packageManager;
+    private final LauncherApps launcherApps;
+    public final List<AppUpdateListener> _updateListeners;
+    public final List<AppDeleteListener> _deleteListeners;
+    private final Executor appExecutor;
+    private final Handler handler;
+
     private List<App> _apps = new ArrayList<>();
     private List<App> _nonFilteredApps = new ArrayList<>();
-    public final List<AppUpdateListener> _updateListeners = new ArrayList<>();
-    public final List<AppDeleteListener> _deleteListeners = new ArrayList<>();
-    public boolean _recreateAfterGettingApps;
-    private AsyncTask _task;
-    private final Context _context;
+
+    public AppManager(Context context) {
+        _packageManager = context.getPackageManager();
+        launcherApps = (LauncherApps) context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
+        _updateListeners = new ArrayList<>();
+        _deleteListeners = new ArrayList<>();
+        appExecutor = Executors.newSingleThreadExecutor();
+        handler = new Handler(Looper.getMainLooper());
+    }
 
     public PackageManager getPackageManager() {
         return _packageManager;
     }
 
     public Context getContext() {
-        return _context;
-    }
-
-    public AppManager(Context context) {
-        _context = context;
-        _packageManager = context.getPackageManager();
+        return Setup.appContext();
     }
 
     public App findApp(Intent intent) {
@@ -82,118 +86,20 @@ public class AppManager {
         return _nonFilteredApps;
     }
 
-    public void init() {
-        getAllApps();
-    }
+    public void refreshApps(boolean recreateHomeActivity) {
+        appExecutor.execute(() -> {
+            List<App> appsTemp = new ArrayList<>();
+            List<App> nonFilteredAppsTemp = new ArrayList<>();
+            List<App> removedApps;
 
-    public void getAllApps() {
-        if (_task == null || _task.getStatus() == AsyncTask.Status.FINISHED)
-            _task = new AsyncGetApps().execute();
-        else if (_task.getStatus() == AsyncTask.Status.RUNNING) {
-            _task.cancel(false);
-            _task = new AsyncGetApps().execute();
-        }
-    }
-
-    public List<App> getAllApps(boolean includeHidden) {
-        return includeHidden ? getNonFilteredApps() : getApps();
-    }
-
-    public App findItemApp(Item item) {
-        return findApp(item.getIntent());
-    }
-
-    public App createApp(Intent intent) {
-        try {
-            ResolveInfo info = _packageManager.resolveActivity(intent, 0);
-            List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), intent.getComponent().getPackageName());
-            return new App(_packageManager, info, shortcutInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void onAppUpdated() {
-        getAllApps();
-    }
-
-    public void addUpdateListener(AppUpdateListener updateListener) {
-        _updateListeners.add(updateListener);
-    }
-
-    public void addDeleteListener(AppDeleteListener deleteListener) {
-        _deleteListeners.add(deleteListener);
-    }
-
-    public void notifyUpdateListeners(@NonNull List<App> apps) {
-        _updateListeners.removeIf(appUpdateListener -> appUpdateListener.onAppUpdated(apps));
-    }
-
-    public void notifyRemoveListeners(@NonNull List<App> apps) {
-        _deleteListeners.removeIf(appDeleteListener -> appDeleteListener.onAppDeleted(apps));
-    }
-
-    private class AsyncGetApps extends AsyncTask {
-        private List<App> appsTemp;
-        private List<App> nonFilteredAppsTemp;
-        private List<App> removedApps;
-
-        @Override
-        protected void onPreExecute() {
-            appsTemp = new ArrayList<>();
-            nonFilteredAppsTemp = new ArrayList<>();
-            removedApps = new ArrayList<>();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onCancelled() {
-            appsTemp = null;
-            nonFilteredAppsTemp = null;
-            removedApps = new ArrayList<>();
-            super.onCancelled();
-        }
-
-        @Override
-        protected Object doInBackground(Object[] p1) {
-
-            // work profile support
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
-                List<UserHandle> profiles = launcherApps.getProfiles();
-                for (UserHandle userHandle : profiles) {
-                    List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, userHandle);
-                    for (LauncherActivityInfo info : apps) {
-                        List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
-                        App app = new App(_packageManager, info, shortcutInfo);
-                        app._userHandle = userHandle;
-                        LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
-                        nonFilteredAppsTemp.add(app);
-                    }
-                }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                UserManager userManager = (UserManager) _context.getSystemService(Context.USER_SERVICE);
-                // LauncherApps.getProfiles() is not available for API 25, so just get all associated user profile handlers
-                List<UserHandle> profiles = userManager.getUserProfiles();
-                LauncherApps launcherApps = (LauncherApps) _context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
-                for (UserHandle userHandle : profiles) {
-                    List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, userHandle);
-                    for (LauncherActivityInfo info : apps) {
-                        List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
-                        App app = new App(_packageManager, info, shortcutInfo);
-                        app._userHandle = userHandle;
-                        LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
-                        nonFilteredAppsTemp.add(app);
-                    }
-                }
-            } else {
-                Intent intent = new Intent(Intent.ACTION_MAIN, null);
-                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                List<ResolveInfo> activitiesInfo = _packageManager.queryIntentActivities(intent, 0);
-                for (ResolveInfo info : activitiesInfo) {
-                    App app = new App(_packageManager, info, null);
-                    LOG.debug("adding app to non filtered list: {}, {}, {}", app._label,  app._packageName, app._className);
+            List<UserHandle> profiles = launcherApps.getProfiles();
+            for (UserHandle userHandle : profiles) {
+                List<LauncherActivityInfo> apps = launcherApps.getActivityList(null, userHandle);
+                for (LauncherActivityInfo info : apps) {
+                    List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), info.getComponentName().getPackageName());
+                    App app = new App(_packageManager, info, shortcutInfo);
+                    app._userHandle = userHandle;
+                    LOG.debug("adding work profile to non filtered list: {}, {}, {}", app._label, app._packageName, app._className);
                     nonFilteredAppsTemp.add(app);
                 }
             }
@@ -229,28 +135,62 @@ public class AppManager {
             if (!appSettings.getIconPack().isEmpty() && Tool.isPackageInstalled(appSettings.getIconPack(), _packageManager)) {
                 IconPackHelper.applyIconPack(AppManager.this, Tool.dp2px(appSettings.getIconSize()), appSettings.getIconPack(), appsTemp);
             }
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(Object result) {
             _apps = appsTemp;
             _nonFilteredApps = nonFilteredAppsTemp;
 
-            if (removedApps.size() > 0) {
-                notifyRemoveListeners(removedApps);
-            }
+            // update UI using correct thread
+            handler.post(() -> {
+                if (removedApps.size() > 0) {
+                    notifyRemoveListeners(removedApps);
+                }
 
-            notifyUpdateListeners(appsTemp);
+                notifyUpdateListeners(appsTemp);
 
-            if (_recreateAfterGettingApps) {
-                _recreateAfterGettingApps = false;
-                if (_context instanceof HomeActivity)
-                    ((HomeActivity) _context).recreate();
-            }
+                if (recreateHomeActivity) {
+                    HomeActivity._launcher.recreate();
+                }
+            });
+        });
+    }
 
-            super.onPostExecute(result);
+    public List<App> getAllApps(boolean includeHidden) {
+        return includeHidden ? getNonFilteredApps() : getApps();
+    }
+
+    public App findItemApp(Item item) {
+        return findApp(item.getIntent());
+    }
+
+    public App createApp(Intent intent) {
+        try {
+            ResolveInfo info = _packageManager.resolveActivity(intent, 0);
+            List<ShortcutInfo> shortcutInfo = Tool.getShortcutInfo(getContext(), intent.getComponent().getPackageName());
+            return new App(_packageManager, info, shortcutInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
+    }
+
+    public void onAppUpdated() {
+        refreshApps(false);
+    }
+
+    public void addUpdateListener(AppUpdateListener updateListener) {
+        _updateListeners.add(updateListener);
+    }
+
+    public void addDeleteListener(AppDeleteListener deleteListener) {
+        _deleteListeners.add(deleteListener);
+    }
+
+    public void notifyUpdateListeners(@NonNull List<App> apps) {
+        _updateListeners.removeIf(appUpdateListener -> appUpdateListener.onAppUpdated(apps));
+    }
+
+    public void notifyRemoveListeners(@NonNull List<App> apps) {
+        _deleteListeners.removeIf(appDeleteListener -> appDeleteListener.onAppDeleted(apps));
     }
 
     public static List<App> getRemovedApps(List<App> oldApps, List<App> newApps) {

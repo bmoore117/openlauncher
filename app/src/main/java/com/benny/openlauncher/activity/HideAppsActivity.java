@@ -41,8 +41,7 @@ public class HideAppsActivity extends ColorActivity {
 
     @Override
     protected void onDestroy() {
-        AppManager.getInstance(this)._recreateAfterGettingApps = true;
-        AppManager.getInstance(this).init();
+        AppManager.getInstance(this).refreshApps(true);
         super.onDestroy();
     }
 

@@ -240,7 +240,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             getDock().initDock();
             return false;
         });
-        AppManager.getInstance(this).getAllApps();
+        AppManager.getInstance(this).refreshApps(false);
     }
 
     private void initViews() {
