@@ -4,11 +4,12 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.benny.openlauncher.R;
 import com.benny.openlauncher.fragment.HideAppsFragment;
@@ -26,7 +27,7 @@ public class HideAppsActivity extends ColorActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark, getTheme()));
 
-        ViewPager viewPager = findViewById(R.id.viewpager);
+        ViewPager2 viewPager = findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -43,8 +44,8 @@ public class HideAppsActivity extends ColorActivity {
         super.onDestroy();
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+    private void setupViewPager(ViewPager2 viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         adapter.addFragment(new HideAppsFragment(), "Skip");
         viewPager.setAdapter(adapter);
     }
@@ -57,32 +58,28 @@ public class HideAppsActivity extends ColorActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private static class ViewPagerAdapter extends FragmentPagerAdapter {
+    private static class ViewPagerAdapter extends FragmentStateAdapter {
         private final ArrayList<Fragment> mFragmentList = new ArrayList<>();
         private final ArrayList<String> mFragmentTitleList = new ArrayList<>();
 
-        ViewPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentTitleList.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
+        public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+            super(fragmentActivity);
         }
 
         public void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mFragmentTitleList.size();
         }
     }
 }
