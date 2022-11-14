@@ -24,8 +24,6 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.benny.openlauncher.activity.homeparts.HpAppDrawer;
 import com.benny.openlauncher.activity.homeparts.HpDesktopOption;
 import com.benny.openlauncher.activity.homeparts.HpDragOption;
@@ -513,12 +511,9 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
 
         // Request the required permission otherwise.
-        DialogHelper.alertDialog(this, getString(R.string.notification_title), getString(R.string.notification_summary), getString(R.string.enable), new MaterialDialog.SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                Tool.toast(HomeActivity.this, getString(R.string.toast_notification_permission_required));
-                startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
-            }
+        DialogHelper.alertDialog(this, getString(R.string.notification_title), getString(R.string.notification_summary), getString(R.string.enable), (dialog, which) -> {
+            Tool.toast(HomeActivity.this, getString(R.string.toast_notification_permission_required));
+            startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
         });
     }
 
@@ -547,7 +542,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         } else if (appSettings.getDesktopOrientationMode() == 1) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
         handleLauncherResume();
         LicenseService.schedule(this);
@@ -605,7 +600,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             cy += view.getHeight() / 2f;
             if (view instanceof AppItemView) {
                 AppItemView appItemView = (AppItemView) view;
-                if (appItemView != null && appItemView.getShowLabel()) {
+                if (appItemView.getShowLabel()) {
                     cy -= Tool.dp2px(14) / 2f;
                 }
             }

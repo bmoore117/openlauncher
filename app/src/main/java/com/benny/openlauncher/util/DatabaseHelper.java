@@ -1,5 +1,6 @@
 package com.benny.openlauncher.util;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -259,6 +260,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         createItem(item, page, itemPosition);
     }
 
+    @SuppressLint("Range")
     private Item getSelection(Cursor cursor) {
         Item item = new Item();
         int id = Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_TIME)));
