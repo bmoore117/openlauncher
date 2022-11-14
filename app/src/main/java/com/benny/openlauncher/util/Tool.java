@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.LauncherApps;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.pm.ShortcutInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -16,14 +17,11 @@ import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Process;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
@@ -31,6 +29,9 @@ import android.view.ViewPropertyAnimator;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.manager.Setup;
@@ -59,10 +60,8 @@ public class Tool {
             // some manufacturers do not vibrate on long press
             // might as well make this a fallback method
             view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(50, 160));
         } else {
-            vibrator.vibrate(50);
+            vibrator.vibrate(VibrationEffect.createOneShot(50, 160));
         }
     }
 
@@ -70,12 +69,7 @@ public class Tool {
         if (views == null) return;
         for (View view : views) {
             if (view == null) continue;
-            view.animate().alpha(1).setDuration(duration).setInterpolator(new AccelerateDecelerateInterpolator()).withStartAction(new Runnable() {
-                @Override
-                public void run() {
-                    view.setVisibility(View.VISIBLE);
-                }
-            });
+            view.animate().alpha(1).setDuration(duration).setInterpolator(new AccelerateDecelerateInterpolator()).withStartAction(() -> view.setVisibility(View.VISIBLE));
         }
     }
 
@@ -83,12 +77,7 @@ public class Tool {
         if (views == null) return;
         for (final View view : views) {
             if (view == null) continue;
-            view.animate().alpha(0).setDuration(duration).setInterpolator(new AccelerateDecelerateInterpolator()).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    view.setVisibility(View.INVISIBLE);
-                }
-            });
+            view.animate().alpha(0).setDuration(duration).setInterpolator(new AccelerateDecelerateInterpolator()).withEndAction(() -> view.setVisibility(View.INVISIBLE));
         }
     }
 
@@ -96,12 +85,7 @@ public class Tool {
         if (views == null) return;
         for (final View view : views) {
             if (view == null) continue;
-            view.animate().alpha(0).setDuration(duration).setInterpolator(new AccelerateDecelerateInterpolator()).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    view.setVisibility(View.GONE);
-                }
-            });
+            view.animate().alpha(0).setDuration(duration).setInterpolator(new AccelerateDecelerateInterpolator()).withEndAction(() -> view.setVisibility(View.GONE));
         }
     }
 
@@ -109,17 +93,10 @@ public class Tool {
         final int animTime = Setup.appSettings().getAnimationSpeed() * 4;
         ViewPropertyAnimator animateScaleIn = view.animate().scaleX(0.85f).scaleY(0.85f).setDuration(animTime);
         animateScaleIn.setInterpolator(new AccelerateDecelerateInterpolator());
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ViewPropertyAnimator animateScaleOut = view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(animTime);
-                animateScaleOut.setInterpolator(new AccelerateDecelerateInterpolator());
-                new Handler().postDelayed(new Runnable() {
-                    public final void run() {
-                        action.run();
-                    }
-                }, animTime);
-            }
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            ViewPropertyAnimator animateScaleOut = view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(animTime);
+            animateScaleOut.setInterpolator(new AccelerateDecelerateInterpolator());
+            new Handler(Looper.getMainLooper()).postDelayed(action, animTime);
         }, animTime);
     }
 
@@ -198,14 +175,13 @@ public class Tool {
         fromView.getLocationOnScreen(fromCoordinate);
         toView.getLocationOnScreen(toCoordinate);
 
-        Point toPoint = new Point(fromCoordinate[0] - toCoordinate[0] + fromPoint.x, fromCoordinate[1] - toCoordinate[1] + fromPoint.y);
-        return toPoint;
+        return new Point(fromCoordinate[0] - toCoordinate[0] + fromPoint.x, fromCoordinate[1] - toCoordinate[1] + fromPoint.y);
     }
 
     public static boolean isIntentActionAvailable(Context context, String action) {
         final PackageManager packageManager = context.getPackageManager();
         final Intent intent = new Intent(action);
-        List resolveInfo = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        List<ResolveInfo> resolveInfo = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         return resolveInfo.size() > 0;
     }
 
@@ -253,30 +229,17 @@ public class Tool {
         }
     }
 
-    public static void removeIcon(Context context, String filename) {
-        File file = new File(context.getFilesDir() + "/icons/" + filename + ".png");
-        if (file.exists()) {
-            try {
-                file.delete();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Nullable
     public static List<ShortcutInfo> getShortcutInfo(@NonNull Context context, @NonNull String packageName) {
         List<ShortcutInfo> shortcutInfo = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
-            LauncherApps launcherApps = (LauncherApps) context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
-            LauncherApps.ShortcutQuery shortcutQuery = new LauncherApps.ShortcutQuery();
-            shortcutQuery.setQueryFlags(FLAG_MATCH_DYNAMIC | FLAG_MATCH_MANIFEST | FLAG_MATCH_PINNED);
-            shortcutQuery.setPackage(packageName);
-            try {
-                shortcutInfo = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle());
-            } catch (SecurityException e) {
-                Log.w(Tool.class.getSimpleName(), "Can't get shortcuts info. App is not set as default launcher");
-            }
+        LauncherApps launcherApps = (LauncherApps) context.getSystemService(Context.LAUNCHER_APPS_SERVICE);
+        LauncherApps.ShortcutQuery shortcutQuery = new LauncherApps.ShortcutQuery();
+        shortcutQuery.setQueryFlags(FLAG_MATCH_DYNAMIC | FLAG_MATCH_MANIFEST | FLAG_MATCH_PINNED);
+        shortcutQuery.setPackage(packageName);
+        try {
+            shortcutInfo = launcherApps.getShortcuts(shortcutQuery, Process.myUserHandle());
+        } catch (SecurityException e) {
+            Log.w(Tool.class.getSimpleName(), "Can't get shortcuts info. App is not set as default launcher");
         }
         return shortcutInfo;
     }

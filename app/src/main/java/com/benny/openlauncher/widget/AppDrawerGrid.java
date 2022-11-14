@@ -69,7 +69,6 @@ public class AppDrawerGrid extends FrameLayout {
         }
         _recyclerView.setAdapter(_gridDrawerAdapter);
         _recyclerView.setLayoutManager(_layoutManager);
-        _recyclerView.setDrawingCacheEnabled(true);
 
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
