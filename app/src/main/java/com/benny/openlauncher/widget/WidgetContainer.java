@@ -42,48 +42,36 @@ public class WidgetContainer extends FrameLayout {
         hl = findViewById(R.id.horiless);
 
         final WidgetContainer widgetContainer = this;
-        ve.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.getScaleX() < 1) return;
-                item.setSpanY(item.getSpanY() + 1);
-                scaleWidget(widgetContainer, item);
-                widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 2000);
-            }
+        ve.setOnClickListener(view -> {
+            if (view.getScaleX() < 1) return;
+            item.setSpanY(item.getSpanY() + 1);
+            scaleWidget(widgetContainer, item);
+            widgetContainer.removeCallbacks(action);
+            widgetContainer.postDelayed(action, 2000);
         });
 
-        he.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.getScaleX() < 1) return;
-                item.setSpanX(item.getSpanX() + 1);
-                scaleWidget(widgetContainer, item);
-                widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 2000);
-            }
+        he.setOnClickListener(view -> {
+            if (view.getScaleX() < 1) return;
+            item.setSpanX(item.getSpanX() + 1);
+            scaleWidget(widgetContainer, item);
+            widgetContainer.removeCallbacks(action);
+            widgetContainer.postDelayed(action, 2000);
         });
 
-        vl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.getScaleX() < 1) return;
-                item.setSpanY(item.getSpanY() - 1);
-                scaleWidget(widgetContainer, item);
-                widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 2000);
-            }
+        vl.setOnClickListener(view -> {
+            if (view.getScaleX() < 1) return;
+            item.setSpanY(item.getSpanY() - 1);
+            scaleWidget(widgetContainer, item);
+            widgetContainer.removeCallbacks(action);
+            widgetContainer.postDelayed(action, 2000);
         });
 
-        hl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (view.getScaleX() < 1) return;
-                item.setSpanX(item.getSpanX() - 1);
-                scaleWidget(widgetContainer, item);
-                widgetContainer.removeCallbacks(action);
-                widgetContainer.postDelayed(action, 2000);
-            }
+        hl.setOnClickListener(view -> {
+            if (view.getScaleX() < 1) return;
+            item.setSpanX(item.getSpanX() - 1);
+            scaleWidget(widgetContainer, item);
+            widgetContainer.removeCallbacks(action);
+            widgetContainer.postDelayed(action, 2000);
         });
     }
 
