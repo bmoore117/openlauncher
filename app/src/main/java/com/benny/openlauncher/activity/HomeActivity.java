@@ -192,7 +192,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         // transparent status and navigation
         Window window = getWindow();
         View decorView = window.getDecorView();
-        decorView.setSystemUiVisibility(1536);
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
         init();
     }
