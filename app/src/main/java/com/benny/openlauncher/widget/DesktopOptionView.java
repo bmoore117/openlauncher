@@ -89,8 +89,8 @@ public class DesktopOptionView extends FrameLayout {
 
         final int paddingHorizontal = Tool.dp2px(42);
 
-        _actionAdapters.set(0, new FastItemAdapter<>());
-        _actionAdapters.set(1, new FastItemAdapter<>());
+        _actionAdapters.add(new FastItemAdapter<>());
+        _actionAdapters.add(new FastItemAdapter<>());
 
         _actionRecyclerViews[0] = createRecyclerView(_actionAdapters.get(0), Gravity.TOP | Gravity.CENTER_HORIZONTAL, paddingHorizontal);
         _actionRecyclerViews[1] = createRecyclerView(_actionAdapters.get(1), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, paddingHorizontal);
