@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,9 +55,9 @@ public class DesktopOptionView extends FrameLayout {
     public void updateHomeIcon(final boolean home) {
         post(() -> {
             if (home) {
-                _actionAdapters.get(0).getAdapterItem(1)._icon = getContext().getResources().getDrawable(R.drawable.ic_star);
+                _actionAdapters.get(0).getAdapterItem(1)._icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_star, getContext().getTheme());
             } else {
-                _actionAdapters.get(0).getAdapterItem(1)._icon = getContext().getResources().getDrawable(R.drawable.ic_star_border);
+                _actionAdapters.get(0).getAdapterItem(1)._icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_star_border, getContext().getTheme());
             }
             _actionAdapters.get(0).notifyAdapterItemChanged(1);
         });
@@ -65,16 +66,13 @@ public class DesktopOptionView extends FrameLayout {
     public void updateLockIcon(final boolean lock) {
         if (_actionAdapters.size() == 0) return;
         if (_actionAdapters.get(0).getAdapterItemCount() == 0) return;
-        post(new Runnable() {
-            @Override
-            public void run() {
-                if (lock) {
-                    _actionAdapters.get(0).getAdapterItem(2)._icon = getContext().getResources().getDrawable(R.drawable.ic_lock);
-                } else {
-                    _actionAdapters.get(0).getAdapterItem(2)._icon = getContext().getResources().getDrawable(R.drawable.ic_lock_open);
-                }
-                _actionAdapters.get(0).notifyAdapterItemChanged(2);
+        post(() -> {
+            if (lock) {
+                _actionAdapters.get(0).getAdapterItem(2)._icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_lock, getContext().getTheme());
+            } else {
+                _actionAdapters.get(0).getAdapterItem(2)._icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_lock_open, getContext().getTheme());
             }
+            _actionAdapters.get(0).notifyAdapterItemChanged(2);
         });
     }
 
