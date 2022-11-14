@@ -36,8 +36,8 @@ public class PermissionChecker {
                 new AlertDialog.Builder(_activity)
                         .setMessage(optionalToastMessageForKnowingWhyNeeded[0])
                         .setCancelable(false)
-                        .setNegativeButton(android.R.string.no, null)
-                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                             if (android.os.Build.VERSION.SDK_INT >= 23) {
                                 ActivityCompat.requestPermissions(_activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_PERMISSION_EXTERNAL_STORAGE);
                             }

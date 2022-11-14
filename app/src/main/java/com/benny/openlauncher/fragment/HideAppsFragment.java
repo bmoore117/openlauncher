@@ -3,14 +3,10 @@ package com.benny.openlauncher.fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -18,10 +14,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.benny.openlauncher.R;
 import com.benny.openlauncher.model.App;
 import com.benny.openlauncher.util.AppManager;
 import com.benny.openlauncher.util.AppSettings;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +30,10 @@ public class HideAppsFragment extends Fragment {
     private static final String TAG = "RequestActivity";
     private static final boolean DEBUG = true;
 
-    private ArrayList<String> _listActivitiesHidden = new ArrayList();
-    private ArrayList<App> _listActivitiesAll = new ArrayList();
-    private AsyncWorkerList _taskList = new AsyncWorkerList();
-    private HideAppsAdapter _appInfoAdapter;
+    private final ArrayList<String> _listActivitiesHidden = new ArrayList<>();
+    private final ArrayList<App> _listActivitiesAll = new ArrayList<>();
+    private final AsyncWorkerList _taskList = new AsyncWorkerList();
     private ViewSwitcher _switcherLoad;
-    private ListView _grid;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,12 +41,7 @@ public class HideAppsFragment extends Fragment {
         _switcherLoad = rootView.findViewById(R.id.viewSwitcherLoadingMain);
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab_rq);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                confirmSelection();
-            }
-        });
+        fab.setOnClickListener(view -> confirmSelection());
 
         if (_taskList.getStatus() == AsyncTask.Status.PENDING) {
             // task has not started yet
@@ -105,15 +98,11 @@ public class HideAppsFragment extends Fragment {
     }
 
     private void confirmSelection() {
-        Thread actionSend_Thread = new Thread() {
-
-            @Override
-            public void run() {
-                // update hidden apps
-                AppSettings.get().setHiddenAppsList(_listActivitiesHidden);
-                getActivity().finish();
-            }
-        };
+        Thread actionSend_Thread = new Thread(() -> {
+            // update hidden apps
+            AppSettings.get().setHiddenAppsList(_listActivitiesHidden);
+            getActivity().finish();
+        });
 
         if (!actionSend_Thread.isAlive()) {
             // prevents thread from being executed more than once
@@ -127,34 +116,32 @@ public class HideAppsFragment extends Fragment {
     }
 
     private void populateView() {
-        _grid = getActivity().findViewById(R.id.app_grid);
+        ListView _grid = getActivity().findViewById(R.id.app_grid);
 
         assert _grid != null;
         _grid.setFastScrollEnabled(true);
         _grid.setFastScrollAlwaysVisible(false);
 
-        _appInfoAdapter = new HideAppsAdapter(getActivity(), _listActivitiesAll);
+        HideAppsAdapter _appInfoAdapter = new HideAppsAdapter(getActivity(), _listActivitiesAll);
 
         _grid.setAdapter(_appInfoAdapter);
-        _grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> AdapterView, View view, int position, long row) {
-                App appInfo = (App) AdapterView.getItemAtPosition(position);
-                CheckBox checker = view.findViewById(R.id.checkbox);
-                ViewSwitcher icon = view.findViewById(R.id.viewSwitcherChecked);
+        _grid.setOnItemClickListener((AdapterView, view, position, row) -> {
+            App appInfo = (App) AdapterView.getItemAtPosition(position);
+            CheckBox checker = view.findViewById(R.id.checkbox);
+            ViewSwitcher icon = view.findViewById(R.id.viewSwitcherChecked);
 
-                checker.toggle();
-                if (checker.isChecked()) {
-                    _listActivitiesHidden.add(appInfo.getComponentName());
-                    if (DEBUG) Log.v(TAG, "Selected App: " + appInfo.getLabel());
-                    if (icon.getDisplayedChild() == 0) {
-                        icon.showNext();
-                    }
-                } else {
-                    _listActivitiesHidden.remove(appInfo.getComponentName());
-                    if (DEBUG) Log.v(TAG, "Deselected App: " + appInfo.getLabel());
-                    if (icon.getDisplayedChild() == 1) {
-                        icon.showPrevious();
-                    }
+            checker.toggle();
+            if (checker.isChecked()) {
+                _listActivitiesHidden.add(appInfo.getComponentName());
+                if (DEBUG) Log.v(TAG, "Selected App: " + appInfo.getLabel());
+                if (icon.getDisplayedChild() == 0) {
+                    icon.showNext();
+                }
+            } else {
+                _listActivitiesHidden.remove(appInfo.getComponentName());
+                if (DEBUG) Log.v(TAG, "Deselected App: " + appInfo.getLabel());
+                if (icon.getDisplayedChild() == 1) {
+                    icon.showPrevious();
                 }
             }
         });
@@ -203,7 +190,7 @@ public class HideAppsFragment extends Fragment {
         }
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         TextView _apkName;
         TextView _apkPackage;
         ImageView _apkIcon;

@@ -55,7 +55,6 @@ public class IconPackHelper {
         BitmapFactory.Options uniformOptions = new BitmapFactory.Options();
         uniformOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
         uniformOptions.inScaled = false;
-        uniformOptions.inDither = false;
 
         Bitmap back = null;
         Bitmap mask = null;
@@ -82,7 +81,6 @@ public class IconPackHelper {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = false;
         options.inPreferredConfig = Bitmap.Config.RGB_565;
-        options.inDither = true;
 
         for (int i = 0; i < apps.size(); i++) {
             if (iconPackResources != null) {
