@@ -1,8 +1,6 @@
 package net.skywall.fragment;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,18 +13,18 @@ import android.widget.GridView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import net.skywall.openlauncher.BuildConfig;
-import net.skywall.openlauncher.R;
+import androidx.fragment.app.Fragment;
+
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
+
 import net.skywall.fragment.view.DisplayApp;
+import net.skywall.openlauncher.R;
 import net.skywall.service.SkywallService;
 import net.skywall.service.WhitelistService;
 import net.skywall.utils.LicenseUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
