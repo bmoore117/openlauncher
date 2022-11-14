@@ -35,6 +35,8 @@ import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 import com.benny.openlauncher.model.Item;
 import com.benny.openlauncher.notifications.NotificationListener;
+import com.benny.openlauncher.receivers.AppUpdateReceiver;
+import com.benny.openlauncher.receivers.ShortcutReceiver;
 import com.benny.openlauncher.util.AppManager;
 import com.benny.openlauncher.util.AppSettings;
 import com.benny.openlauncher.util.DatabaseHelper;
@@ -61,8 +63,6 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 import net.gsantner.opoc.util.ContextUtils;
 import net.skywall.openlauncher.BuildConfig;
 import net.skywall.openlauncher.R;
-import net.skywall.openlauncher.Receivers.AppUpdateReceiver;
-import net.skywall.openlauncher.Receivers.ShortcutReceiver;
 import net.skywall.service.LicenseService;
 import net.skywall.service.WhitelistService;
 

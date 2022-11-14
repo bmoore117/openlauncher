@@ -46,7 +46,7 @@ public class RemoveFragment extends Fragment {
 
         // cannot simply stream to map because of stupid google quicksearchbox, listing itself twice
         Map<String, App> apps = new HashMap<>();
-        List<App> appList = Setup.appLoader().getAllApps(getContext(), false);
+        List<App> appList = Setup.appLoader().getAllApps(false);
         for (App app : appList) {
             apps.put(app.getPackageName(), app);
         }

@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class AppManager {
-    private static Logger LOG = LoggerFactory.getLogger("AppManager");
+    private static final Logger LOG = LoggerFactory.getLogger("AppManager");
 
     private static AppManager appManager;
 
@@ -46,7 +46,7 @@ public class AppManager {
     public final List<AppDeleteListener> _deleteListeners = new ArrayList<>();
     public boolean _recreateAfterGettingApps;
     private AsyncTask _task;
-    private Context _context;
+    private final Context _context;
 
     public PackageManager getPackageManager() {
         return _packageManager;
@@ -95,7 +95,7 @@ public class AppManager {
         }
     }
 
-    public List<App> getAllApps(Context context, boolean includeHidden) {
+    public List<App> getAllApps(boolean includeHidden) {
         return includeHidden ? getNonFilteredApps() : getApps();
     }
 
@@ -114,7 +114,7 @@ public class AppManager {
         }
     }
 
-    public void onAppUpdated(Context context, Intent intent) {
+    public void onAppUpdated() {
         getAllApps();
     }
 
@@ -127,21 +127,11 @@ public class AppManager {
     }
 
     public void notifyUpdateListeners(@NonNull List<App> apps) {
-        Iterator<AppUpdateListener> iter = _updateListeners.iterator();
-        while (iter.hasNext()) {
-            if (iter.next().onAppUpdated(apps)) {
-                iter.remove();
-            }
-        }
+        _updateListeners.removeIf(appUpdateListener -> appUpdateListener.onAppUpdated(apps));
     }
 
     public void notifyRemoveListeners(@NonNull List<App> apps) {
-        Iterator<AppDeleteListener> iter = _deleteListeners.iterator();
-        while (iter.hasNext()) {
-            if (iter.next().onAppDeleted(apps)) {
-                iter.remove();
-            }
-        }
+        _deleteListeners.removeIf(appDeleteListener -> appDeleteListener.onAppDeleted(apps));
     }
 
     private class AsyncGetApps extends AsyncTask {
@@ -209,12 +199,7 @@ public class AppManager {
             }
 
             // sort the apps by label here
-            Collections.sort(nonFilteredAppsTemp, new Comparator<App>() {
-                @Override
-                public int compare(App one, App two) {
-                    return Collator.getInstance().compare(one._label, two._label);
-                }
-            });
+            nonFilteredAppsTemp.sort((one, two) -> Collator.getInstance().compare(one._label, two._label));
 
             List<String> hiddenList = AppSettings.get().getHiddenAppsList();
             if (hiddenList != null) {

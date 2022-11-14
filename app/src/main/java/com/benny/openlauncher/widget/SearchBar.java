@@ -226,7 +226,7 @@ public class SearchBar extends FrameLayout {
             public boolean onAppUpdated(List<App> apps) {
                 _adapter.clear();
                 if (Setup.appSettings().getSearchBarShouldShowHiddenApps()) {
-                    apps = Setup.appLoader().getAllApps(getContext(), true);
+                    apps = Setup.appLoader().getAllApps(true);
                 }
                 List<IconLabelItem> items = new ArrayList<>();
                 for (int i = 0; i < apps.size(); i++) {

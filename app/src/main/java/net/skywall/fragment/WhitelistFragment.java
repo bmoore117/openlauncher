@@ -49,7 +49,7 @@ public class WhitelistFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        List<App> apps = Setup.appLoader().getAllApps(getContext(), false);
+        List<App> apps = Setup.appLoader().getAllApps(false);
         Set<String> whiteListedApps = whitelistService.getCurrentWhitelistedApps();
         nonWhitelistedApps = apps.stream()
                 .filter(app -> !whiteListedApps.contains(app.getPackageName())

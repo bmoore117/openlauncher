@@ -95,7 +95,7 @@ public class AppDrawerPage extends ViewPager {
             setLandscapeValue();
         }
 
-        List<App> allApps = Setup.appLoader().getAllApps(c, false);
+        List<App> allApps = Setup.appLoader().getAllApps(false);
         if (allApps.size() != 0) {
             AppDrawerPage.this._apps = allApps;
             calculatePage();

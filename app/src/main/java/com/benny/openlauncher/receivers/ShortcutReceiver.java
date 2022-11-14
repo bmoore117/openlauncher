@@ -1,4 +1,4 @@
-package net.skywall.openlauncher.Receivers;
+package com.benny.openlauncher.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
