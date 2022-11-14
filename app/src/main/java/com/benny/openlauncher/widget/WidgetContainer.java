@@ -97,36 +97,36 @@ public class WidgetContainer extends FrameLayout {
     }
 
     public void scaleWidget(View view, Item item) {
-        item.setSpanX(Math.min(item.getSpanX(), HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellSpanH()));
+        item.setSpanX(Math.min(item.getSpanX(), HomeActivity.getCurrentInstance().getDesktop().getCurrentPage().getCellSpanH()));
         item.setSpanX(Math.max(item.getSpanX(), 1));
-        item.setSpanY(Math.min(item.getSpanY(), HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellSpanV()));
+        item.setSpanY(Math.min(item.getSpanY(), HomeActivity.getCurrentInstance().getDesktop().getCurrentPage().getCellSpanV()));
         item.setSpanY(Math.max(item.getSpanY(), 1));
 
-        HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().setOccupied(false, (CellContainer.LayoutParams) view.getLayoutParams());
+        HomeActivity.getCurrentInstance().getDesktop().getCurrentPage().setOccupied(false, (CellContainer.LayoutParams) view.getLayoutParams());
 
-        if (!HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().checkOccupied(new Point(item.getX(), item.getY()), item.getSpanX(), item.getSpanY())) {
+        if (!HomeActivity.getCurrentInstance().getDesktop().getCurrentPage().checkOccupied(new Point(item.getX(), item.getY()), item.getSpanX(), item.getSpanY())) {
             CellContainer.LayoutParams newWidgetLayoutParams = new CellContainer.LayoutParams(CellContainer.LayoutParams.WRAP_CONTENT, CellContainer.LayoutParams.WRAP_CONTENT, item.getX(), item.getY(), item.getSpanX(), item.getSpanY());
 
             // update occupied array
-            HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().setOccupied(true, newWidgetLayoutParams);
+            HomeActivity.getCurrentInstance().getDesktop().getCurrentPage().setOccupied(true, newWidgetLayoutParams);
 
             // update the view
             view.setLayoutParams(newWidgetLayoutParams);
             updateWidgetOption(item);
 
             // update the widget size in the database
-            HomeActivity._db.saveItem(item);
+            HomeActivity.getCurrentInstance().getDb().saveItem(item);
         } else {
-            Toast.makeText(HomeActivity.Companion.getLauncher().getDesktop().getContext(), R.string.toast_not_enough_space, Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomeActivity.getCurrentInstance().getDesktop().getContext(), R.string.toast_not_enough_space, Toast.LENGTH_SHORT).show();
 
             // add the old layout params to the occupied array
-            HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().setOccupied(true, (CellContainer.LayoutParams) view.getLayoutParams());
+            HomeActivity.getCurrentInstance().getDesktop().getCurrentPage().setOccupied(true, (CellContainer.LayoutParams) view.getLayoutParams());
         }
     }
 
     public void updateWidgetOption(Item item) {
-        int cellWidth = HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellWidth();
-        int cellHeight = HomeActivity.Companion.getLauncher().getDesktop().getCurrentPage().getCellHeight();
+        int cellWidth = HomeActivity.getCurrentInstance().getDesktop().getCurrentPage().getCellWidth();
+        int cellHeight = HomeActivity.getCurrentInstance().getDesktop().getCurrentPage().getCellHeight();
 
         if (cellWidth < 1 || cellHeight < 1) {
             // desktop isn't laid out

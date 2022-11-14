@@ -245,7 +245,7 @@ public class AppItemView extends View implements Drawable.Callback, Notification
             _view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (HomeActivity.Companion.getLauncher() != null && (HomeActivity.Companion.getLauncher()).getGroupPopup().showPopup(item, v, callback)) {
+                    if (HomeActivity.getCurrentInstance() != null && (HomeActivity.getCurrentInstance()).getGroupPopup().showPopup(item, v, callback)) {
                         ((GroupDrawable) ((AppItemView) v).getIcon()).popUp();
                     }
                 }
@@ -262,7 +262,7 @@ public class AppItemView extends View implements Drawable.Callback, Notification
                     Tool.createScaleInScaleOutAnim(_view, new Runnable() {
                         @Override
                         public void run() {
-                            HomeActivity.Companion.getLauncher().openAppDrawer(_view, 0, 0);
+                            HomeActivity.getCurrentInstance().openAppDrawer(_view, 0, 0);
                         }
                     });
                 }

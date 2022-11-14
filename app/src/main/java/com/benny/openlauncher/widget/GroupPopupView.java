@@ -130,8 +130,8 @@ public class GroupPopupView extends RevealFrameLayout {
                         @Override
                         public boolean onLongClick(View view2) {
                             if (Setup.appSettings().getDesktopLock()) {
-                                if (HomeActivity.Companion.getLauncher() != null) {
-                                    HomeActivity._launcher.getItemOptionView().showItemPopupForLockedDesktop(groupItem, HomeActivity.Companion.getLauncher());
+                                if (HomeActivity.getCurrentInstance() != null) {
+                                    HomeActivity.getCurrentInstance().getItemOptionView().showItemPopupForLockedDesktop(groupItem, HomeActivity.getCurrentInstance());
                                     return true;
                                 }
                                 return false;
@@ -307,8 +307,8 @@ public class GroupPopupView extends RevealFrameLayout {
     private void removeItem(Context context, final Item currentItem, Item dragOutItem, AppItemView currentView) {
         currentItem.getGroupItems().remove(dragOutItem);
 
-        HomeActivity._db.saveItem(dragOutItem, ItemState.Visible);
-        HomeActivity._db.saveItem(currentItem);
+        HomeActivity.getCurrentInstance().getDb().saveItem(dragOutItem, ItemState.Visible);
+        HomeActivity.getCurrentInstance().getDb().saveItem(currentItem);
 
         currentView.setIcon(new GroupDrawable(context, currentItem, Setup.appSettings().getDesktopIconSize()));
     }
@@ -316,8 +316,8 @@ public class GroupPopupView extends RevealFrameLayout {
     private void deleteItem(Context context, final Item currentItem, Item dragOutItem, AppItemView currentView) {
         currentItem.getGroupItems().remove(dragOutItem);
 
-        HomeActivity._db.deleteItem(dragOutItem, false);
-        HomeActivity._db.saveItem(currentItem);
+        HomeActivity.getCurrentInstance().getDb().deleteItem(dragOutItem, false);
+        HomeActivity.getCurrentInstance().getDb().saveItem(currentItem);
 
         currentView.setIcon(new GroupDrawable(context, currentItem, Setup.appSettings().getDesktopIconSize()));
     }
@@ -326,16 +326,16 @@ public class GroupPopupView extends RevealFrameLayout {
         if (currentItem.getGroupItems().size() == 1) {
             final App app = Setup.appLoader().findItemApp(currentItem.getGroupItems().get(0));
             if (app != null) {
-                Item item = HomeActivity._db.getItem(currentItem.getGroupItems().get(0).getId());
+                Item item = HomeActivity.getCurrentInstance().getDb().getItem(currentItem.getGroupItems().get(0).getId());
                 item.setX(currentItem.getX());
                 item.setY(currentItem.getY());
                 item._location = ItemPosition.Desktop;
 
                 // update db
-                HomeActivity._db.saveItem(item);
-                HomeActivity._db.saveItem(item, HomeActivity._launcher.getDesktop().getCurrentItem(), ItemPosition.Desktop);
-                HomeActivity._db.saveItem(item, ItemState.Visible);
-                HomeActivity._db.deleteItem(currentItem, false);
+                HomeActivity.getCurrentInstance().getDb().saveItem(item);
+                HomeActivity.getCurrentInstance().getDb().saveItem(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem(), ItemPosition.Desktop);
+                HomeActivity.getCurrentInstance().getDb().saveItem(item, ItemState.Visible);
+                HomeActivity.getCurrentInstance().getDb().deleteItem(currentItem, false);
 
                 // update launcher
                 callback.removeItem(currentView, false);

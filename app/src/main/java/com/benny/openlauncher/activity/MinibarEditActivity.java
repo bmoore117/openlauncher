@@ -68,9 +68,9 @@ public class MinibarEditActivity extends ColorActivity implements ItemTouchCallb
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 buttonView.setText(isChecked ? R.string.on : R.string.off);
                 AppSettings.get().setMinibarEnable(isChecked);
-                if (HomeActivity.Companion.getLauncher() != null) {
-                    HomeActivity.Companion.getLauncher().closeAppDrawer();
-                    HomeActivity.Companion.getLauncher().getDrawerLayout().setDrawerLockMode(isChecked ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                if (HomeActivity.getCurrentInstance() != null) {
+                    HomeActivity.getCurrentInstance().closeAppDrawer();
+                    HomeActivity.getCurrentInstance().getDrawerLayout().setDrawerLockMode(isChecked ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                 }
             }
         });
@@ -90,8 +90,8 @@ public class MinibarEditActivity extends ColorActivity implements ItemTouchCallb
 
     @Override
     protected void onStop() {
-        if (HomeActivity.Companion.getLauncher() != null) {
-            HomeActivity.Companion.getLauncher().initMinibar();
+        if (HomeActivity.getCurrentInstance() != null) {
+            HomeActivity.getCurrentInstance().initMinibar();
         }
         super.onStop();
     }

@@ -138,7 +138,7 @@ public class Tool {
     }
 
     public static void startApp(Context context, App app, View view) {
-        HomeActivity launcher = HomeActivity.Companion.getLauncher();
+        HomeActivity launcher = HomeActivity.getCurrentInstance();
         launcher.onStartApp(context, app, view);
     }
 

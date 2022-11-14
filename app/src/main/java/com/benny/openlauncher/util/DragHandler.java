@@ -17,33 +17,30 @@ public final class DragHandler {
     public static void startDrag(View view, Item item, DragAction.Action action, final DesktopCallback desktopCallback) {
         _cachedDragBitmap = loadBitmapFromView(view);
 
-        if (HomeActivity.Companion.getLauncher() != null)
-            HomeActivity._launcher.getItemOptionView().startDragNDropOverlay(view, item, action);
+        if (HomeActivity.getCurrentInstance() != null)
+            HomeActivity.getCurrentInstance().getItemOptionView().startDragNDropOverlay(view, item, action);
 
         if (desktopCallback != null)
             desktopCallback.setLastItem(item, view);
     }
 
     public static View.OnLongClickListener getLongClick(final Item item, final DragAction.Action action, final DesktopCallback desktopCallback) {
-        return new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (Setup.appSettings().getDesktopLock()) {
-                    if (HomeActivity.Companion.getLauncher() != null && !DragAction.Action.SEARCH.equals(action)) {
-                        if (Setup.appSettings().getGestureFeedback()) {
-                            Tool.vibrate(view);
-                        }
-                        HomeActivity._launcher.getItemOptionView().showItemPopupForLockedDesktop(item, HomeActivity.Companion.getLauncher());
-                        return true;
+        return view -> {
+            if (Setup.appSettings().getDesktopLock()) {
+                if (HomeActivity.getCurrentInstance() != null && !DragAction.Action.SEARCH.equals(action)) {
+                    if (Setup.appSettings().getGestureFeedback()) {
+                        Tool.vibrate(view);
                     }
-                    return false;
+                    HomeActivity.getCurrentInstance().getItemOptionView().showItemPopupForLockedDesktop(item, HomeActivity.getCurrentInstance());
+                    return true;
                 }
-                if (Setup.appSettings().getGestureFeedback()) {
-                    Tool.vibrate(view);
-                }
-                startDrag(view, item, action, desktopCallback);
-                return true;
+                return false;
             }
+            if (Setup.appSettings().getGestureFeedback()) {
+                Tool.vibrate(view);
+            }
+            startDrag(view, item, action, desktopCallback);
+            return true;
         };
     }
 

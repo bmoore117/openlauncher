@@ -18,7 +18,7 @@ public class SettingsDesktopFragment extends SettingsBaseFragment {
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-        HomeActivity homeActivity = HomeActivity._launcher;
+        HomeActivity homeActivity = HomeActivity.getCurrentInstance();
         int key = new ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.getKey());
         switch (key) {
             case R.string.pref_key__minibar:

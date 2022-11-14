@@ -187,7 +187,7 @@ public class HpDragOption {
                     _homeActivity.getDesktop().consumeLastItem();
                     _homeActivity.getDock().consumeLastItem();
                     // add the item to the database
-                    HomeActivity._db.saveItem(item, _homeActivity.getDesktop().getCurrentItem(), Definitions.ItemPosition.Desktop);
+                    HomeActivity.getCurrentInstance().getDb().saveItem(item, _homeActivity.getDesktop().getCurrentItem(), Definitions.ItemPosition.Desktop);
                     _homeActivity.getDesktop().updateDesktop();
 
                 } else {
@@ -265,7 +265,7 @@ public class HpDragOption {
                     _homeActivity.getDock().consumeLastItem();
 
                     // add the item to the database
-                    HomeActivity._db.saveItem(item, 0, Definitions.ItemPosition.Dock);
+                    HomeActivity.getCurrentInstance().getDb().saveItem(item, 0, Definitions.ItemPosition.Dock);
                 } else {
                     Point pos = new Point();
                     _homeActivity.getDock().touchPosToCoordinate(pos, x, y, item._spanX, item._spanY, false);

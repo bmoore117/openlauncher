@@ -28,7 +28,7 @@ public class SettingsMiscellaneousFragment extends SettingsBaseFragment {
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {
-        HomeActivity homeActivity = HomeActivity._launcher;
+        HomeActivity homeActivity = HomeActivity.getCurrentInstance();
         int key = new ContextUtils(homeActivity).getResId(ContextUtils.ResType.STRING, preference.getKey());
         switch (key) {
             case R.string.pref_key__backup:
@@ -53,7 +53,7 @@ public class SettingsMiscellaneousFragment extends SettingsBaseFragment {
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         AppSettings.get().resetSettings();
                         homeActivity.recreate();
-                        Toast.makeText(HomeActivity._launcher, R.string.toast_settings_restored, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeActivity.getCurrentInstance(), R.string.toast_settings_restored, Toast.LENGTH_SHORT).show();
                     }
                 });
                 return true;
@@ -61,11 +61,11 @@ public class SettingsMiscellaneousFragment extends SettingsBaseFragment {
                 DialogHelper.alertDialog(getActivity(), getString(R.string.pref_title__reset_database), getString(R.string.are_you_sure), new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        DatabaseHelper db = HomeActivity._db;
+                        DatabaseHelper db = HomeActivity.getCurrentInstance().getDb();
                         db.onUpgrade(db.getWritableDatabase(), 1, 1);
                         AppSettings.get().setAppFirstLaunch(true);
                         homeActivity.recreate();
-                        Toast.makeText(HomeActivity._launcher, R.string.toast_database_deleted, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeActivity.getCurrentInstance(), R.string.toast_database_deleted, Toast.LENGTH_SHORT).show();
                     }
                 });
                 return true;

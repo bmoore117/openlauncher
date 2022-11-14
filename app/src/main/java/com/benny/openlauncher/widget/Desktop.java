@@ -21,6 +21,7 @@ import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.Item;
 import com.benny.openlauncher.model.Item.Type;
+import com.benny.openlauncher.util.DatabaseHelper;
 import com.benny.openlauncher.util.Definitions;
 import com.benny.openlauncher.util.Definitions.ItemPosition;
 import com.benny.openlauncher.util.Definitions.ItemState;
@@ -77,13 +78,14 @@ public final class Desktop extends ViewPager implements DesktopCallback {
                                 group.getGroupItems().add(dropItem);
                                 group._x = item._x;
                                 group._y = item._y;
-                                HomeActivity._db.saveItem(dropItem, page, ItemPosition.Group);
-                                HomeActivity._db.saveItem(item, ItemState.Hidden);
-                                HomeActivity._db.saveItem(dropItem, ItemState.Hidden);
-                                HomeActivity._db.saveItem(group, page, itemPosition);
-                                callback.addItemToPage(group, page);
-                                HomeActivity launcher = HomeActivity.Companion.getLauncher();
+                                HomeActivity launcher = HomeActivity.getCurrentInstance();
                                 if (launcher != null) {
+                                    DatabaseHelper db = launcher.getDb();
+                                    db.saveItem(dropItem, page, ItemPosition.Group);
+                                    db.saveItem(item, ItemState.Hidden);
+                                    db.saveItem(dropItem, ItemState.Hidden);
+                                    db.saveItem(group, page, itemPosition);
+                                    callback.addItemToPage(group, page);
                                     launcher.getDesktop().consumeLastItem();
                                     launcher.getDock().consumeLastItem();
                                 }
@@ -97,12 +99,13 @@ public final class Desktop extends ViewPager implements DesktopCallback {
                                 group.getGroupItems().addAll(dropItem.getGroupItems());
                                 group._x = item._x;
                                 group._y = item._y;
-                                HomeActivity._db.deleteItem(dropItem, false);
-                                HomeActivity._db.saveItem(item, ItemState.Hidden);
-                                HomeActivity._db.saveItem(group, page, itemPosition);
-                                callback.addItemToPage(group, page);
-                                HomeActivity launcher = HomeActivity.Companion.getLauncher();
+                                HomeActivity launcher = HomeActivity.getCurrentInstance();
                                 if (launcher != null) {
+                                    DatabaseHelper db = launcher.getDb();
+                                    db.deleteItem(dropItem, false);
+                                    db.saveItem(item, ItemState.Hidden);
+                                    db.saveItem(group, page, itemPosition);
+                                    callback.addItemToPage(group, page);
                                     launcher.getDesktop().consumeLastItem();
                                     launcher.getDock().consumeLastItem();
                                 }
@@ -114,12 +117,13 @@ public final class Desktop extends ViewPager implements DesktopCallback {
                                 parent.removeView(itemView);
                                 dropItem._location = ItemPosition.Group;
                                 item.getGroupItems().add(dropItem);
-                                HomeActivity._db.saveItem(dropItem, page, ItemPosition.Group);
-                                HomeActivity._db.saveItem(dropItem, ItemState.Hidden);
-                                HomeActivity._db.saveItem(item, page, itemPosition);
-                                callback.addItemToPage(item, page);
-                                HomeActivity launcher = HomeActivity.Companion.getLauncher();
+                                HomeActivity launcher = HomeActivity.getCurrentInstance();
                                 if (launcher != null) {
+                                    DatabaseHelper db = launcher.getDb();
+                                    db.saveItem(dropItem, page, ItemPosition.Group);
+                                    db.saveItem(dropItem, ItemState.Hidden);
+                                    db.saveItem(item, page, itemPosition);
+                                    callback.addItemToPage(item, page);
                                     launcher.getDesktop().consumeLastItem();
                                     launcher.getDock().consumeLastItem();
                                 }
@@ -127,11 +131,12 @@ public final class Desktop extends ViewPager implements DesktopCallback {
                             } else if (Type.GROUP.equals(dropItem._type) && item.getGroupItems().size() < GroupPopupView.GroupDef._maxItem && dropItem.getGroupItems().size() < GroupPopupView.GroupDef._maxItem) {
                                 parent.removeView(itemView);
                                 item.getGroupItems().addAll(dropItem.getGroupItems());
-                                HomeActivity._db.saveItem(item, page, itemPosition);
-                                HomeActivity._db.deleteItem(dropItem, false);
-                                callback.addItemToPage(item, page);
-                                HomeActivity launcher = HomeActivity.Companion.getLauncher();
+                                HomeActivity launcher = HomeActivity.getCurrentInstance();
                                 if (launcher != null) {
+                                    DatabaseHelper db = launcher.getDb();
+                                    db.saveItem(item, page, itemPosition);
+                                    db.deleteItem(dropItem, false);
+                                    callback.addItemToPage(item, page);
                                     launcher.getDesktop().consumeLastItem();
                                     launcher.getDock().consumeLastItem();
                                 }
@@ -154,7 +159,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         public DesktopAdapter(Desktop desktop) {
             _desktop = desktop;
             _desktop.getPages().clear();
-            int count = HomeActivity._db.getDesktop().size();
+            int count = HomeActivity.getCurrentInstance().getDb().getDesktop().size();
             if (count == 0) count++;
             for (int i = 0; i < count; i++) {
                 _desktop.getPages().add(getItemLayout());
@@ -176,7 +181,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
             layout.setOnLongClickListener(v -> {
                 enterDesktopEditMode();
                 if (Setup.appSettings().getGestureFeedback()) {
-                    Tool.vibrate(HomeActivity._launcher.getDesktop());
+                    Tool.vibrate(HomeActivity.getCurrentInstance().getDesktop());
                 }
                 return true;
             });
@@ -185,7 +190,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
 
         public void addPageLeft() {
             // Shift pages to the right (including home page)
-            HomeActivity._db.addPage(0);
+            HomeActivity.getCurrentInstance().getDb().addPage(0);
             Setup.appSettings().setDesktopPageCurrent(Setup.appSettings().getDesktopPageCurrent()+1);
 
             _desktop.getPages().add(0, getItemLayout());
@@ -202,13 +207,13 @@ public final class Desktop extends ViewPager implements DesktopCallback {
                 for (View view : _desktop.getPages().get(position).getAllCells()) {
                     Object item = view.getTag();
                     if (item instanceof Item) {
-                        HomeActivity._db.deleteItem((Item) item, true);
+                        HomeActivity.getCurrentInstance().getDb().deleteItem((Item) item, true);
                     }
                 }
             }
 
             // Shift pages to the left (including home page)
-            HomeActivity._db.removePage(position);
+            HomeActivity.getCurrentInstance().getDb().removePage(position);
             if (Setup.appSettings().getDesktopPageCurrent() > position) {
                 Setup.appSettings().setDesktopPageCurrent(Setup.appSettings().getDesktopPageCurrent() - 1);
             }
@@ -329,7 +334,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
     private void addItemsToPage() {
         int columns = Setup.appSettings().getDesktopColumnCount();
         int rows = Setup.appSettings().getDesktopRowCount();
-        List<List<Item>> desktopItems = HomeActivity._db.getDesktop();
+        List<List<Item>> desktopItems = HomeActivity.getCurrentInstance().getDb().getDesktop();
         for (int pageCount = 0; pageCount < desktopItems.size(); pageCount++) {
             List<Item> page = desktopItems.get(pageCount);
             _pages.get(pageCount).removeAllViews();
@@ -385,7 +390,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
     }
 
     public void updateIconProjection(int x, int y) {
-        HomeActivity launcher = HomeActivity.Companion.getLauncher();
+        HomeActivity launcher = HomeActivity.getCurrentInstance();
         ItemOptionView dragNDropView = launcher.getItemOptionView();
         DragState state = getCurrentPage().peekItemAndSwap(x, y, _coordinate);
         if (!_coordinate.equals(_previousDragPoint)) {

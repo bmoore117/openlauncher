@@ -144,7 +144,7 @@ public class DialogHelper {
                             dialog.dismiss();
                         } else {
                             Tool.toast(context, (activity.getString(R.string.toast_icon_pack_error)));
-                            ActivityCompat.requestPermissions(HomeActivity.Companion.getLauncher(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, HomeActivity.REQUEST_PERMISSION_STORAGE);
+                            ActivityCompat.requestPermissions(HomeActivity.getCurrentInstance(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, HomeActivity.REQUEST_PERMISSION_STORAGE);
                         }
                     }));
         }

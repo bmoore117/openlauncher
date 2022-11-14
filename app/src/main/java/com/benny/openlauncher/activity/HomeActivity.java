@@ -72,7 +72,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
-    public static final Companion Companion = new Companion();
     public static final int REQUEST_CREATE_APPWIDGET = 0x6475;
     public static final int REQUEST_PERMISSION_STORAGE = 0x3648;
     public static final int REQUEST_PICK_APPWIDGET = 0x2678;
@@ -83,8 +82,8 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     public static float _itemTouchY;
 
     // static launcher variables
-    public static HomeActivity _launcher;
-    public static DatabaseHelper _db;
+    private static HomeActivity _launcher;
+    public DatabaseHelper db;
     public static HpDesktopOption _desktopOption;
 
     // receiver variables
@@ -101,19 +100,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     // SkyWall variables
     private WhitelistService whitelistService;
 
-    public static final class Companion {
-        private Companion() {
-        }
-
-        public HomeActivity getLauncher() {
-            return _launcher;
-        }
-
-        public void setLauncher(@Nullable HomeActivity v) {
-            _launcher = v;
-        }
-    }
-
     static {
         _timeChangedIntentFilter.addAction(Intent.ACTION_TIME_TICK);
         _timeChangedIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
@@ -123,6 +109,14 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         _appUpdateIntentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
         _appUpdateIntentFilter.addAction(Intent.ACTION_PACKAGE_CHANGED);
         _shortcutIntentFilter.addAction("com.android.launcher.action.INSTALL_SHORTCUT");
+    }
+
+    public DatabaseHelper getDb() {
+        return db;
+    }
+
+    public static HomeActivity getCurrentInstance() {
+        return _launcher;
     }
 
     public DrawerLayout getDrawerLayout() {
@@ -178,7 +172,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     }
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Companion.setLauncher(this);
+        _launcher = this;
         AndroidThreeTen.init(this);
 
         AppSettings appSettings = AppSettings.get();
@@ -190,8 +184,8 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             Setup.init(new HpInitSetup(this));
         }
 
-        Companion.setLauncher(this);
-        _db = Setup.dataManager();
+        _launcher = this;
+        db = Setup.dataManager();
 
         setContentView(getLayoutInflater().inflate(R.layout.activity_home, null));
 
@@ -228,7 +222,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             Setup.appSettings().setAppShowIntro(false);
             Item appDrawerBtnItem = Item.newActionItem(8);
             appDrawerBtnItem._x = 2;
-            _db.saveItem(appDrawerBtnItem, 0, ItemPosition.Dock);
+            db.saveItem(appDrawerBtnItem, 0, ItemPosition.Dock);
         }
         Setup.appLoader().addUpdateListener(it -> {
             getDesktop().initDesktop();

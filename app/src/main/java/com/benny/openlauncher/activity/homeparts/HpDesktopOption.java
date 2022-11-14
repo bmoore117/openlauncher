@@ -97,7 +97,7 @@ public class HpDesktopOption implements DesktopOptionView.DesktopOptionViewListe
             item._y = point.y;
 
             // add item to database
-            _homeActivity._db.saveItem(item, desktop.getCurrentItem(), Definitions.ItemPosition.Desktop);
+            HomeActivity.getCurrentInstance().getDb().saveItem(item, desktop.getCurrentItem(), Definitions.ItemPosition.Desktop);
             desktop.addItemToPage(item, desktop.getCurrentItem());
         } else {
             Tool.toast(_homeActivity, R.string.toast_not_enough_space);

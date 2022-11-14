@@ -1,10 +1,8 @@
 package com.benny.openlauncher.viewutil;
 
-import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 
@@ -102,17 +100,17 @@ public class ItemViewFactory {
                 if (HomeActivity._appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, cn)) {
                     appWidgetInfo = HomeActivity._appWidgetManager.getAppWidgetInfo(appWidgetId);
                     item.setWidgetValue(appWidgetId);
-                    HomeActivity._db.updateItem(item);
+                    HomeActivity.getCurrentInstance().getDb().updateItem(item);
                 } else {
                     LOG.error("Unable to bind app widget id: {}; removing from database", cn);
                     HomeActivity._appWidgetHost.deleteAppWidgetId(appWidgetId);
-                    HomeActivity._db.deleteItem(item, false);
+                    HomeActivity.getCurrentInstance().getDb().deleteItem(item, false);
                     return null;
                 }
             } else {
                 // Delete the Widget if we don't have enough information to rehydrate it.
                 LOG.debug("Unable to identify Widget for rehydration; removing from database");
-                HomeActivity._db.deleteItem(item, false);
+                HomeActivity.getCurrentInstance().getDb().deleteItem(item, false);
                 return null;
             }
         }

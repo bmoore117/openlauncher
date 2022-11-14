@@ -128,7 +128,7 @@ public class AppManager {
             removedApps = getRemovedApps(_apps, appsTemp);
 
             for (App app : removedApps) {
-                HomeActivity._db.deleteItems(app);
+                HomeActivity.getCurrentInstance().getDb().deleteItems(app);
             }
 
             AppSettings appSettings = AppSettings.get();
@@ -148,7 +148,7 @@ public class AppManager {
                 notifyUpdateListeners(appsTemp);
 
                 if (recreateHomeActivity) {
-                    HomeActivity._launcher.recreate();
+                    HomeActivity.getCurrentInstance().recreate();
                 }
             });
         });

@@ -33,17 +33,17 @@ public class LauncherAction {
     public static ActionDisplayItem SkyWallItem = new ActionDisplayItem(Action.SkyWall, "SkyWall", "Manage whitelisted apps", R.drawable.logo_white, 117);
 
     public static ActionDisplayItem[] actionDisplayItems = new ActionDisplayItem[]{
-            new ActionDisplayItem(Action.EditMinibar, HomeActivity._launcher.getResources().getString(R.string.minibar_title__edit_minibar), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__edit_minibar), R.drawable.ic_edit, 98),
-            new ActionDisplayItem(Action.SetWallpaper, HomeActivity._launcher.getResources().getString(R.string.minibar_title__set_wallpaper), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__set_wallpaper), R.drawable.ic_photo, 36),
-            new ActionDisplayItem(Action.LockScreen, HomeActivity._launcher.getResources().getString(R.string.minibar_title__lock_screen), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__lock_screen), R.drawable.ic_lock, 24),
-            new ActionDisplayItem(Action.LauncherSettings, HomeActivity._launcher.getResources().getString(R.string.minibar_title__launcher_settings), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__launcher_settings), R.drawable.ic_settings, 50),
-            new ActionDisplayItem(Action.VolumeDialog, HomeActivity._launcher.getResources().getString(R.string.minibar_title__volume_dialog), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__volume_dialog), R.drawable.ic_volume, 71),
-            //new ActionDisplayItem(Action.DeviceSettings, HomeActivity._launcher.getResources().getString(R.string.minibar_title__device_settings), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__device_settings), R.drawable.ic_android, 25),
-            new ActionDisplayItem(Action.AppDrawer, HomeActivity._launcher.getResources().getString(R.string.minibar_title__app_drawer), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__app_drawer), R.drawable.ic_apps, 73),
-            new ActionDisplayItem(Action.SearchBar, HomeActivity._launcher.getResources().getString(R.string.minibar_title__search_bar), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__search_bar), R.drawable.ic_search, 89),
-            new ActionDisplayItem(Action.MobileNetworkSettings, HomeActivity._launcher.getResources().getString(R.string.minibar_title__mobile_network), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__mobile_network), R.drawable.ic_network, 46),
-            new ActionDisplayItem(Action.ShowNotifications, HomeActivity._launcher.getResources().getString(R.string.minibar_title__notification_bar), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__notification_bar), R.drawable.ic_notifications, 46),
-            new ActionDisplayItem(Action.Camera, HomeActivity._launcher.getResources().getString(R.string.minibar_title__camera), HomeActivity._launcher.getResources().getString(R.string.minibar_summary__camera), R.drawable.ic_camera_, 13),
+            new ActionDisplayItem(Action.EditMinibar, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__edit_minibar), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__edit_minibar), R.drawable.ic_edit, 98),
+            new ActionDisplayItem(Action.SetWallpaper, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__set_wallpaper), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__set_wallpaper), R.drawable.ic_photo, 36),
+            new ActionDisplayItem(Action.LockScreen, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__lock_screen), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__lock_screen), R.drawable.ic_lock, 24),
+            new ActionDisplayItem(Action.LauncherSettings, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__launcher_settings), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__launcher_settings), R.drawable.ic_settings, 50),
+            new ActionDisplayItem(Action.VolumeDialog, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__volume_dialog), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__volume_dialog), R.drawable.ic_volume, 71),
+            //new ActionDisplayItem(Action.DeviceSettings, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__device_settings), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__device_settings), R.drawable.ic_android, 25),
+            new ActionDisplayItem(Action.AppDrawer, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__app_drawer), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__app_drawer), R.drawable.ic_apps, 73),
+            new ActionDisplayItem(Action.SearchBar, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__search_bar), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__search_bar), R.drawable.ic_search, 89),
+            new ActionDisplayItem(Action.MobileNetworkSettings, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__mobile_network), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__mobile_network), R.drawable.ic_network, 46),
+            new ActionDisplayItem(Action.ShowNotifications, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__notification_bar), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__notification_bar), R.drawable.ic_notifications, 46),
+            new ActionDisplayItem(Action.Camera, HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_title__camera), HomeActivity.getCurrentInstance().getResources().getString(R.string.minibar_summary__camera), R.drawable.ic_camera_, 13),
             SkyWallItem
     };
 
@@ -106,10 +106,10 @@ public class LauncherAction {
                 }
                 break;
             case AppDrawer:
-                HomeActivity._launcher.openAppDrawer();
+                HomeActivity.getCurrentInstance().openAppDrawer();
                 break;
             case SearchBar:
-                HomeActivity._launcher.getSearchBar().getSearchButton().performClick();
+                HomeActivity.getCurrentInstance().getSearchBar().getSearchButton().performClick();
                 break;
             case MobileNetworkSettings:
                 context.startActivity(new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS));

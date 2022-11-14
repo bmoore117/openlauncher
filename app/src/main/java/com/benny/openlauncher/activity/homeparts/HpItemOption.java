@@ -1,9 +1,5 @@
 package com.benny.openlauncher.activity.homeparts;
 
-import static android.content.pm.LauncherApps.ShortcutQuery.FLAG_MATCH_DYNAMIC;
-import static android.content.pm.LauncherApps.ShortcutQuery.FLAG_MATCH_MANIFEST;
-import static android.content.pm.LauncherApps.ShortcutQuery.FLAG_MATCH_PINNED;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,9 +7,9 @@ import android.content.pm.LauncherApps;
 import android.content.pm.ShortcutInfo;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.Process;
+
 import androidx.annotation.NonNull;
-import android.util.Log;
+
 import android.view.View;
 
 import net.skywall.openlauncher.R;
@@ -23,12 +19,9 @@ import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.Item;
 import com.benny.openlauncher.util.Definitions.ItemPosition;
 import com.benny.openlauncher.util.Tool;
-import com.benny.openlauncher.viewutil.PopupDynamicIconLabelItem;
 import com.benny.openlauncher.widget.Desktop;
 import com.benny.openlauncher.widget.Dock;
 import com.benny.openlauncher.widget.WidgetContainer;
-
-import java.util.List;
 
 public class HpItemOption implements DialogListener.OnEditDialogListener {
     private HomeActivity _homeActivity;
@@ -62,7 +55,7 @@ public class HpItemOption implements DialogListener.OnEditDialogListener {
             coordinateToChildView = dock.coordinateToChildView(new Point(item._x, item._y));
             dock.removeItem(coordinateToChildView, true);
         }
-        _homeActivity._db.deleteItem(item, true);
+        HomeActivity.getCurrentInstance().getDb().deleteItem(item, true);
     }
 
     public final void onInfoItem(@NonNull Item item) {

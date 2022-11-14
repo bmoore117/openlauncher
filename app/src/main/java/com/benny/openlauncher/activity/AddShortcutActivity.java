@@ -7,7 +7,6 @@ import android.content.pm.LauncherApps;
 import android.content.pm.ShortcutInfo; 
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -44,15 +43,15 @@ public class AddShortcutActivity extends Activity {
                 Drawable shortcutIcon = launcherApps.getShortcutIconDrawable(info, context.getResources().getDisplayMetrics().densityDpi);
 
                 Item item = Item.newShortcutItem(shortcutIntent, shortcutIcon, shortcutLabel);
-                Point preferredPos = HomeActivity.Companion.getLauncher().getDesktop().getPages().get(HomeActivity.Companion.getLauncher().getDesktop().getCurrentItem()).findFreeSpace();
+                Point preferredPos = HomeActivity.getCurrentInstance().getDesktop().getPages().get(HomeActivity.getCurrentInstance().getDesktop().getCurrentItem()).findFreeSpace();
                 
                 if (preferredPos == null) {
-                    Tool.toast(HomeActivity.Companion.getLauncher(), R.string.toast_not_enough_space);
+                    Tool.toast(HomeActivity.getCurrentInstance(), R.string.toast_not_enough_space);
                 } else {
                     item.setX(preferredPos.x);
                     item.setY(preferredPos.y);
-                    HomeActivity._db.saveItem(item, HomeActivity.Companion.getLauncher().getDesktop().getCurrentItem(), Definitions.ItemPosition.Desktop);
-                    HomeActivity.Companion.getLauncher().getDesktop().addItemToPage(item, HomeActivity.Companion.getLauncher().getDesktop().getCurrentItem());
+                    HomeActivity.getCurrentInstance().getDb().saveItem(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem(), Definitions.ItemPosition.Desktop);
+                    HomeActivity.getCurrentInstance().getDesktop().addItemToPage(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem());
                     Log.d(this.getClass().toString(), "shortcut installed");
                 }
 
