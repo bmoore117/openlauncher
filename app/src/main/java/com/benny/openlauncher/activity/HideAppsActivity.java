@@ -1,14 +1,14 @@
 package com.benny.openlauncher.activity;
 
-import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.WindowManager;
+
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.widget.Toolbar;
-import android.view.MenuItem;
-import android.view.WindowManager;
 
 import com.benny.openlauncher.R;
 import com.benny.openlauncher.fragment.HideAppsFragment;
@@ -23,10 +23,8 @@ public class HideAppsActivity extends ColorActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hide_apps);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-        }
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark, getTheme()));
 
         ViewPager viewPager = findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -53,18 +51,15 @@ public class HideAppsActivity extends ColorActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home: {
-                onBackPressed();
-                break;
-            }
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
 
     private static class ViewPagerAdapter extends FragmentPagerAdapter {
-        private ArrayList<Fragment> mFragmentList = new ArrayList<>();
-        private ArrayList<String> mFragmentTitleList = new ArrayList<>();
+        private final ArrayList<Fragment> mFragmentList = new ArrayList<>();
+        private final ArrayList<String> mFragmentTitleList = new ArrayList<>();
 
         ViewPagerAdapter(FragmentManager fm) {
             super(fm);
