@@ -12,7 +12,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.util.Tool;
 import com.mikepenz.fastadapter.items.AbstractItem;

@@ -21,7 +21,7 @@ import com.flask.colorpicker.renderer.ColorWheelRenderer;
 import com.flask.colorpicker.slider.AlphaSlider;
 import com.flask.colorpicker.slider.LightnessSlider;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 
 public class ColorPickerDialogBuilder {
 	private AlertDialog.Builder builder;

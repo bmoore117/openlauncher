@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 
 import net.skywall.utils.Pair;
 import net.skywall.activity.SkyWallActivity;

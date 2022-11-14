@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.activity.homeparts.HpItemOption;
 import com.benny.openlauncher.interfaces.DropTargetListener;

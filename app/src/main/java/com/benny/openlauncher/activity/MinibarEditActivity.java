@@ -13,7 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import com.benny.openlauncher.util.AppSettings;
 import com.benny.openlauncher.util.LauncherAction;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;

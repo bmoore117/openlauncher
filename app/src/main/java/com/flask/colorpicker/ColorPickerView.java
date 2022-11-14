@@ -26,7 +26,7 @@ import com.flask.colorpicker.slider.LightnessSlider;
 
 import java.util.ArrayList;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 
 public class ColorPickerView extends View {
 	private static final float STROKE_RATIO = 1.5f;

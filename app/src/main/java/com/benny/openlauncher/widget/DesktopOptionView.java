@@ -22,7 +22,7 @@ import com.benny.openlauncher.util.Tool;
 import com.benny.openlauncher.viewutil.IconLabelItem;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="net.skywall.openlauncher">
+    package="com.benny.openlauncher">
 
     <queries>
         <intent>
@@ -130,7 +130,7 @@
                 android:resource="@xml/device_admin" />
         </receiver>
         <receiver
-            android:name="net.skywall.openlauncher.Receivers.ShortcutReceiver"
+            android:name="com.benny.openlauncher.Receivers.ShortcutReceiver"
             android:permission="com.android.launcher.permission.INSTALL_SHORTCUT"
             android:exported="true">
             <intent-filter>

@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import androidx.fragment.app.Fragment;
 
 import net.skywall.fragment.view.Phone;
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import net.skywall.service.SkywallService;
 import net.skywall.service.WhitelistService;
 

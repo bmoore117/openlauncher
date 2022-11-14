@@ -3,7 +3,7 @@ package com.benny.openlauncher.fragment;
 import android.os.Bundle;
 import androidx.preference.Preference;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.util.LauncherAction;
 

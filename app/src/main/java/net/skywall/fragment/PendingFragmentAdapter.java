@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import net.skywall.fragment.view.DisplayApp;
 import net.skywall.service.WhitelistService;
 

@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 
 import java.util.List;
 

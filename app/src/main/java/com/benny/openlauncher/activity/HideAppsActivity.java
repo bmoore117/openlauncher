@@ -10,7 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import com.benny.openlauncher.fragment.HideAppsFragment;
 import com.benny.openlauncher.util.AppManager;
 

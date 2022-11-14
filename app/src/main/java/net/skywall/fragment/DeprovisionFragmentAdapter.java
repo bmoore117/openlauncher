@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.skywall.fragment.view.Phone;
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import net.skywall.service.SkywallService;
 import net.skywall.service.WhitelistService;
 

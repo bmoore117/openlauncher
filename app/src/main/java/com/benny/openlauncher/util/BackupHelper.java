@@ -5,7 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.widget.Toast;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

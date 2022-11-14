@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.Gravity;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.model.App;
 import com.benny.openlauncher.model.Item;

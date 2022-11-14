@@ -3,7 +3,7 @@ package com.benny.openlauncher.viewutil;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 import com.benny.openlauncher.model.Item;

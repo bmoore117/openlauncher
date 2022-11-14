@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 import com.benny.openlauncher.manager.Setup;
 
 import net.gsantner.opoc.util.Callback;

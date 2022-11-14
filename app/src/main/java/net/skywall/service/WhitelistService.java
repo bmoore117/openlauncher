@@ -3,7 +3,7 @@ package net.skywall.service;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 
 import net.skywall.utils.Pair;
 

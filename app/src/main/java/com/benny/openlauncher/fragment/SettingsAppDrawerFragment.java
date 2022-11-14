@@ -2,7 +2,7 @@ package com.benny.openlauncher.fragment;
 
 import android.os.Bundle;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 
 public class SettingsAppDrawerFragment extends SettingsBaseFragment {
     @Override

@@ -11,7 +11,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import net.skywall.activity.BlockedActivity;
-import net.skywall.openlauncher.BuildConfig;
+import com.benny.openlauncher.BuildConfig;
 
 import java.util.Arrays;
 import java.util.HashSet;

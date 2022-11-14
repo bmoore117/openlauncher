@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.R;
 
 public abstract class AbsCustomSlider extends View {
 	protected Bitmap bitmap;
