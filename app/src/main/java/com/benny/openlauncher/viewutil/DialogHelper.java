@@ -7,11 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import androidx.annotation.NonNull;
+
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.Gravity;
-import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import net.skywall.openlauncher.R;
@@ -21,11 +20,9 @@ import com.benny.openlauncher.model.Item;
 import com.benny.openlauncher.util.AppManager;
 import com.benny.openlauncher.util.AppSettings;
 import com.benny.openlauncher.util.Tool;
-import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class DialogHelper {
@@ -34,12 +31,7 @@ public class DialogHelper {
         builder.title(title)
                 .positiveText(android.R.string.ok)
                 .negativeText(android.R.string.cancel)
-                .input(null, defaultText, new MaterialDialog.InputCallback() {
-                    @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                        listener.itemLabel(input.toString());
-                    }
-                }).show();
+                .input(null, defaultText, (dialog, input) -> listener.itemLabel(input.toString())).show();
     }
 
     public static void alertDialog(Context context, String title, String msg, MaterialDialog.SingleButtonCallback onPositive) {
@@ -104,15 +96,12 @@ public class DialogHelper {
                     .withIconPadding(8));
         }
         fastItemAdapter.set(items);
-        fastItemAdapter.withOnClickListener(new com.mikepenz.fastadapter.listeners.OnClickListener<IconLabelItem>() {
-            @Override
-            public boolean onClick(View v, IAdapter<IconLabelItem> adapter, IconLabelItem item, int position) {
-                if (onAppSelectedListener != null) {
-                    onAppSelectedListener.onAppSelected(apps.get(position));
-                }
-                dialog.dismiss();
-                return true;
+        fastItemAdapter.withOnClickListener((v, adapter, item, position) -> {
+            if (onAppSelectedListener != null) {
+                onAppSelectedListener.onAppSelected(apps.get(position));
             }
+            dialog.dismiss();
+            return true;
         });
         dialog.show();
     }
@@ -127,7 +116,7 @@ public class DialogHelper {
         FastItemAdapter<IconLabelItem> fastItemAdapter = new FastItemAdapter<>();
 
         final List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent, 0);
-        Collections.sort(resolveInfos, new ResolveInfo.DisplayNameComparator(packageManager));
+        resolveInfos.sort(new ResolveInfo.DisplayNameComparator(packageManager));
         final MaterialDialog dialog = new MaterialDialog.Builder(activity)
                 .adapter(fastItemAdapter, null)
                 .title((activity.getString(R.string.select_icon_pack)))
@@ -136,14 +125,10 @@ public class DialogHelper {
         fastItemAdapter.add(new IconLabelItem(activity, R.mipmap.ic_launcher_2, R.string.default_icons)
                 .withIconPadding(16)
                 .withIconGravity(Gravity.START)
-                .withOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        appManager._recreateAfterGettingApps = true;
-                        AppSettings.get().setIconPack("");
-                        appManager.getAllApps();
-                        dialog.dismiss();
-                    }
+                .withOnClickListener(v -> {
+                    AppSettings.get().setIconPack("");
+                    appManager.refreshApps(true);
+                    dialog.dismiss();
                 }));
         for (int i = 0; i < resolveInfos.size(); i++) {
             final int mI = i;
@@ -152,18 +137,14 @@ public class DialogHelper {
                     .withIconSize(50)
                     .withIsAppLauncher(true)
                     .withIconGravity(Gravity.START)
-                    .withOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                                appManager._recreateAfterGettingApps = true;
-                                AppSettings.get().setIconPack(resolveInfos.get(mI).activityInfo.packageName);
-                                appManager.getAllApps();
-                                dialog.dismiss();
-                            } else {
-                                Tool.toast(context, (activity.getString(R.string.toast_icon_pack_error)));
-                                ActivityCompat.requestPermissions(HomeActivity.Companion.getLauncher(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, HomeActivity.REQUEST_PERMISSION_STORAGE);
-                            }
+                    .withOnClickListener(v -> {
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                            AppSettings.get().setIconPack(resolveInfos.get(mI).activityInfo.packageName);
+                            appManager.refreshApps(true);
+                            dialog.dismiss();
+                        } else {
+                            Tool.toast(context, (activity.getString(R.string.toast_icon_pack_error)));
+                            ActivityCompat.requestPermissions(HomeActivity.Companion.getLauncher(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, HomeActivity.REQUEST_PERMISSION_STORAGE);
                         }
                     }));
         }

@@ -1,18 +1,21 @@
 package com.benny.openlauncher.widget;
 
+import static com.benny.openlauncher.util.Definitions.WallpaperScroll.Inverse;
+import static com.benny.openlauncher.util.Definitions.WallpaperScroll.Off;
+
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.graphics.Point;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.AccelerateDecelerateInterpolator;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.manager.Setup;
@@ -34,9 +37,6 @@ import java.util.List;
 
 import in.championswimmer.sfg.lib.SimpleFingerGestures;
 import in.championswimmer.sfg.lib.SimpleFingerGestures.OnFingerGestureListener;
-
-import static com.benny.openlauncher.util.Definitions.WallpaperScroll.Inverse;
-import static com.benny.openlauncher.util.Definitions.WallpaperScroll.Off;
 
 public final class Desktop extends ViewPager implements DesktopCallback {
     private OnDesktopEditListener _desktopEditListener;
@@ -148,7 +148,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         return false;
     }
 
-    public final class DesktopAdapter extends PagerAdapter {
+    public static final class DesktopAdapter extends PagerAdapter {
         private final Desktop _desktop;
 
         public DesktopAdapter(Desktop desktop) {
@@ -172,21 +172,13 @@ public final class Desktop extends ViewPager implements DesktopCallback {
             mySfg.setOnFingerGestureListener(getGestureListener());
             layout.setGestures(mySfg);
             layout.setGridSize(Setup.appSettings().getDesktopColumnCount(), Setup.appSettings().getDesktopRowCount());
-            layout.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    exitDesktopEditMode();
+            layout.setOnClickListener(view -> exitDesktopEditMode());
+            layout.setOnLongClickListener(v -> {
+                enterDesktopEditMode();
+                if (Setup.appSettings().getGestureFeedback()) {
+                    Tool.vibrate(HomeActivity._launcher.getDesktop());
                 }
-            });
-            layout.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    enterDesktopEditMode();
-                    if (Setup.appSettings().getGestureFeedback()) {
-                        Tool.vibrate(HomeActivity._launcher.getDesktop());
-                    }
-                    return true;
-                }
+                return true;
             });
             return layout;
         }
@@ -290,40 +282,40 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         }
     }
 
-    public final List<CellContainer> getPages() {
+    public List<CellContainer> getPages() {
         return _pages;
     }
 
-    public final OnDesktopEditListener getDesktopEditListener() {
+    public OnDesktopEditListener getDesktopEditListener() {
         return _desktopEditListener;
     }
 
-    public final void setDesktopEditListener(@Nullable OnDesktopEditListener v) {
+    public void setDesktopEditListener(@Nullable OnDesktopEditListener v) {
         _desktopEditListener = v;
     }
 
-    public final boolean getInEditMode() {
+    public boolean getInEditMode() {
         return _inEditMode;
     }
 
-    public final void setInEditMode(boolean v) {
+    public void setInEditMode(boolean v) {
         _inEditMode = v;
     }
 
-    public final boolean isCurrentPageEmpty() {
+    public boolean isCurrentPageEmpty() {
         return getCurrentPage().getChildCount() == 0;
     }
 
-    public final CellContainer getCurrentPage() {
+    public CellContainer getCurrentPage() {
         return _pages.get(getCurrentItem());
     }
 
-    public final void setPageIndicator(PagerIndicator pageIndicator) {
+    public void setPageIndicator(PagerIndicator pageIndicator) {
         _pageIndicator = pageIndicator;
     }
 
 
-    public final void initDesktop() {
+    public void initDesktop() {
         _adapter = new DesktopAdapter(this);
         setAdapter(_adapter);
         setCurrentItem(Setup.appSettings().getDesktopPageCurrent());
@@ -351,11 +343,11 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         }
     }
 
-    public final void updateDesktop() {
+    public void updateDesktop() {
         addItemsToPage();
     }
 
-    public final void addPageRight(boolean showGrid) {
+    public void addPageRight(boolean showGrid) {
         int previousPage = getCurrentItem();
         _adapter.addPageRight();
         setCurrentItem(previousPage + 1);
@@ -367,7 +359,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         _pageIndicator.invalidate();
     }
 
-    public final void addPageLeft(boolean showGrid) {
+    public void addPageLeft(boolean showGrid) {
         int previousPage = getCurrentItem();
         _adapter.addPageLeft();
         setCurrentItem(previousPage + 1, false);
@@ -380,7 +372,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         _pageIndicator.invalidate();
     }
 
-    public final void removeCurrentPage() {
+    public void removeCurrentPage() {
         int previousPage = getCurrentItem();
         _adapter.removePage(getCurrentItem(), true);
         if (_pages.size() == 0) {
@@ -392,7 +384,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         }
     }
 
-    public final void updateIconProjection(int x, int y) {
+    public void updateIconProjection(int x, int y) {
         HomeActivity launcher = HomeActivity.Companion.getLauncher();
         ItemOptionView dragNDropView = launcher.getItemOptionView();
         DragState state = getCurrentPage().peekItemAndSwap(x, y, _coordinate);
@@ -492,12 +484,9 @@ public final class Desktop extends ViewPager implements DesktopCallback {
 
     public void removeItem(final View view, boolean animate) {
         if (animate) {
-            view.animate().setDuration(100).scaleX(0.0f).scaleY(0.0f).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    if (getCurrentPage().equals(view.getParent())) {
-                        getCurrentPage().removeView(view);
-                    }
+            view.animate().setDuration(100).scaleX(0.0f).scaleY(0.0f).withEndAction(() -> {
+                if (getCurrentPage().equals(view.getParent())) {
+                    getCurrentPage().removeView(view);
                 }
             });
         } else if (getCurrentPage().equals(view.getParent())) {
