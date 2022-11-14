@@ -105,11 +105,11 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         private Companion() {
         }
 
-        public final HomeActivity getLauncher() {
+        public HomeActivity getLauncher() {
             return _launcher;
         }
 
-        public final void setLauncher(@Nullable HomeActivity v) {
+        public void setLauncher(@Nullable HomeActivity v) {
             _launcher = v;
         }
     }
@@ -125,55 +125,55 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         _shortcutIntentFilter.addAction("com.android.launcher.action.INSTALL_SHORTCUT");
     }
 
-    public final DrawerLayout getDrawerLayout() {
+    public DrawerLayout getDrawerLayout() {
         return findViewById(R.id.drawer_layout);
     }
 
-    public final Desktop getDesktop() {
+    public Desktop getDesktop() {
         return findViewById(R.id.desktop);
     }
 
-    public final Dock getDock() {
+    public Dock getDock() {
         return findViewById(R.id.dock);
     }
 
-    public final AppDrawerController getAppDrawerController() {
+    public AppDrawerController getAppDrawerController() {
         return findViewById(R.id.appDrawerController);
     }
 
-    public final GroupPopupView getGroupPopup() {
+    public GroupPopupView getGroupPopup() {
         return findViewById(R.id.groupPopup);
     }
 
-    public final SearchBar getSearchBar() {
+    public SearchBar getSearchBar() {
         return findViewById(R.id.searchBar);
     }
 
-    public final View getBackground() {
+    public View getBackground() {
         return findViewById(R.id.background_frame);
     }
 
-    public final PagerIndicator getDesktopIndicator() {
+    public PagerIndicator getDesktopIndicator() {
         return findViewById(R.id.desktopIndicator);
     }
 
-    public final DesktopOptionView getDesktopOptionView() {
+    public DesktopOptionView getDesktopOptionView() {
         return findViewById(R.id.desktop_option);
     }
 
-    public final ItemOptionView getItemOptionView() {
+    public ItemOptionView getItemOptionView() {
         return findViewById(R.id.item_option);
     }
 
-    public final FrameLayout getMinibarFrame() {
+    public FrameLayout getMinibarFrame() {
         return findViewById(R.id.minibar_frame);
     }
 
-    public final View getStatusView() {
+    public View getStatusView() {
         return findViewById(R.id.status_frame);
     }
 
-    public final View getNavigationView() {
+    public View getNavigationView() {
         return findViewById(R.id.navigation_frame);
     }
 
@@ -222,7 +222,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         whitelistService = WhitelistService.getInstance(this);
     }
 
-    protected void initAppManager() {
+    private void initAppManager() {
         if (Setup.appSettings().getAppFirstLaunch()) {
             Setup.appSettings().setAppFirstLaunch(false);
             Setup.appSettings().setAppShowIntro(false);
@@ -243,7 +243,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         AppManager.getInstance(this).getAllApps();
     }
 
-    protected void initViews() {
+    private void initViews() {
         new HpSearchBar(this, getSearchBar()).initSearchBar();
         getAppDrawerController().init();
         getDock().setHome(this);
@@ -275,14 +275,14 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         initMinibar();
     }
 
-    public final void initMinibar() {
+    public void initMinibar() {
         final ArrayList<LauncherAction.ActionDisplayItem> items = AppSettings.get().getMinibarArrangement();
         MinibarView minibar = findViewById(R.id.minibar);
         minibar.setAdapter(new MinibarAdapter(this, items));
         minibar.setOnItemClickListener((parent, view, i, id) -> LauncherAction.RunAction(items.get(i), HomeActivity.this));
     }
 
-    public final void initSettings() {
+    public void initSettings() {
         updateHomeLayout();
 
         AppSettings appSettings = Setup.appSettings();
@@ -323,7 +323,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         registerReceiver(_timeChangedReceiver, _timeChangedIntentFilter);
     }
 
-    public final void onStartApp(@NonNull Context context, @NonNull App app, @Nullable View view) {
+    public void onStartApp(@NonNull Context context, @NonNull App app, @Nullable View view) {
         if (BuildConfig.APPLICATION_ID.equals(app._packageName)) {
             LauncherAction.RunAction(Action.LauncherSettings, context);
             return;
@@ -395,27 +395,27 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         updateSearchBar(true);
     }
 
-    public final void dimBackground() {
+    public void dimBackground() {
         Tool.visibleViews(200, getBackground());
     }
 
-    public final void unDimBackground() {
+    public void unDimBackground() {
         Tool.invisibleViews(200, getBackground());
     }
 
-    public final void clearRoomForPopUp() {
+    public void clearRoomForPopUp() {
         Tool.invisibleViews(200, getDesktop());
         updateDesktopIndicator(false);
         updateDock(false);
     }
 
-    public final void unClearRoomForPopUp() {
+    public void unClearRoomForPopUp() {
         Tool.visibleViews(200, getDesktop());
         updateDesktopIndicator(true);
         updateDock(true);
     }
 
-    public final void updateDock(boolean show) {
+    public void updateDock(boolean show) {
         AppSettings appSettings = Setup.appSettings();
         if (appSettings.getDockEnable() && show) {
             Tool.visibleViews(100, getDock());
@@ -428,7 +428,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
     }
 
-    public final void updateSearchBar(boolean show) {
+    public void updateSearchBar(boolean show) {
         AppSettings appSettings = Setup.appSettings();
         if (appSettings.getSearchBarEnable() && show) {
             Tool.visibleViews(100, getSearchBar());
@@ -441,7 +441,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
     }
 
-    public final void updateDesktopIndicator(boolean show) {
+    public void updateDesktopIndicator(boolean show) {
         AppSettings appSettings = Setup.appSettings();
         if (appSettings.getDesktopShowIndicator() && show) {
             Tool.visibleViews(100, getDesktopIndicator());
@@ -450,7 +450,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
     }
 
-    public final void updateSearchClock() {
+    public void updateSearchClock() {
         TextView textView = getSearchBar()._searchClock;
 
         if (textView.getText() != null) {
@@ -462,7 +462,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
     }
 
-    public final void updateHomeLayout() {
+    public void updateHomeLayout() {
         updateSearchBar(true);
         updateDock(true);
         updateDesktopIndicator(true);
@@ -585,11 +585,11 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         }
     }
 
-    public final void openAppDrawer() {
+    public void openAppDrawer() {
         openAppDrawer(null, 0, 0);
     }
 
-    public final void openAppDrawer(View view, int x, int y) {
+    public void openAppDrawer(View view, int x, int y) {
         if (!(x > 0 && y > 0) && view != null) {
             int[] pos = new int[2];
             view.getLocationInWindow(pos);
@@ -612,7 +612,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         getAppDrawerController().open(cx, cy);
     }
 
-    public final void closeAppDrawer() {
+    public void closeAppDrawer() {
         getAppDrawerController().close(cx, cy);
     }
 }
