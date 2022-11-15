@@ -120,7 +120,7 @@
         </activity>
 
         <receiver
-            android:name="net.skywall.openlauncher.Receivers.DeviceAdminReceiver"
+            android:name="net.skywall.receivers.DeviceAdminReceiver"
             android:permission="android.permission.BIND_DEVICE_ADMIN"
             android:exported="true">
             <intent-filter>

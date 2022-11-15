@@ -1,4 +1,4 @@
-package net.skywall.openlauncher.Receivers;
+package net.skywall.receivers;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
