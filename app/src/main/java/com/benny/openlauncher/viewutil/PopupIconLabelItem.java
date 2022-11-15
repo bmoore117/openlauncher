@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 
 import java.util.List;
 

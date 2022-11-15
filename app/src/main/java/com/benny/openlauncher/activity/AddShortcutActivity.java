@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.benny.openlauncher.AppObject;
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.model.Item;
 import com.benny.openlauncher.util.Definitions;
 import com.benny.openlauncher.util.Tool;

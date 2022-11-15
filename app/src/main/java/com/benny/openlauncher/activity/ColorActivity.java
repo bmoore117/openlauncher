@@ -6,7 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.util.AppSettings;
 
 public abstract class ColorActivity extends AppCompatActivity {

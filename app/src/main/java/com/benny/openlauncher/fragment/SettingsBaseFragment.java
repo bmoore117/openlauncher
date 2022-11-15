@@ -10,7 +10,7 @@ import androidx.preference.PreferenceGroup;
 import androidx.appcompat.widget.Toolbar;
 import android.util.TypedValue;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.util.AppSettings;
 
 import java.util.ArrayList;

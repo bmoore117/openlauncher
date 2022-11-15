@@ -17,7 +17,7 @@ import android.widget.ViewSwitcher;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 import com.benny.openlauncher.model.App;
 import com.benny.openlauncher.util.AppManager;
 import com.benny.openlauncher.util.AppSettings;

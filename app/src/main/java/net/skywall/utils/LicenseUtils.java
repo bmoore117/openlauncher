@@ -3,7 +3,7 @@ package net.skywall.utils;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.R;
 
 import java.util.function.Supplier;
 

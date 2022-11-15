@@ -59,8 +59,8 @@ import com.benny.openlauncher.widget.SearchBar;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import net.gsantner.opoc.util.ContextUtils;
-import com.benny.openlauncher.BuildConfig;
-import com.benny.openlauncher.R;
+import net.skywall.openlauncher.BuildConfig;
+import net.skywall.openlauncher.R;
 import net.skywall.service.LicenseService;
 import net.skywall.service.WhitelistService;
 
