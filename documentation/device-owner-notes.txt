@@ -9,8 +9,11 @@ command to find the remaining apps with accounts, and uninstall each:
 As a note, you may have to disable some built-in apps, such as gmail and google play services, to
 get those accounts to disappear. Make sure to re-enable them afterwards
 
-Then do:
+Of note, do not activate the app as a device admin before running the appropriate command below,
+if you do the logic in the receiver will never run.
+
+For production builds:
     .\adb.exe shell dpm set-device-owner net.skywall.openlauncher/net.skywall.receivers.DeviceAdminReceiver
 
 For emulators, do:
-.\adb.exe shell dpm set-device-owner net.skywall.openlauncher.nightly.debug/net.skywall.receivers.DeviceAdminReceiver
+    .\adb.exe shell dpm set-device-owner net.skywall.openlauncher.nightly.debug/net.skywall.receivers.DeviceAdminReceiver
