@@ -39,7 +39,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.microsoft.emmx.webview.browser.InAppBrowserActivity"));
 
     private static final Set<String> PROBABLE_LOGIN_ACTIVITIES = new HashSet<>(
-            Arrays.asList("authentication", "auth", "welcome", "login", "signup"));
+            Arrays.asList("authentication", "auth", "welcome", "login", "signup", "credentialpicker"));
 
     private String lastActivity;
 
