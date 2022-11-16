@@ -81,20 +81,22 @@ public class WindowChangeDetectingService extends AccessibilityService {
                         // this enables us to allow the rest of the settings app
                         if (whitelistService.getCurrentDelayMillis() > 0) {
                             if (SUB_SETTINGS.equals(componentName.flattenToShortString())) {
-                                String screenTitle = event.getText().isEmpty() ? "" : event.getText().get(0).toString();
-                                List<AccessibilityNodeInfo> nodes = event.getSource().findAccessibilityNodeInfosByText("Use SkyWall");
-                                if (!nodes.isEmpty() || "device admin apps".equalsIgnoreCase(screenTitle)
-                                        || "install unknown apps".equalsIgnoreCase(screenTitle)
-                                        || "developer options".equalsIgnoreCase(screenTitle)) {
-                                    performGlobalAction(GLOBAL_ACTION_BACK);
-                                    return;
-                                } else if ("app info".equalsIgnoreCase(screenTitle) &&
-                                        !event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()) {
-                                    performGlobalAction(GLOBAL_ACTION_BACK);
-                                    return;
+                                String screenTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
+                                if (event.getSource() != null) { // sometimes happens
+                                    List<AccessibilityNodeInfo> nodes = event.getSource().findAccessibilityNodeInfosByText("Use SkyWall");
+                                    if (!nodes.isEmpty() || "device admin apps".equalsIgnoreCase(screenTitle)
+                                            || "install unknown apps".equalsIgnoreCase(screenTitle)
+                                            || "developer options".equalsIgnoreCase(screenTitle)) {
+                                        performGlobalAction(GLOBAL_ACTION_BACK);
+                                        return;
+                                    } else if ("app info".equalsIgnoreCase(screenTitle) &&
+                                            !event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()) {
+                                        performGlobalAction(GLOBAL_ACTION_BACK);
+                                        return;
+                                    }
                                 }
                             } else if (DEFAULT_HOME_APP_ACTIVITY.equals(componentName.flattenToShortString())) {
-                                String screenTitle = event.getText().isEmpty() ? "" : event.getText().get(0).toString();
+                                String screenTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
                                 if ("default home app".equalsIgnoreCase(screenTitle)) {
                                     performGlobalAction(GLOBAL_ACTION_BACK);
                                     return;
