@@ -28,12 +28,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
     public static final String ACTIVITY_NAME = "activityName";
     public static final String APP_NAME = "appName";
 
-    private static final Set<String> allowedActivities = new HashSet<>(
-            Arrays.asList("com.android.quickstep.RecentsActivity",
-                    "com.facebook.gdp.LightWeightProxyAuthActivity",
-                    "com.facebook.katana.gdp.ProxyAuthDialog",
-                    "com.facebook.katana.gdp.WebViewProxyAuth"));
-
     private static final Set<String> blockedActivities = new HashSet<>(
             Arrays.asList("com.facebook.browser.lite.BrowserLiteActivity",
                     "com.microsoft.emmx.webview.browser.InAppBrowserActivity"));
@@ -102,11 +96,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
                                     return;
                                 }
                             }
-                        }
-
-                        if (allowedActivities.contains(className)) {
-                            lastActivity = componentName.flattenToShortString();
-                            return;
                         }
 
                         if (blockedActivities.contains(className) && whitelistService.getCurrentDelayMillis() > 0) {
