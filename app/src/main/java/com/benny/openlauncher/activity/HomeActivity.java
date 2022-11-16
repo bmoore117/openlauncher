@@ -323,7 +323,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
             return;
         }
 
-        if (!whitelistService.refreshAndCheckWhitelisted(app._packageName)) {
+        if (!whitelistService.refreshAndCheckWhitelisted(app._packageName, null)) {
             Toast.makeText(this, R.string.ignoring_app, Toast.LENGTH_SHORT).show();
             return;
         }

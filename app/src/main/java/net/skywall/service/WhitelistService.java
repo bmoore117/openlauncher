@@ -81,20 +81,20 @@ public class WhitelistService {
         return new HashSet<>(activePrefs.getStringSet(APPS_KEY, new HashSet<>()));
     }
 
-    public boolean refreshAndCheckWhitelisted(String packageName) {
+    public boolean refreshAndCheckWhitelisted(String packageName, String className) {
         if (getCurrentDelayMillis() == 0) {
             return true;
         }
 
-        return refreshAndCheckWhitelistedInternal(packageName);
+        return refreshAndCheckWhitelistedInternal(packageName, className);
     }
 
-    private boolean refreshAndCheckWhitelistedInternal(String packageName) {
+    private boolean refreshAndCheckWhitelistedInternal(String packageName, String className) {
         if (currentActiveApps().contains(packageName)) {
             return true;
         }
 
-        if (isPredefinedAllowedApp(packageName)) {
+        if (isPredefinedAllowedApp(packageName, className)) {
             return true;
         }
 
@@ -122,12 +122,22 @@ public class WhitelistService {
         return false;
     }
 
-    public static boolean isPredefinedAllowedApp(String packageName) {
+    public static boolean isPredefinedAllowedApp(String packageName, String className) {
         for (String val : ALLOWED_PACKAGES) {
             if (packageName.startsWith(val)) {
                 if (!"com.android.chrome".equals(packageName)
                         && !"com.android.vending".equals(packageName)) {
                     return true;
+                }
+            }
+        }
+        if (className != null) {
+            for (String val : ALLOWED_PACKAGES) {
+                if (className.startsWith(val)) {
+                    if (!"com.android.chrome".equals(packageName)
+                            && !"com.android.vending".equals(packageName)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -186,7 +196,7 @@ public class WhitelistService {
     public Map<String, Long> getPendingApps() {
         Map<String, ?> pending = pendingChanges.getAll();
         for (String key : pending.keySet()) {
-            refreshAndCheckWhitelistedInternal(key);
+            refreshAndCheckWhitelistedInternal(key, null);
         }
 
         pending = pendingChanges.getAll();

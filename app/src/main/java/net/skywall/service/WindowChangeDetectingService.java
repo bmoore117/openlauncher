@@ -38,9 +38,8 @@ public class WindowChangeDetectingService extends AccessibilityService {
             Arrays.asList("com.facebook.browser.lite.BrowserLiteActivity",
                     "com.microsoft.emmx.webview.browser.InAppBrowserActivity"));
 
-    private static final Set<String> WEWORK_LOGIN_ACTIVITIES = new HashSet<>(
-            Arrays.asList("com.wework.ondemand/com.auth0.android.provider.AuthenticationActivity",
-                    "com.wework.ondemand/.splash.welcome.WelcomeActivity"));
+    private static final Set<String> PROBABLE_LOGIN_ACTIVITIES = new HashSet<>(
+            Arrays.asList("authentication", "welcome", "login", "signup"));
 
     private String lastActivity;
 
@@ -114,12 +113,17 @@ public class WindowChangeDetectingService extends AccessibilityService {
                             return;
                         }
 
-                        if (lastActivity != null && WEWORK_LOGIN_ACTIVITIES.contains(lastActivity)) {
+                        // apps frequently start a chromium tab as a linked/hosted activity which
+                        // will run under its own package name, and thus fail the ability to log in
+                        // so if we're on that new activity, check to see if the last activity was
+                        // something to do with sign-in, and allow
+                        if (lastActivity != null && PROBABLE_LOGIN_ACTIVITIES.stream()
+                                .anyMatch(activityTitleWord -> lastActivity.toLowerCase().contains(activityTitleWord))) {
                             lastActivity = componentName.flattenToShortString();
                             return;
                         }
 
-                        if (!whitelistService.refreshAndCheckWhitelisted(packageName)) {
+                        if (!whitelistService.refreshAndCheckWhitelisted(packageName, className)) {
                             Log.i(TAG, "Found non-whitelisted foreground activity: " + className);
                             blockActivity(className, appName);
                         }

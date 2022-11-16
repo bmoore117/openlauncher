@@ -51,7 +51,7 @@ public class WhitelistFragment extends Fragment {
         Set<String> whiteListedApps = whitelistService.getCurrentWhitelistedApps();
         nonWhitelistedApps = apps.stream()
                 .filter(app -> !whiteListedApps.contains(app.getPackageName())
-                        && !WhitelistService.isPredefinedAllowedApp(app.getPackageName())
+                        && !WhitelistService.isPredefinedAllowedApp(app.getPackageName(), null)
                         && !whitelistService.isAppPending(app.getPackageName()))
                 .map(app -> new DisplayApp(app.getLabel(), app.getPackageName(), app.getIcon(), null))
                 .collect(Collectors.toList());
