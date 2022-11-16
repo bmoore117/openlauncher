@@ -159,10 +159,13 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         public DesktopAdapter(Desktop desktop) {
             _desktop = desktop;
             _desktop.getPages().clear();
-            int count = HomeActivity.getCurrentInstance().getDb().getDesktop().size();
-            if (count == 0) count++;
-            for (int i = 0; i < count; i++) {
-                _desktop.getPages().add(getItemLayout());
+            final HomeActivity instance = HomeActivity.getCurrentInstance();
+            if (instance != null) {
+                int count = instance.getDb().getDesktop().size();
+                if (count == 0) count++;
+                for (int i = 0; i < count; i++) {
+                    _desktop.getPages().add(getItemLayout());
+                }
             }
         }
 
