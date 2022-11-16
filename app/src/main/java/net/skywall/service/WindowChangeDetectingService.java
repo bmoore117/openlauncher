@@ -39,7 +39,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     "com.microsoft.emmx.webview.browser.InAppBrowserActivity"));
 
     private static final Set<String> PROBABLE_LOGIN_ACTIVITIES = new HashSet<>(
-            Arrays.asList("authentication", "welcome", "login", "signup"));
+            Arrays.asList("authentication", "auth", "welcome", "login", "signup"));
 
     private String lastActivity;
 
@@ -114,9 +114,9 @@ public class WindowChangeDetectingService extends AccessibilityService {
                         }
 
                         // apps frequently start a chromium tab as a linked/hosted activity which
-                        // will run under its own package name, and thus fail the ability to log in
-                        // so if we're on that new activity, check to see if the last activity was
-                        // something to do with sign-in, and allow
+                        // will run under its own package name in a separate process, and thus fail
+                        // the ability to log in so if we're on that new activity, check to see if
+                        // the last activity was something to do with sign-in, and allow
                         if (lastActivity != null && PROBABLE_LOGIN_ACTIVITIES.stream()
                                 .anyMatch(activityTitleWord -> lastActivity.toLowerCase().contains(activityTitleWord))) {
                             lastActivity = componentName.flattenToShortString();
