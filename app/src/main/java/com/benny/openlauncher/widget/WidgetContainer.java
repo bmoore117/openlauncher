@@ -113,19 +113,24 @@ public class WidgetContainer extends FrameLayout {
     }
 
     public void updateWidgetOption(Item item) {
-        int cellWidth = HomeActivity.getCurrentInstance().getDesktop().getCurrentPage().getCellWidth();
-        int cellHeight = HomeActivity.getCurrentInstance().getDesktop().getCurrentPage().getCellHeight();
+        final HomeActivity currentInstance = HomeActivity.getCurrentInstance();
+        if (currentInstance != null) {
+            if (!currentInstance.getDesktop().getPages().isEmpty()) {
+                int cellWidth = currentInstance.getDesktop().getCurrentPage().getCellWidth();
+                int cellHeight = currentInstance.getDesktop().getCurrentPage().getCellHeight();
 
-        if (cellWidth < 1 || cellHeight < 1) {
-            // desktop isn't laid out
-            return;
+                if (cellWidth < 1 || cellHeight < 1) {
+                    // desktop isn't laid out
+                    return;
+                }
+
+                Bundle newOps = new Bundle();
+                newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, item.getSpanX() * cellWidth);
+                newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, item.getSpanX() * cellWidth);
+                newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, item.getSpanY() * cellHeight);
+                newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, item.getSpanY() * cellHeight);
+                HomeActivity._appWidgetManager.updateAppWidgetOptions(item.getWidgetValue(), newOps);
+            }
         }
-
-        Bundle newOps = new Bundle();
-        newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, item.getSpanX() * cellWidth);
-        newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, item.getSpanX() * cellWidth);
-        newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, item.getSpanY() * cellHeight);
-        newOps.putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, item.getSpanY() * cellHeight);
-        HomeActivity._appWidgetManager.updateAppWidgetOptions(item.getWidgetValue(), newOps);
     }
 }
