@@ -3,10 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.skywall.openlauncher">
 
+    <!-- the first query is to find installed apps on the phone, the second is to determine if we're
+     the current default home app-->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.HOME" />
         </intent>
     </queries>
 
