@@ -23,6 +23,8 @@ public class WindowChangeDetectingService extends AccessibilityService {
     private static final String TAG = WindowChangeDetectingService.class.getSimpleName();
     public static final String SUB_SETTINGS = "com.android.settings/.SubSettings";
     public static final String DEFAULT_HOME_APP_ACTIVITY = "com.google.android.permissioncontroller/com.android.permissioncontroller.role.ui.DefaultAppActivity";
+    public static final String GOOGLE_ASSISTANT_SAFESEARCH_SETTINGS_ACTIVITY = "com.google.android.googlequicksearchbox/com.google.android.apps.search.googleapp.search.settings.safesearch.SafeSearchSettingActivity";
+    public static final String GOOGLE_ASSISTANT_SETTINGS_MENU = "com.google.android.googlequicksearchbox/com.google.android.apps.search.googleapp.settingsui.SettingsActivity";
 
     private WhitelistService whitelistService;
     public static final String ACTIVITY_NAME = "activityName";
@@ -95,6 +97,13 @@ public class WindowChangeDetectingService extends AccessibilityService {
                                     performGlobalAction(GLOBAL_ACTION_BACK);
                                     return;
                                 }
+                            } else if (GOOGLE_ASSISTANT_SAFESEARCH_SETTINGS_ACTIVITY.equals(componentName.flattenToShortString())
+                                    || GOOGLE_ASSISTANT_SETTINGS_MENU.equals(componentName.flattenToShortString())) {
+                                // on the emulator, the google app has a specific recognizable explicit
+                                // settings activity. On my pixel 4 xl, it does not, and we sadly
+                                // have to block all settings, though you theoretically could still
+                                // get to the assistant settings specifically by using voice commands
+                                performGlobalAction(GLOBAL_ACTION_BACK);
                             }
                         }
 
