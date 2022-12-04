@@ -38,6 +38,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
             Arrays.asList("authentication", "auth", "welcome", "login", "signup", "credentialpicker"));
 
     private String lastActivity;
+    private String lastActivityTitle;
 
     @Override
     protected void onServiceConnected() {
@@ -85,8 +86,9 @@ public class WindowChangeDetectingService extends AccessibilityService {
                                             || "developer options".equalsIgnoreCase(screenTitle)) {
                                         performGlobalAction(GLOBAL_ACTION_BACK);
                                         return;
-                                    } else if ("app info".equalsIgnoreCase(screenTitle) &&
-                                            !event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()) {
+                                    } else if ("app info".equalsIgnoreCase(screenTitle)
+                                            && (!event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()
+                                                || !event.getSource().findAccessibilityNodeInfosByText("Firefox").isEmpty())) {
                                         performGlobalAction(GLOBAL_ACTION_BACK);
                                         return;
                                     }
@@ -109,6 +111,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
                         if (blockedActivities.contains(className) && whitelistService.getCurrentDelayMillis() > 0) {
                             lastActivity = componentName.flattenToShortString();
+                            lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
                             blockActivity(className, appName);
                             return;
                         }
@@ -120,6 +123,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                         if (lastActivity != null && PROBABLE_LOGIN_ACTIVITIES.stream()
                                 .anyMatch(activityTitleWord -> lastActivity.toLowerCase().contains(activityTitleWord))) {
                             lastActivity = componentName.flattenToShortString();
+                            lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
                             return;
                         }
 
@@ -128,6 +132,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                             blockActivity(className, appName);
                         }
                         lastActivity = componentName.flattenToShortString();
+                        lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
                     }
                 }
             } else if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) {
@@ -140,6 +145,18 @@ public class WindowChangeDetectingService extends AccessibilityService {
                             performGlobalAction(GLOBAL_ACTION_BACK);
                         }
                     }
+                }
+            } else if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+                if (whitelistService.getCurrentDelayMillis() == 0) {
+                    return;
+                }
+                if ("org.mozilla.firefox".equals(event.getPackageName().toString())
+                        && "org.mozilla.firefox/org.mozilla.fenix.HomeActivity".equals(lastActivity)
+                        && "Add-ons".equals(lastActivityTitle)
+                        && event.getSource() != null
+                        && !event.getSource().findAccessibilityNodeInfosByText("uBlock Origin").isEmpty()
+                        && !event.getSource().findAccessibilityNodeInfosByText("Run in private browsing").isEmpty()) {
+                    performGlobalAction(GLOBAL_ACTION_BACK);
                 }
             }
         } catch (RuntimeException e) {

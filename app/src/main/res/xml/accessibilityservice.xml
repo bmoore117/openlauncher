@@ -3,7 +3,7 @@
  start in Android 4.1.1 -->
 <accessibility-service
     xmlns:tools="http://schemas.android.com/tools"
-    android:accessibilityEventTypes="typeWindowStateChanged|typeViewLongClicked"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeViewLongClicked|typeWindowContentChanged"
     android:accessibilityFeedbackType="feedbackAllMask"
     android:accessibilityFlags="flagIncludeNotImportantViews"
     android:canRetrieveWindowContent="true"
