@@ -88,7 +88,9 @@ public class WindowChangeDetectingService extends AccessibilityService {
                                         return;
                                     } else if ("app info".equalsIgnoreCase(screenTitle)
                                             && (!event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()
-                                                || !event.getSource().findAccessibilityNodeInfosByText("Firefox").isEmpty())) {
+                                                || !event.getSource().findAccessibilityNodeInfosByText("Firefox").isEmpty()
+                                                || !event.getSource().findAccessibilityNodeInfosByText("Firefox Beta").isEmpty()
+                                                || !event.getSource().findAccessibilityNodeInfosByText("Firefox Nightly").isEmpty())) {
                                         performGlobalAction(GLOBAL_ACTION_BACK);
                                         return;
                                     }
@@ -150,11 +152,11 @@ public class WindowChangeDetectingService extends AccessibilityService {
                 if (whitelistService.getCurrentDelayMillis() == 0) {
                     return;
                 }
-                if ("org.mozilla.firefox".equals(event.getPackageName().toString())
-                        && "org.mozilla.firefox/org.mozilla.fenix.HomeActivity".equals(lastActivity)
+                if (event.getPackageName().toString().startsWith("org.mozilla.firefox")
+                        && lastActivity.matches("org.mozilla.firefox(.*?)/org.mozilla.fenix.HomeActivity")
                         && "Add-ons".equals(lastActivityTitle)
                         && event.getSource() != null
-                        && !event.getSource().findAccessibilityNodeInfosByText("uBlock Origin").isEmpty()
+                        && !event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()
                         && !event.getSource().findAccessibilityNodeInfosByText("Run in private browsing").isEmpty()) {
                     performGlobalAction(GLOBAL_ACTION_BACK);
                 }
