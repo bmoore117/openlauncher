@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import net.skywall.fragment.InfoFragment;
 import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.ColorActivity;
 import net.skywall.fragment.LoginFragment;
@@ -18,6 +19,7 @@ public class SkyWallActivity extends ColorActivity {
     private static FragmentManager fragmentManager;
     private static MainFragment mainFragment;
     private static LoginFragment loginFragment;
+    private static InfoFragment infoFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class SkyWallActivity extends ColorActivity {
         SkywallService skywallService = SkywallService.getInstance(this);
         mainFragment = new MainFragment();
         loginFragment = new LoginFragment();
+        infoFragment = new InfoFragment();
         fragmentManager = getSupportFragmentManager();
 
         if (!skywallService.isLicensed() && skywallService.getUsername() == null) {
@@ -58,11 +61,16 @@ public class SkyWallActivity extends ColorActivity {
         return loginFragment;
     }
 
+    public static InfoFragment getInfoFragment() {
+        return infoFragment;
+    }
+
     @Override
     public void onDestroy() {
         fragmentManager = null;
         mainFragment = null;
         loginFragment = null;
+        infoFragment = null;
         super.onDestroy();
     }
 }

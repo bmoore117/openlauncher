@@ -207,10 +207,12 @@ public class MainFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_logout_button) {
+        if (item.getItemId() == R.id.menu_logout_logout_btn) {
             skywallService.logout();
             SkyWallActivity.doTransition(SkyWallActivity.getLoginFragment());
             return true;
+        } else if (item.getItemId() == R.id.menu_logout_info_btn) {
+            SkyWallActivity.doTransition(SkyWallActivity.getInfoFragment());
         }
         return super.onOptionsItemSelected(item); // important line
     }
