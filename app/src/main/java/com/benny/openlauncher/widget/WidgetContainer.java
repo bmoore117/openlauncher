@@ -9,9 +9,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
+import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.Item;
+
+import net.skywall.openlauncher.R;
 
 public class WidgetContainer extends FrameLayout {
     View ve;
@@ -103,7 +105,7 @@ public class WidgetContainer extends FrameLayout {
             updateWidgetOption(item);
 
             // update the widget size in the database
-            HomeActivity.getCurrentInstance().getDb().saveItem(item);
+            Setup.dataManager().saveItem(item);
         } else {
             Toast.makeText(HomeActivity.getCurrentInstance().getDesktop().getContext(), R.string.toast_not_enough_space, Toast.LENGTH_SHORT).show();
 

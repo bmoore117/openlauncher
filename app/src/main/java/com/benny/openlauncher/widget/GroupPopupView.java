@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import androidx.cardview.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,8 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.skywall.openlauncher.R;
+import androidx.cardview.widget.CardView;
+
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
@@ -29,6 +29,7 @@ import com.benny.openlauncher.viewutil.GroupDrawable;
 import com.benny.openlauncher.viewutil.ItemViewFactory;
 
 import net.gsantner.opoc.util.ContextUtils;
+import net.skywall.openlauncher.R;
 
 import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealFrameLayout;
@@ -307,8 +308,8 @@ public class GroupPopupView extends RevealFrameLayout {
     private void removeItem(Context context, final Item currentItem, Item dragOutItem, AppItemView currentView) {
         currentItem.getGroupItems().remove(dragOutItem);
 
-        HomeActivity.getCurrentInstance().getDb().saveItem(dragOutItem, ItemState.Visible);
-        HomeActivity.getCurrentInstance().getDb().saveItem(currentItem);
+        Setup.dataManager().saveItem(dragOutItem, ItemState.Visible);
+        Setup.dataManager().saveItem(currentItem);
 
         currentView.setIcon(new GroupDrawable(context, currentItem, Setup.appSettings().getDesktopIconSize()));
     }
@@ -316,8 +317,8 @@ public class GroupPopupView extends RevealFrameLayout {
     private void deleteItem(Context context, final Item currentItem, Item dragOutItem, AppItemView currentView) {
         currentItem.getGroupItems().remove(dragOutItem);
 
-        HomeActivity.getCurrentInstance().getDb().deleteItem(dragOutItem, false);
-        HomeActivity.getCurrentInstance().getDb().saveItem(currentItem);
+        Setup.dataManager().deleteItem(dragOutItem, false);
+        Setup.dataManager().saveItem(currentItem);
 
         currentView.setIcon(new GroupDrawable(context, currentItem, Setup.appSettings().getDesktopIconSize()));
     }
@@ -326,16 +327,16 @@ public class GroupPopupView extends RevealFrameLayout {
         if (currentItem.getGroupItems().size() == 1) {
             final App app = Setup.appLoader().findItemApp(currentItem.getGroupItems().get(0));
             if (app != null) {
-                Item item = HomeActivity.getCurrentInstance().getDb().getItem(currentItem.getGroupItems().get(0).getId());
+                Item item = Setup.dataManager().getItem(currentItem.getGroupItems().get(0).getId());
                 item.setX(currentItem.getX());
                 item.setY(currentItem.getY());
                 item._location = ItemPosition.Desktop;
 
                 // update db
-                HomeActivity.getCurrentInstance().getDb().saveItem(item);
-                HomeActivity.getCurrentInstance().getDb().saveItem(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem(), ItemPosition.Desktop);
-                HomeActivity.getCurrentInstance().getDb().saveItem(item, ItemState.Visible);
-                HomeActivity.getCurrentInstance().getDb().deleteItem(currentItem, false);
+                Setup.dataManager().saveItem(item);
+                Setup.dataManager().saveItem(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem(), ItemPosition.Desktop);
+                Setup.dataManager().saveItem(item, ItemState.Visible);
+                Setup.dataManager().deleteItem(currentItem, false);
 
                 // update launcher
                 callback.removeItem(currentView, false);

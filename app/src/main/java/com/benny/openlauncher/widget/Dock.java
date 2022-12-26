@@ -2,10 +2,11 @@ package com.benny.openlauncher.widget;
 
 import android.content.Context;
 import android.graphics.Point;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.manager.Setup;
@@ -20,26 +21,23 @@ import com.benny.openlauncher.viewutil.ItemViewFactory;
 import java.util.List;
 
 public final class Dock extends CellContainer implements DesktopCallback {
-    private HomeActivity _homeActivity;
     private final Point _coordinate = new Point();
     private final Point _previousDragPoint = new Point();
 
     private Item _previousItem;
     private View _previousItemView;
 
-    // open app drawer on slide up gesture
-    private float _startPosX;
     private float _startPosY;
 
     public Dock(Context context, AttributeSet attr) {
         super(context, attr);
     }
 
-    public final void initDock() {
+    public void initDock() {
         int columns = Setup.appSettings().getDockColumnCount();
         int rows = Setup.appSettings().getDockRowCount();
         setGridSize(columns, rows);
-        List<Item> dockItems = HomeActivity.getCurrentInstance().getDb().getDock();
+        List<Item> dockItems = Setup.dataManager().getDock();
         removeAllViews();
         for (Item item : dockItems) {
             if (item._x + item._spanX <= columns && item._y + item._spanY <= rows) {
@@ -60,17 +58,17 @@ public final class Dock extends CellContainer implements DesktopCallback {
     private void detectSwipe(MotionEvent ev) {
         switch (ev.getAction()) {
             case 0:
-                _startPosX = ev.getX();
+                // open app drawer on slide up gesture
                 _startPosY = ev.getY();
                 break;
             case 1:
                 if (_startPosY - ev.getY() > 150.0f && Setup.appSettings().getGestureDockSwipeUp()) {
                     Point point = new Point((int) ev.getX(), (int) ev.getY());
-                    point = Tool.convertPoint(point, this, _homeActivity.getAppDrawerController());
+                    point = Tool.convertPoint(point, this, HomeActivity.getCurrentInstance().getAppDrawerController());
                     if (Setup.appSettings().getGestureFeedback()) {
                         Tool.vibrate(this);
                     }
-                    _homeActivity.openAppDrawer(this, point.x, point.y);
+                    HomeActivity.getCurrentInstance().openAppDrawer(this, point.x, point.y);
                     break;
                 }
             default:
@@ -78,9 +76,8 @@ public final class Dock extends CellContainer implements DesktopCallback {
         }
     }
 
-    public final void updateIconProjection(int x, int y) {
-        HomeActivity launcher = _homeActivity;
-        ItemOptionView dragNDropView = launcher.getItemOptionView();
+    public void updateIconProjection(int x, int y) {
+        ItemOptionView dragNDropView = HomeActivity.getCurrentInstance().getItemOptionView();
         DragState state = peekItemAndSwap(x, y, _coordinate);
         if (!_coordinate.equals(_previousDragPoint)) {
             dragNDropView.cancelFolderPreview();
@@ -193,13 +190,7 @@ public final class Dock extends CellContainer implements DesktopCallback {
         }
     }
 
-    public void setHome(HomeActivity homeActivity) {
-        _homeActivity = homeActivity;
-    }
-
-    private Boolean isDockShowLabel() {
-        boolean b = Setup.appSettings().getDockShowLabel();
-        Boolean ret = new Boolean(b);
-        return ret;
+    private boolean isDockShowLabel() {
+        return Setup.appSettings().getDockShowLabel();
     }
 }

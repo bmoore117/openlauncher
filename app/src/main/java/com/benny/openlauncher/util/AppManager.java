@@ -128,7 +128,7 @@ public class AppManager {
             removedApps = getRemovedApps(_apps, appsTemp);
 
             for (App app : removedApps) {
-                HomeActivity.getCurrentInstance().getDb().deleteItems(app);
+                Setup.dataManager().deleteItems(app);
             }
 
             AppSettings appSettings = AppSettings.get();

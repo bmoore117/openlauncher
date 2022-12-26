@@ -2,14 +2,15 @@ package com.benny.openlauncher.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.preference.Preference;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
+import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.util.AppSettings;
 import com.benny.openlauncher.util.DatabaseHelper;
 import com.benny.openlauncher.util.Definitions;
@@ -18,6 +19,7 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import net.gsantner.opoc.util.ContextUtils;
 import net.gsantner.opoc.util.PermissionChecker;
+import net.skywall.openlauncher.R;
 
 public class SettingsMiscellaneousFragment extends SettingsBaseFragment {
     @Override
@@ -61,7 +63,7 @@ public class SettingsMiscellaneousFragment extends SettingsBaseFragment {
                 DialogHelper.alertDialog(getActivity(), getString(R.string.pref_title__reset_database), getString(R.string.are_you_sure), new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        DatabaseHelper db = HomeActivity.getCurrentInstance().getDb();
+                        DatabaseHelper db = Setup.dataManager();
                         db.onUpgrade(db.getWritableDatabase(), 1, 1);
                         AppSettings.get().setAppFirstLaunch(true);
                         homeActivity.recreate();

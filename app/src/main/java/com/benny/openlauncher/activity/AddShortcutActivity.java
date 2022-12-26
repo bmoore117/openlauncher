@@ -2,19 +2,21 @@ package com.benny.openlauncher.activity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent; 
+import android.content.Intent;
 import android.content.pm.LauncherApps;
-import android.content.pm.ShortcutInfo; 
+import android.content.pm.ShortcutInfo;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.benny.openlauncher.AppObject;
-import net.skywall.openlauncher.R;
+import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.Item;
 import com.benny.openlauncher.util.Definitions;
 import com.benny.openlauncher.util.Tool;
+
+import net.skywall.openlauncher.R;
 
 public class AddShortcutActivity extends Activity {
 
@@ -50,7 +52,7 @@ public class AddShortcutActivity extends Activity {
                 } else {
                     item.setX(preferredPos.x);
                     item.setY(preferredPos.y);
-                    HomeActivity.getCurrentInstance().getDb().saveItem(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem(), Definitions.ItemPosition.Desktop);
+                    Setup.dataManager().saveItem(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem(), Definitions.ItemPosition.Desktop);
                     HomeActivity.getCurrentInstance().getDesktop().addItemToPage(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem());
                     Log.d(this.getClass().toString(), "shortcut installed");
                 }

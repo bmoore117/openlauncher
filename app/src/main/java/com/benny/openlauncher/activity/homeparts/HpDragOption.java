@@ -3,10 +3,10 @@ package com.benny.openlauncher.activity.homeparts;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.Handler;
-import androidx.annotation.NonNull;
 import android.view.View;
 
-import net.skywall.openlauncher.R;
+import androidx.annotation.NonNull;
+
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.interfaces.DropTargetListener;
 import com.benny.openlauncher.manager.Setup;
@@ -18,6 +18,8 @@ import com.benny.openlauncher.util.Tool;
 import com.benny.openlauncher.widget.CellContainer;
 import com.benny.openlauncher.widget.Desktop;
 import com.benny.openlauncher.widget.ItemOptionView;
+
+import net.skywall.openlauncher.R;
 
 public class HpDragOption {
     public void initDragNDrop(@NonNull final HomeActivity _homeActivity, @NonNull final View leftDragHandle, @NonNull final View rightDragHandle, @NonNull final ItemOptionView dragNDropView) {
@@ -187,7 +189,7 @@ public class HpDragOption {
                     _homeActivity.getDesktop().consumeLastItem();
                     _homeActivity.getDock().consumeLastItem();
                     // add the item to the database
-                    HomeActivity.getCurrentInstance().getDb().saveItem(item, _homeActivity.getDesktop().getCurrentItem(), Definitions.ItemPosition.Desktop);
+                    Setup.dataManager().saveItem(item, _homeActivity.getDesktop().getCurrentItem(), Definitions.ItemPosition.Desktop);
                     _homeActivity.getDesktop().updateDesktop();
 
                 } else {
@@ -265,7 +267,7 @@ public class HpDragOption {
                     _homeActivity.getDock().consumeLastItem();
 
                     // add the item to the database
-                    HomeActivity.getCurrentInstance().getDb().saveItem(item, 0, Definitions.ItemPosition.Dock);
+                    Setup.dataManager().saveItem(item, 0, Definitions.ItemPosition.Dock);
                 } else {
                     Point pos = new Point();
                     _homeActivity.getDock().touchPosToCoordinate(pos, x, y, item._spanX, item._spanY, false);

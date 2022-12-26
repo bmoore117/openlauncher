@@ -1,15 +1,18 @@
 package com.benny.openlauncher.activity.homeparts;
 
+import static com.benny.openlauncher.activity.HomeActivity.REQUEST_CREATE_APPWIDGET;
+import static com.benny.openlauncher.activity.HomeActivity.REQUEST_PICK_APPWIDGET;
+
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.interfaces.DialogListener;
 import com.benny.openlauncher.manager.Setup;
@@ -22,10 +25,9 @@ import com.benny.openlauncher.widget.CellContainer;
 import com.benny.openlauncher.widget.Desktop;
 import com.benny.openlauncher.widget.DesktopOptionView;
 
-import java.util.List;
+import net.skywall.openlauncher.R;
 
-import static com.benny.openlauncher.activity.HomeActivity.REQUEST_CREATE_APPWIDGET;
-import static com.benny.openlauncher.activity.HomeActivity.REQUEST_PICK_APPWIDGET;
+import java.util.List;
 
 public class HpDesktopOption implements DesktopOptionView.DesktopOptionViewListener, DialogListener.OnActionDialogListener {
     private HomeActivity _homeActivity;
@@ -97,7 +99,7 @@ public class HpDesktopOption implements DesktopOptionView.DesktopOptionViewListe
             item._y = point.y;
 
             // add item to database
-            HomeActivity.getCurrentInstance().getDb().saveItem(item, desktop.getCurrentItem(), Definitions.ItemPosition.Desktop);
+            Setup.dataManager().saveItem(item, desktop.getCurrentItem(), Definitions.ItemPosition.Desktop);
             desktop.addItemToPage(item, desktop.getCurrentItem());
         } else {
             Tool.toast(_homeActivity, R.string.toast_not_enough_space);

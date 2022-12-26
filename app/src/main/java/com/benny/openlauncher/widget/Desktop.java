@@ -193,7 +193,8 @@ public final class Desktop extends ViewPager implements DesktopCallback {
 
         public void addPageLeft() {
             // Shift pages to the right (including home page)
-            HomeActivity.getCurrentInstance().getDb().addPage(0);
+            Setup.dataManager().addPage(0);
+            Setup.dataManager().addPage(0);
             Setup.appSettings().setDesktopPageCurrent(Setup.appSettings().getDesktopPageCurrent()+1);
 
             _desktop.getPages().add(0, getItemLayout());
@@ -210,13 +211,13 @@ public final class Desktop extends ViewPager implements DesktopCallback {
                 for (View view : _desktop.getPages().get(position).getAllCells()) {
                     Object item = view.getTag();
                     if (item instanceof Item) {
-                        HomeActivity.getCurrentInstance().getDb().deleteItem((Item) item, true);
+                        Setup.dataManager().deleteItem((Item) item, true);
                     }
                 }
             }
 
             // Shift pages to the left (including home page)
-            HomeActivity.getCurrentInstance().getDb().removePage(position);
+            Setup.dataManager().removePage(position);
             if (Setup.appSettings().getDesktopPageCurrent() > position) {
                 Setup.appSettings().setDesktopPageCurrent(Setup.appSettings().getDesktopPageCurrent() - 1);
             }
@@ -339,7 +340,7 @@ public final class Desktop extends ViewPager implements DesktopCallback {
         int rows = Setup.appSettings().getDesktopRowCount();
         HomeActivity homeActivity = HomeActivity.getCurrentInstance();
         if (homeActivity != null) {
-            List<List<Item>> desktopItems = HomeActivity.getCurrentInstance().getDb().getDesktop();
+            List<List<Item>> desktopItems = Setup.dataManager().getDesktop();
             for (int pageCount = 0; pageCount < desktopItems.size(); pageCount++) {
                 List<Item> page = desktopItems.get(pageCount);
                 _pages.get(pageCount).removeAllViews();

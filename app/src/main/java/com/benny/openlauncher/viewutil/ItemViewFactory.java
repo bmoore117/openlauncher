@@ -100,17 +100,17 @@ public class ItemViewFactory {
                 if (HomeActivity._appWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, cn)) {
                     appWidgetInfo = HomeActivity._appWidgetManager.getAppWidgetInfo(appWidgetId);
                     item.setWidgetValue(appWidgetId);
-                    HomeActivity.getCurrentInstance().getDb().updateItem(item);
+                    Setup.dataManager().updateItem(item);
                 } else {
                     LOG.error("Unable to bind app widget id: {}; removing from database", cn);
                     HomeActivity._appWidgetHost.deleteAppWidgetId(appWidgetId);
-                    HomeActivity.getCurrentInstance().getDb().deleteItem(item, false);
+                    Setup.dataManager().deleteItem(item, false);
                     return null;
                 }
             } else {
                 // Delete the Widget if we don't have enough information to rehydrate it.
                 LOG.debug("Unable to identify Widget for rehydration; removing from database");
-                HomeActivity.getCurrentInstance().getDb().deleteItem(item, false);
+                Setup.dataManager().deleteItem(item, false);
                 return null;
             }
         }

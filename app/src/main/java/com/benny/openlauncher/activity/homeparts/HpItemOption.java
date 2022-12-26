@@ -7,12 +7,10 @@ import android.content.pm.LauncherApps;
 import android.content.pm.ShortcutInfo;
 import android.graphics.Point;
 import android.net.Uri;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import android.view.View;
-
-import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.interfaces.DialogListener;
 import com.benny.openlauncher.manager.Setup;
@@ -22,6 +20,8 @@ import com.benny.openlauncher.util.Tool;
 import com.benny.openlauncher.widget.Desktop;
 import com.benny.openlauncher.widget.Dock;
 import com.benny.openlauncher.widget.WidgetContainer;
+
+import net.skywall.openlauncher.R;
 
 public class HpItemOption implements DialogListener.OnEditDialogListener {
     private HomeActivity _homeActivity;
@@ -55,7 +55,7 @@ public class HpItemOption implements DialogListener.OnEditDialogListener {
             coordinateToChildView = dock.coordinateToChildView(new Point(item._x, item._y));
             dock.removeItem(coordinateToChildView, true);
         }
-        HomeActivity.getCurrentInstance().getDb().deleteItem(item, true);
+        Setup.dataManager().deleteItem(item, true);
     }
 
     public final void onInfoItem(@NonNull Item item) {

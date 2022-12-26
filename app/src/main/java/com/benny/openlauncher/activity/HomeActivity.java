@@ -181,10 +181,9 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         contextUtils.setAppLanguage(appSettings.getLanguage());
         super.onCreate(savedInstanceState);
         if (!Setup.wasInitialised()) {
-            Setup.init(new HpInitSetup(this));
+            Setup.init(new HpInitSetup(getApplicationContext()));
         }
 
-        _launcher = this;
         db = Setup.dataManager();
 
         setContentView(getLayoutInflater().inflate(R.layout.activity_home, null));
@@ -240,7 +239,6 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
     private void initViews() {
         new HpSearchBar(this, getSearchBar()).initSearchBar();
         getAppDrawerController().init();
-        getDock().setHome(this);
 
         getDesktop().setDesktopEditListener(this);
         getDesktop().setPageIndicator(getDesktopIndicator());

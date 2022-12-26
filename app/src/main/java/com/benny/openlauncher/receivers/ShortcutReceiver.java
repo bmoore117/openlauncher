@@ -11,13 +11,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
 import android.util.Log;
 
-import net.skywall.openlauncher.R;
 import com.benny.openlauncher.activity.HomeActivity;
 import com.benny.openlauncher.manager.Setup;
 import com.benny.openlauncher.model.App;
 import com.benny.openlauncher.model.Item;
 import com.benny.openlauncher.util.Definitions;
 import com.benny.openlauncher.util.Tool;
+
+import net.skywall.openlauncher.R;
 
 public class ShortcutReceiver extends BroadcastReceiver {
 
@@ -64,7 +65,7 @@ public class ShortcutReceiver extends BroadcastReceiver {
         } else {
             item.setX(preferredPos.x);
             item.setY(preferredPos.y);
-            HomeActivity.getCurrentInstance().getDb().saveItem(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem(), Definitions.ItemPosition.Desktop);
+            Setup.dataManager().saveItem(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem(), Definitions.ItemPosition.Desktop);
             HomeActivity.getCurrentInstance().getDesktop().addItemToPage(item, HomeActivity.getCurrentInstance().getDesktop().getCurrentItem());
             Log.d(this.getClass().toString(), "shortcut installed");
         }
