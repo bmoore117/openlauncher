@@ -113,7 +113,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
                         if (blockedActivities.contains(className) && whitelistService.getCurrentDelayMillis() > 0) {
                             lastActivity = componentName.flattenToShortString();
-                            lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
+                            lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0) == null ? "" : event.getText().get(0).toString();
                             blockActivity(className, appName);
                             return;
                         }
@@ -125,7 +125,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                         if (lastActivity != null && PROBABLE_LOGIN_ACTIVITIES.stream()
                                 .anyMatch(activityTitleWord -> lastActivity.toLowerCase().contains(activityTitleWord))) {
                             lastActivity = componentName.flattenToShortString();
-                            lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
+                            lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0) == null ? "" : event.getText().get(0).toString();
                             return;
                         }
 
@@ -134,7 +134,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                             blockActivity(className, appName);
                         }
                         lastActivity = componentName.flattenToShortString();
-                        lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
+                        lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0) == null ? "" : event.getText().get(0).toString();
                     }
                 }
             } else if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) {
