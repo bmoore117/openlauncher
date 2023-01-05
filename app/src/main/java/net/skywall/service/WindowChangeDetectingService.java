@@ -154,7 +154,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
                 }
                 if (event.getPackageName().toString().startsWith("org.mozilla.firefox")
                         && lastActivity.matches("org.mozilla.firefox(.*?)/org.mozilla.fenix.HomeActivity")
-                        && "Add-ons".equals(lastActivityTitle)
                         && event.getSource() != null
                         && !event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()
                         && !event.getSource().findAccessibilityNodeInfosByText("Run in private browsing").isEmpty()) {
