@@ -27,6 +27,7 @@ public class WhitelistService {
             "com.benny",
             "com.flask",
             "com.google.android.apps.inputmethod",
+            "com.google.android.apps.search.transcription",
             "com.google.android.apps.wellbeing",
             "com.google.android.documentsui",
             "com.google.android.gms",
