@@ -1,0 +1,2 @@
+Build > Generate Signed Bundle / APK > flavorGplay
+Use upload.jks, key alias upload-key, both passwords are halo bang bang
