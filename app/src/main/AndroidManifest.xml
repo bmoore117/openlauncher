@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="net.skywall.openlauncher">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- the first query is to find installed apps on the phone, the second is to determine if we're
      the current default home app-->

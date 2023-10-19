@@ -79,6 +79,7 @@ android {
         abortOnError false
         disable 'MissingTranslation', 'InvalidPackage', 'ObsoleteLintCustomCheck', 'DefaultLocale', 'UnusedAttribute', 'VectorRaster', 'InflateParams', 'IconLocation', 'UnusedResources', 'TypographyEllipsis'
     }
+    namespace 'net.skywall.openlauncher'
 
     allprojects {
         tasks.withType(JavaCompile) {
