@@ -21,8 +21,8 @@ public final class HpInitSetup extends Setup {
     public HpInitSetup(Context context) {
         _appSettings = AppSettings.get();
         _desktopGestureCallback = new HpGestureCallback(_appSettings);
-        _dataManager = new DatabaseHelper(context);
-        _appLoader = AppManager.getInstance(context);
+        _dataManager = new DatabaseHelper(context.getApplicationContext());
+        _appLoader = AppManager.getInstance(context.getApplicationContext());
         _eventHandler = new HpEventHandler();
     }
 

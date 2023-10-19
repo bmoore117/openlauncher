@@ -29,12 +29,6 @@
     <com.benny.openlauncher.widget.ColorPreferenceCategory android:title="@string/contribute">
 
         <Preference
-            android:icon="@drawable/ic_favorite"
-            android:key="@string/pref_key__more_info__donate"
-            android:summary="@string/more_info_support"
-            android:title="@string/donate" />
-
-        <Preference
             android:icon="@drawable/ic_bug"
             android:key="@string/pref_key__more_info__bug_reports"
             android:summary="@string/bug_reports_suggest_improvements"
@@ -51,12 +45,6 @@
             android:key="@string/pref_key__more_info__project_contribution_info"
             android:summary="@string/more_info_on_how_to_contribute_to_this_project"
             android:title="@string/project_contribution_info" />
-
-        <Preference
-            android:icon="@drawable/ic_info"
-            android:key="@string/pref_key__more_info__android_contribution_guide"
-            android:summary="@string/more_info_foss"
-            android:title="@string/android_contribution_guide" />
 
     </com.benny.openlauncher.widget.ColorPreferenceCategory>
 

@@ -1,9 +1,8 @@
 /*#######################################################
  *
- *   Maintained by Gregor Santner, 2016-
- *   https://gsantner.net/
+ *   Maintained 2016-2023 by Gregor Santner <gsantner AT mailbox DOT org>
  *
- *   License of this file: Apache 2.0 (Commercial upon request)
+ *   License of this file: Apache 2.0
  *     https://www.apache.org/licenses/LICENSE-2.0
  *     https://github.com/gsantner/opoc/#licensing
  *
@@ -365,26 +364,6 @@ public class ContextUtils {
      */
     public boolean isFossBuild() {
         return bcbool("IS_FOSS_BUILD", false);
-    }
-
-    /**
-     * Request a bitcoin donation with given details.
-     * All parameters are awaited as string resource ids
-     */
-    public void showDonateBitcoinRequest(@StringRes final int srBitcoinId, @StringRes final int srBitcoinAmount, @StringRes final int srBitcoinMessage, @StringRes final int srAlternativeDonateUrl) {
-        if (!isGooglePlayBuild()) {
-            String btcUri = String.format("bitcoin:%s?amount=%s&label=%s&message=%s",
-                    rstr(srBitcoinId), rstr(srBitcoinAmount),
-                    rstr(srBitcoinMessage), rstr(srBitcoinMessage));
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(btcUri));
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-            try {
-                _context.startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                openWebpageInExternalBrowser(rstr(srAlternativeDonateUrl));
-            }
-        }
     }
 
     public String readTextfileFromRawRes(@RawRes int rawResId, String linePrefix, String linePostfix) {
