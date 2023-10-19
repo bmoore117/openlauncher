@@ -21,7 +21,7 @@ allprojects {
         task -> task.dependsOn copyRepoFiles
     }
 
-    tasks.matching { task -> task.name.matches('.*DebugSourceSetPaths.*') }.all {
+    tasks.matching { task -> task.name.matches('.*SourceSetPaths.*') }.all {
         task -> task.dependsOn copyRepoFiles
     }
 
