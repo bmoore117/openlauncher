@@ -33,6 +33,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
     private static final Set<String> blockedActivities = new HashSet<>(
             Arrays.asList("com.facebook.browser.lite.BrowserLiteActivity",
                     "com.instagram.inappbrowser.launcher.BrowserLiteInMainProcessIGActivity",
+                    "com.instagram.inappbrowser.fragments.BrowserLiteInMainProcessIGActivity",
                     "com.microsoft.emmx.webview.browser.InAppBrowserActivity"));
 
     private static final Set<String> PROBABLE_LOGIN_ACTIVITIES = new HashSet<>(
