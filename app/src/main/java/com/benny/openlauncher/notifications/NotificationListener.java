@@ -55,7 +55,7 @@ public class NotificationListener extends NotificationListenerService {
         if (_notificationReceiver == null) {
             _notificationReceiver = new NotificationListenerReceiver();
             IntentFilter filter = new IntentFilter(UPDATE_NOTIFICATIONS_ACTION);
-            registerReceiver(_notificationReceiver, filter);
+            registerReceiver(_notificationReceiver, filter, RECEIVER_EXPORTED);
         }
     }
 

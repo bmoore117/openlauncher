@@ -311,7 +311,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
 
         // register all receivers
         registerReceiver(_appUpdateReceiver, _appUpdateIntentFilter);
-        registerReceiver(_shortcutReceiver, _shortcutIntentFilter);
+        registerReceiver(_shortcutReceiver, _shortcutIntentFilter, RECEIVER_NOT_EXPORTED);
         registerReceiver(_timeChangedReceiver, _timeChangedIntentFilter);
     }
 
