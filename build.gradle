@@ -8,31 +8,27 @@ import java.text.SimpleDateFormat
 import java.util.stream.Collectors
 
 plugins {
-    id 'com.android.application' version '8.0.2' apply false
-    id 'com.android.library' version '8.0.2' apply false
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    id 'com.android.application' version '8.8.0' apply false
+    id 'com.android.library' version '8.8.0' apply false
 }
 
 allprojects {
-    tasks.matching { task -> task.name.matches('.*generate.*Resources') }.all {
+    tasks.matching { task -> task.name.matches('.*generate.*Resources') }.configureEach {
         task -> task.dependsOn copyRepoFiles
     }
 
-    tasks.matching { task -> task.name.matches('.*SourceSetPaths.*') }.all {
+    tasks.matching { task -> task.name.matches('.*SourceSetPaths.*') }.configureEach {
         task -> task.dependsOn copyRepoFiles
     }
 
-    tasks.matching {it instanceof Test}.all { // Enable unit test output, html+xml output
+    tasks.matching {it instanceof Test}.configureEach { // Enable unit test output, html+xml output
         testLogging.events "passed", "skipped", "failed", "standardOut", "standardError"
         testLogging.showStandardStreams = true
     }
 }
 
 final String[] ROOT_TO_RAW_COPYFILES = ["README.md", "CHANGELOG.md", "CONTRIBUTORS.md", "LICENSE.txt", "LICENSE.md", "LICENSE"]
-task copyRepoFiles(type: Copy) {
+tasks.register('copyRepoFiles', Copy) {
     from rootProject.files(ROOT_TO_RAW_COPYFILES)
     into "app/src/main/res/raw"
     rename { String fileName -> fileName.replace(fileName, fileName.toLowerCase()) }

@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 35
 
     defaultConfig {
         // will generate monotonically increasing build numbers that always fit within int max val,
@@ -16,8 +16,8 @@ android {
         String padding = hourOfDay < 10 ? "00" : "0"
         String version = LocalDate.now().toString().replaceAll("-", "").substring(2) + hourOfDay + padding
         applicationId "net.skywall.openlauncher"
-        minSdk 27
-        targetSdk 33
+        minSdk 33
+        targetSdk 35
         versionCode Integer.parseInt(version)
         versionName version
 
@@ -56,8 +56,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     buildTypes {
@@ -82,15 +82,17 @@ android {
     namespace 'net.skywall.openlauncher'
 
     allprojects {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:deprecation"
+        tasks.withType(JavaCompile).tap {
+            configureEach {
+                options.compilerArgs << "-Xlint:deprecation"
+            }
         }
     }
 }
 
 dependencies {
     // Support libraries
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
 
@@ -98,7 +100,7 @@ dependencies {
     implementation 'com.mikepenz:fastadapter:3.2.3@aar'
     implementation 'com.mikepenz:fastadapter-commons:3.0.0@aar'
     implementation 'com.mikepenz:fastadapter-extensions:3.0.0@aar'
-    implementation 'jp.wasabeef:recyclerview-animators:2.2.7'
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'io.github.dreierf:material-intro-screen:0.0.6'
     implementation 'cat.ereza:customactivityoncrash:2.2.0'
