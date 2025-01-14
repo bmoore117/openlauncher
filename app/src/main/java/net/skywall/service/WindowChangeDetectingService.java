@@ -65,20 +65,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
             return;
         }
 
-        if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED) {
-            if (!event.getPackageName().equals("com.android.settings") && !event.getPackageName().equals("com.google.android.settings.intelligence")) {
-                return;
-            }
-
-            if (event.getText() != null && !event.getText().isEmpty()
-                    && ("Default apps".equalsIgnoreCase(event.getText().get(0).toString())
-                        || "Default home app".equalsIgnoreCase(event.getText().get(0).toString()))
-                    && whitelistService.getCurrentDelayMillis() > 0) {
-                performGlobalAction(GLOBAL_ACTION_BACK);
-                return;
-            }
-        }
-
         try {
             if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
                 if (event.getPackageName() != null && event.getClassName() != null) {
@@ -96,7 +82,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                         // or deactivate device admin for this app, or change the home screen to something else
                         // this enables us to allow the rest of the settings app
                         if (whitelistService.getCurrentDelayMillis() > 0) {
-                            String screenTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
+                            String screenTitle = event.getText().isEmpty() ? "" : event.getText().get(0).toString();
                             if (SUB_SETTINGS.equals(componentName.flattenToShortString())) {
                                 if (event.getSource() != null) { // sometimes happens
                                     List<AccessibilityNodeInfo> nodes = event.getSource().findAccessibilityNodeInfosByText("Use SkyWall");
@@ -161,17 +147,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
                             blockActivity(className, appName);
                         }
                         lastActivity = componentName.flattenToShortString();
-                    }
-                }
-            } else if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) {
-                if (whitelistService.getCurrentDelayMillis() > 0) {
-                    if ("com.android.systemui".equals(event.getPackageName().toString())
-                            && event.getText().stream().anyMatch(seq ->
-                            "power off".equalsIgnoreCase(seq.toString())
-                                    || "restart".equalsIgnoreCase(seq.toString()))) {
-                        for (int i = 0; i < 1000; i++) {
-                            performGlobalAction(GLOBAL_ACTION_BACK);
-                        }
                     }
                 }
             } else if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
