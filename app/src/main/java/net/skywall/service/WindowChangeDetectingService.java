@@ -22,6 +22,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
     private static final String TAG = WindowChangeDetectingService.class.getSimpleName();
     public static final String SUB_SETTINGS = "com.android.settings/.SubSettings";
+    public static final String SUB_SETTINGS_ANDROID_15 = "com.android.settings/.spa.SpaActivity";
     public static final String DEFAULT_HOME_APP_ACTIVITY = "com.google.android.permissioncontroller/com.android.permissioncontroller.role.ui.DefaultAppActivity";
     public static final String GOOGLE_ASSISTANT_SAFESEARCH_SETTINGS_ACTIVITY = "com.google.android.googlequicksearchbox/com.google.android.apps.search.googleapp.search.settings.safesearch.SafeSearchSettingActivity";
     public static final String GOOGLE_ASSISTANT_SETTINGS_MENU = "com.google.android.googlequicksearchbox/com.google.android.apps.search.googleapp.settingsui.SettingsActivity";
@@ -40,13 +41,15 @@ public class WindowChangeDetectingService extends AccessibilityService {
             Arrays.asList("authentication", "auth", "welcome", "login", "signup", "credentialpicker"));
 
     private String lastActivity;
-    private String lastActivityTitle;
+    // default to production value, fetch actual below
+    private String skywallAppName = "SkyWall";
 
     @Override
     protected void onServiceConnected() {
         try  {
             super.onServiceConnected();
             whitelistService = WhitelistService.getInstance(getApplicationContext());
+            skywallAppName = getApplicationInfo().loadLabel(getPackageManager()).toString();
         } catch (RuntimeException e) {
             Log.e(TAG, "Error starting " + TAG, e);
             throw e;
@@ -60,6 +63,20 @@ public class WindowChangeDetectingService extends AccessibilityService {
         // block things if we're the default home app
         if (!isHomeApp()) {
             return;
+        }
+
+        if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_CLICKED) {
+            if (!event.getPackageName().equals("com.android.settings") && !event.getPackageName().equals("com.google.android.settings.intelligence")) {
+                return;
+            }
+
+            if (event.getText() != null && !event.getText().isEmpty()
+                    && ("Default apps".equalsIgnoreCase(event.getText().get(0).toString())
+                        || "Default home app".equalsIgnoreCase(event.getText().get(0).toString()))
+                    && whitelistService.getCurrentDelayMillis() > 0) {
+                performGlobalAction(GLOBAL_ACTION_BACK);
+                return;
+            }
         }
 
         try {
@@ -79,8 +96,8 @@ public class WindowChangeDetectingService extends AccessibilityService {
                         // or deactivate device admin for this app, or change the home screen to something else
                         // this enables us to allow the rest of the settings app
                         if (whitelistService.getCurrentDelayMillis() > 0) {
+                            String screenTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
                             if (SUB_SETTINGS.equals(componentName.flattenToShortString())) {
-                                String screenTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
                                 if (event.getSource() != null) { // sometimes happens
                                     List<AccessibilityNodeInfo> nodes = event.getSource().findAccessibilityNodeInfosByText("Use SkyWall");
                                     if (!nodes.isEmpty() || "device admin apps".equalsIgnoreCase(screenTitle)
@@ -89,7 +106,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                                         performGlobalAction(GLOBAL_ACTION_BACK);
                                         return;
                                     } else if ("app info".equalsIgnoreCase(screenTitle)
-                                            && (!event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()
+                                            && (!event.getSource().findAccessibilityNodeInfosByText(skywallAppName).isEmpty()
                                                 || !event.getSource().findAccessibilityNodeInfosByText("Firefox").isEmpty()
                                                 || !event.getSource().findAccessibilityNodeInfosByText("Firefox Beta").isEmpty()
                                                 || !event.getSource().findAccessibilityNodeInfosByText("Firefox Nightly").isEmpty())) {
@@ -97,8 +114,18 @@ public class WindowChangeDetectingService extends AccessibilityService {
                                         return;
                                     }
                                 }
+                            } else if (SUB_SETTINGS_ANDROID_15.equals(componentName.flattenToShortString())) {
+                                if ("install unknown apps".equalsIgnoreCase(screenTitle)) {
+                                    performGlobalAction(GLOBAL_ACTION_BACK);
+                                    return;
+                                }
+
+                                String text = getText(getRootInActiveWindow());
+                                if ("app info".equalsIgnoreCase(screenTitle) && (text.startsWith(skywallAppName) || text.startsWith("Firefox"))) {
+                                    performGlobalAction(GLOBAL_ACTION_BACK);
+                                    return;
+                                }
                             } else if (DEFAULT_HOME_APP_ACTIVITY.equals(componentName.flattenToShortString())) {
-                                String screenTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0).toString();
                                 if ("default home app".equalsIgnoreCase(screenTitle)) {
                                     performGlobalAction(GLOBAL_ACTION_BACK);
                                     return;
@@ -115,7 +142,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
                         if (blockedActivities.contains(className) && whitelistService.getCurrentDelayMillis() > 0) {
                             lastActivity = componentName.flattenToShortString();
-                            lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0) == null ? "" : event.getText().get(0).toString();
                             blockActivity(className, appName);
                             return;
                         }
@@ -127,7 +153,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
                         if (lastActivity != null && PROBABLE_LOGIN_ACTIVITIES.stream()
                                 .anyMatch(activityTitleWord -> lastActivity.toLowerCase().contains(activityTitleWord))) {
                             lastActivity = componentName.flattenToShortString();
-                            lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0) == null ? "" : event.getText().get(0).toString();
                             return;
                         }
 
@@ -136,7 +161,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
                             blockActivity(className, appName);
                         }
                         lastActivity = componentName.flattenToShortString();
-                        lastActivityTitle = event.getText() == null || event.getText().isEmpty() ? "" : event.getText().get(0) == null ? "" : event.getText().get(0).toString();
                     }
                 }
             } else if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_LONG_CLICKED) {
@@ -166,6 +190,15 @@ public class WindowChangeDetectingService extends AccessibilityService {
             Log.e(TAG, "Error while checking screen contents", e);
             throw e;
         }
+    }
+
+    private String getText(AccessibilityNodeInfo root) {
+        StringBuilder text = new StringBuilder(root.getText() == null || root.getText().toString().isEmpty() ? "" : root.getText() + "\n");
+        for (int i = 0; i < root.getChildCount(); i++) {
+            AccessibilityNodeInfo node = root.getChild(i);
+            text.append(getText(node));
+        }
+        return text.toString();
     }
 
     private boolean isHomeApp() {
