@@ -17,3 +17,9 @@ For production builds:
 
 For emulators, do:
     .\adb.exe shell dpm set-device-owner net.skywall.openlauncher.nightly.debug/net.skywall.receivers.DeviceAdminReceiver
+
+
+To remove device owner:
+    .\adb.exe shell dpm remove-active-admin net.skywall.openlauncher.nightly.debug/net.skywall.receivers.DeviceAdminReceiver
+
+    requires the manifest to have android:testOnly="true" set on the <application> - and also doesn't seem to trip device admin receiver
