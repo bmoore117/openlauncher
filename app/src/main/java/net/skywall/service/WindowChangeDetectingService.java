@@ -111,11 +111,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
                                     performGlobalAction(GLOBAL_ACTION_BACK);
                                     return;
                                 }
-                            } else if (DEFAULT_HOME_APP_ACTIVITY.equals(componentName.flattenToShortString())) {
-                                if ("default home app".equalsIgnoreCase(screenTitle)) {
-                                    performGlobalAction(GLOBAL_ACTION_BACK);
-                                    return;
-                                }
                             } else if (GOOGLE_ASSISTANT_SAFESEARCH_SETTINGS_ACTIVITY.equals(componentName.flattenToShortString())
                                     || GOOGLE_ASSISTANT_SETTINGS_MENU.equals(componentName.flattenToShortString())) {
                                 // on the emulator, the google app has a specific recognizable explicit
@@ -153,6 +148,13 @@ public class WindowChangeDetectingService extends AccessibilityService {
                 if (whitelistService.getCurrentDelayMillis() == 0) {
                     return;
                 }
+
+                if (event.getPackageName().toString().equals("com.android.settings")
+                        && getText(getRootInActiveWindow()).startsWith("Firefox")) {
+                    performGlobalAction(GLOBAL_ACTION_BACK);
+                    return;
+                }
+
                 if (event.getPackageName().toString().startsWith("org.mozilla.firefox")
                         && lastActivity.matches("org.mozilla.firefox(.*?)/org.mozilla.fenix.HomeActivity")
                         && event.getSource() != null
@@ -168,6 +170,9 @@ public class WindowChangeDetectingService extends AccessibilityService {
     }
 
     private String getText(AccessibilityNodeInfo root) {
+        if (root == null) {
+            return "";
+        }
         StringBuilder text = new StringBuilder(root.getText() == null || root.getText().toString().isEmpty() ? "" : root.getText() + "\n");
         for (int i = 0; i < root.getChildCount(); i++) {
             AccessibilityNodeInfo node = root.getChild(i);
