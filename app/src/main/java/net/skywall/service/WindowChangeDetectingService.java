@@ -82,7 +82,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                         // or deactivate device admin for this app, or change the home screen to something else
                         // this enables us to allow the rest of the settings app
                         if (whitelistService.getCurrentDelayMillis() > 0) {
-                            String screenTitle = event.getText().isEmpty() ? "" : event.getText().get(0).toString();
+                            String screenTitle = event.getText().isEmpty() || event.getText().get(0) == null ? "" : event.getText().get(0).toString();
                             if (SUB_SETTINGS.equals(componentName.flattenToShortString())) {
                                 if (event.getSource() != null) { // sometimes happens
                                     List<AccessibilityNodeInfo> nodes = event.getSource().findAccessibilityNodeInfosByText("Use SkyWall");
