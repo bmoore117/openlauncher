@@ -31,6 +31,8 @@ public class WhitelistService {
             "com.google.android.apps.wellbeing",
             "com.google.android.documentsui",
             "com.google.android.gms",
+            "com.google.android.libraries.inputmethod",
+            "com.google.android.libraries.speech",
             "com.google.android.location",
             "com.google.android.permissioncontroller",
             "com.google.android.settings",
