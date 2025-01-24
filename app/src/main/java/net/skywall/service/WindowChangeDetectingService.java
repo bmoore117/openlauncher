@@ -23,7 +23,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
     private static final String TAG = WindowChangeDetectingService.class.getSimpleName();
     public static final String SUB_SETTINGS = "com.android.settings/.SubSettings";
     public static final String SUB_SETTINGS_ANDROID_15 = "com.android.settings/.spa.SpaActivity";
-    public static final String DEFAULT_HOME_APP_ACTIVITY = "com.google.android.permissioncontroller/com.android.permissioncontroller.role.ui.DefaultAppActivity";
     public static final String GOOGLE_ASSISTANT_SAFESEARCH_SETTINGS_ACTIVITY = "com.google.android.googlequicksearchbox/com.google.android.apps.search.googleapp.search.settings.safesearch.SafeSearchSettingActivity";
     public static final String GOOGLE_ASSISTANT_SETTINGS_MENU = "com.google.android.googlequicksearchbox/com.google.android.apps.search.googleapp.settingsui.SettingsActivity";
 
