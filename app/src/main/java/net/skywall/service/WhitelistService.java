@@ -103,24 +103,16 @@ public class WhitelistService {
         }
 
         long now = new Date().getTime();
+        long pendingNewDelayOnsetTime = pendingChanges.getLong(DELAY_KEY, Long.MAX_VALUE);
+        long pendingAppWhitelistOnsetTime = pendingChanges.getLong(packageName, Long.MAX_VALUE);
 
-        long delayTimeChange = pendingChanges.getLong(DELAY_KEY, Long.MAX_VALUE);
-        long appTimeChange = pendingChanges.getLong(packageName, Long.MAX_VALUE);
-        long delayTimeValue = pendingValues.getLong(DELAY_KEY, 0);
+        if (pendingNewDelayOnsetTime <= now) {
+            updateFiles(DELAY_KEY);
+        }
 
-        if (delayTimeChange == Long.MAX_VALUE) {
-            // if no delay pending change, just look at scheduled app time vs now
-            if (appTimeChange <= now) {
-                updateFiles(packageName);
-                return true;
-            }
-        } else if (delayTimeChange <= now) {
-            long appQueueStartTime = pendingValues.getLong(packageName, 0);
-            if (appQueueStartTime + delayTimeValue <= now) {
-                updateFiles(packageName);
-                updateFiles(DELAY_KEY);
-                return true;
-            }
+        if (pendingAppWhitelistOnsetTime <= now) {
+            updateFiles(packageName);
+            return true;
         }
 
         return false;
