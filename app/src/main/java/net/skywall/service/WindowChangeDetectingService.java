@@ -148,18 +148,20 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     return;
                 }
 
-                if (event.getPackageName().toString().equals("com.android.settings")
-                        && getText(getRootInActiveWindow()).startsWith("Firefox")) {
-                    performGlobalAction(GLOBAL_ACTION_BACK);
-                    return;
-                }
+                if (event.getPackageName() != null) {
+                    if ("com.android.settings".equals(event.getPackageName().toString())
+                            && getText(getRootInActiveWindow()).startsWith("Firefox")) {
+                        performGlobalAction(GLOBAL_ACTION_BACK);
+                        return;
+                    }
 
-                if (event.getPackageName().toString().startsWith("org.mozilla.firefox")
-                        && lastActivity.matches("org.mozilla.firefox(.*?)/org.mozilla.fenix.HomeActivity")
-                        && event.getSource() != null
-                        && !event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()
-                        && !event.getSource().findAccessibilityNodeInfosByText("Run in private browsing").isEmpty()) {
-                    performGlobalAction(GLOBAL_ACTION_BACK);
+                    if (event.getPackageName().toString().startsWith("org.mozilla.firefox")
+                            && lastActivity.matches("org.mozilla.firefox(.*?)/org.mozilla.fenix.HomeActivity")
+                            && event.getSource() != null
+                            && !event.getSource().findAccessibilityNodeInfosByText("SkyWall").isEmpty()
+                            && !event.getSource().findAccessibilityNodeInfosByText("Run in private browsing").isEmpty()) {
+                        performGlobalAction(GLOBAL_ACTION_BACK);
+                    }
                 }
             }
         } catch (RuntimeException e) {
