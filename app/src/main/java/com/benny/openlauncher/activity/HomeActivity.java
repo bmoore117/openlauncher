@@ -1,5 +1,6 @@
 package com.benny.openlauncher.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.appwidget.AppWidgetManager;
@@ -12,7 +13,6 @@ import android.content.pm.LauncherActivityInfo;
 import android.content.pm.LauncherApps;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -504,6 +504,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         });
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onResume() {
         super.onResume();
@@ -529,7 +530,7 @@ public final class HomeActivity extends Activity implements OnDesktopEditListene
         } else if (appSettings.getDesktopOrientationMode() == 1) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         handleLauncherResume();
         LicenseService.schedule(this);
