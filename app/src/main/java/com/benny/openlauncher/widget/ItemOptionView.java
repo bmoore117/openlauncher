@@ -347,17 +347,19 @@ public final class ItemOptionView extends FrameLayout {
     }
 
     public void showItemPopup(final HomeActivity homeActivity) {
-        ArrayList<AbstractPopupIconLabelItem> itemList = new ArrayList<>();
+        List<AbstractPopupIconLabelItem> itemList = new ArrayList<>();
         switch (getDragItem().getType()) {
             case APP:
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1 && getDragItem().getShortcutInfo() != null) {
+                if (!Action.DRAWER.equals(getDragAction())) {
+                    itemList.add(removeItem);
+                }
+                if (getDragItem().getShortcutInfo() != null) {
                     for (ShortcutInfo shortcutInfo : getDragItem().getShortcutInfo()) {
                         itemList.add(getAppShortcutItem(shortcutInfo));
                     }
                 }
-                if (!getDragAction().equals(Action.DRAWER)) {
+                if (!Action.DRAWER.equals(getDragAction())) {
                     itemList.add(editItem);
-                    itemList.add(removeItem);
                 }
                 itemList.add(uninstallItem);
                 itemList.add(infoItem);
@@ -396,36 +398,33 @@ public final class ItemOptionView extends FrameLayout {
             y -= Tool.dp2px(4);
         }
 
-        showPopupMenuForItem(x, y, itemList, new com.mikepenz.fastadapter.listeners.OnClickListener<AbstractPopupIconLabelItem>() {
-            @Override
-            public boolean onClick(View v, IAdapter<AbstractPopupIconLabelItem> adapter, AbstractPopupIconLabelItem item, int position) {
-                Item dragItem = getDragItem();
-                if (dragItem != null) {
-                    HpItemOption itemOption = new HpItemOption(homeActivity);
-                    switch ((int) item.getIdentifier()) {
-                        case uninstallItemIdentifier:
-                            itemOption.onUninstallItem(dragItem);
-                            break;
-                        case editItemIdentifier:
-                            itemOption.onEditItem(dragItem);
-                            break;
-                        case removeItemIdentifier:
-                            itemOption.onRemoveItem(dragItem);
-                            break;
-                        case infoItemIdentifier:
-                            itemOption.onInfoItem(dragItem);
-                            break;
-                        case resizeItemIdentifier:
-                            itemOption.onResizeItem(dragItem);
-                            break;
-                        case startShortcutItemIdentifier:
-                            itemOption.onStartShortcutItem(dragItem, position);
-                            break;
-                    }
+        showPopupMenuForItem(x, y, itemList, (v, adapter, item, position) -> {
+            Item dragItem = getDragItem();
+            if (dragItem != null) {
+                HpItemOption itemOption = new HpItemOption(homeActivity);
+                switch ((int) item.getIdentifier()) {
+                    case uninstallItemIdentifier:
+                        itemOption.onUninstallItem(dragItem);
+                        break;
+                    case editItemIdentifier:
+                        itemOption.onEditItem(dragItem);
+                        break;
+                    case removeItemIdentifier:
+                        itemOption.onRemoveItem(dragItem);
+                        break;
+                    case infoItemIdentifier:
+                        itemOption.onInfoItem(dragItem);
+                        break;
+                    case resizeItemIdentifier:
+                        itemOption.onResizeItem(dragItem);
+                        break;
+                    case startShortcutItemIdentifier:
+                        itemOption.onStartShortcutItem(dragItem, position);
+                        break;
                 }
-                collapse();
-                return true;
             }
+            collapse();
+            return true;
         });
     }
 
